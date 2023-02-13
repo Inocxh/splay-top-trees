@@ -1,8 +1,17 @@
 #include <iostream>
-#include "test.h"
+#include "underlying_tree.h"
 
 int main() {
-    std::cout << add(1,2);
-    return 0;
+    Tree t = Tree(10);
+    t.add_edge(5, 6, 1);
+    t.add_edge(6, 7, 2);
+    t.add_edge(7, 8, 2);
+    //t.del_edge(e);
+
+    cout << t.get_vertex(6)->has_at_most_one_incident_edge();
+    cout << t.get_vertex(5)->has_at_most_one_incident_edge();
+    cout << t.get_vertex(4)->has_at_most_one_incident_edge();
+    
+    t.print_tree();
 }
 
