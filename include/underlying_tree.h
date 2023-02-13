@@ -44,7 +44,6 @@ class Vertex {
 
 class Tree {
     
-    int num_vertices;
     vector<Vertex> vertices;
 
     public:
@@ -57,6 +56,7 @@ class Tree {
 
     Vertex* get_vertex(int id) {return &this->vertices[id]; };
 
+    int num_vertices;
     
     private:
     void print_edges(Vertex*);
