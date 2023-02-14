@@ -21,6 +21,8 @@ add_executable(main src/main.cpp ${TOP_TREE_FILES})
 #Testing target 
 
 add_subdirectory(src/lib/Catch2)
+option(CATCH_CONFIG_COLOUR_WIN32 ON)
+
 #Removes extra CTest targets
 set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 #Add Ctest and Catch to CMake
