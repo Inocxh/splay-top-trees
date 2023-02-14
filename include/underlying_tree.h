@@ -55,6 +55,7 @@ class Tree {
     void print_tree();
 
     Vertex* get_vertex(int id) {return &this->vertices[id]; };
+    vector<Vertex>* get_vertices() {return &this->vertices; };
 
     int num_vertices;
     

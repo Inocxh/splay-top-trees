@@ -11,6 +11,7 @@ set(TEST_FILES ${TEST_FILES}
     src/tree/underlying_tree.cpp
 )
 
+
 add_subdirectory(src/lib/Catch2)
 
 add_executable(tests ${TEST_FILES})
