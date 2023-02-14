@@ -5,7 +5,7 @@ TEST_CASE( "Factorials are computed", "[a]" ) {
     REQUIRE( 1+ 1 ==2 );
 }
 
-TEST_CASE( "Create tree", "[create_tree]") {
+TEST_CASE( "Create tree", "[a]") {
     int size = 10;
     Tree tree = Tree(size);
     REQUIRE(tree.num_vertices == size);
