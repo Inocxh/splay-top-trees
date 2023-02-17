@@ -22,22 +22,11 @@ Tree::~Tree() {
         }
     }
 }
-Edge::Edge(Vertex* left, Vertex* right, int weight) {
-    this->endpoints[0] = left;
-    this->endpoints[1] = right;
-    
-    this->weight = weight;
-    this->user_data = nullptr;
-    for (int i = 0; i < 2; i++) {
-        this->prev[i] = nullptr;
-        this->next[i] = nullptr;
-    }
-}
 
 Edge* Tree::add_edge(int u, int v, int weight) {
     Vertex* left = &this->vertices[u];
     Vertex* right = &this->vertices[v];
-    struct Edge* next[2] = {left->get_first_edge(), right->get_first_edge()};
+    Edge* next[2] = {left->get_first_edge(), right->get_first_edge()};
 
     //Construct edge and set next
     Edge* edge = new Edge(left, right, weight);
@@ -84,6 +73,7 @@ void Tree::print_tree() {
         cout << endl;
     }
 }
+
 void Tree::print_edges(Vertex *vertex) {
     Edge *current = vertex->get_first_edge();
     while (current) {
@@ -92,7 +82,6 @@ void Tree::print_edges(Vertex *vertex) {
         current = current->next[vertex_is_right];
     }
 }
-
 
 bool Vertex::has_at_most_one_incident_edge() {
     Edge *first_edge = this->get_first_edge();
@@ -104,6 +93,20 @@ bool Vertex::has_at_most_one_incident_edge() {
     }
 }
 
+Edge::Edge(Vertex* left, Vertex* right, int weight) {
+    this->endpoints[0] = left;
+    this->endpoints[1] = right;
+    
+    this->weight = weight;
+    this->node = nullptr;
+    for (int i = 0; i < 2; i++) {
+        this->prev[i] = nullptr;
+        this->next[i] = nullptr;
+    }
+}
+
+
 int Edge::vertex_is_right(Vertex* vertex) {
     return this->endpoints[1] == vertex;
 }
+

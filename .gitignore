@@ -33,4 +33,5 @@
 
 # Build dir
 build/
+Testing/
 .vscode/

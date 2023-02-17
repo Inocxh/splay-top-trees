@@ -2,33 +2,32 @@
 #define UNDERLYINGTREE_H
 
 #include <vector>
+
+
 using namespace std;
+
+class LeafNode;
 
 class Edge; 
 class Vertex;
 class Tree;
-class UserData;
 
 class Edge {
     public:
     Edge(Vertex* left, Vertex* right, int weight);
     int weight;
-    UserData* user_data;
+    LeafNode* node;
     Vertex* endpoints[2];
     Edge* prev[2];
     Edge* next[2];
-    
     int vertex_is_right(Vertex* v);
-
-
 };
 
 class Vertex {
-    bool exposed;
     Edge *first_edge;
     
     public: 
-
+    bool exposed;
     int id;
     
     Vertex(int id) {
@@ -39,6 +38,7 @@ class Vertex {
     Edge* get_first_edge() { return first_edge; };
     void set_first_edge(Edge* e) { first_edge = e; };
     bool has_at_most_one_incident_edge();
+    bool is_exposed() { return exposed; }
 };
 
 
@@ -50,7 +50,7 @@ class Tree {
     Tree(int num_vertices);
     ~Tree();
     Edge* add_edge(int u, int v, int weight);
-    void del_edge(Edge* uv);
+    void del_edge(Edge* edge);
 
     void print_tree();
 
@@ -63,11 +63,5 @@ class Tree {
     void print_edges(Vertex*);
     void del_edge_inner(Vertex*, Edge* prev, Edge* next);
 };
-
-
-
-
-
-
 
 #endif

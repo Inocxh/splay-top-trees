@@ -69,7 +69,7 @@ TEST_CASE( "Delete edges", "[del_edge]") {
     REQUIRE_FALSE(vertex_has_edge_incident(tree.get_vertex(1), e2));
 }
 
-TEST_CASE( "vertex is right", "[vertex_is_right]") {
+TEST_CASE( "Vertex is right", "[vertex_is_right]") {
     int size = 10;
     Tree tree = Tree(size);
 

@@ -6,12 +6,19 @@ set(CXX_STANDARD -c++20)
 include_directories(include)
 
 set(TEST_FILES ${TEST_FILES}
-test/tree_test.cpp
-test/test.cpp
+
+    test/tree_tests/tree_test.cpp
+    test/tree_tests/toptree_test.cpp
 )
 
 set(TOP_TREE_FILES ${TOP_TREE_FILES}
-src/tree/underlying_tree.cpp
+
+    src/tree/underlying_tree.cpp
+    src/tree/top_tree/top_tree.cpp
+    src/tree/top_tree/internal_node.cpp
+    src/tree/top_tree/leaf_node.cpp
+    src/tree/top_tree/node.cpp
+    src/tree/top_tree/user_data.cpp
 )
 
 
