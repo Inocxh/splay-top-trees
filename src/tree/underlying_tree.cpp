@@ -23,13 +23,11 @@ Tree::~Tree() {
     }
 }
 
-Edge* Tree::add_edge(int u, int v, int weight) {
-    Vertex* left = &this->vertices[u];
-    Vertex* right = &this->vertices[v];
+Edge* Tree::add_edge(Vertex* left, Vertex* right) {
     Edge* next[2] = {left->get_first_edge(), right->get_first_edge()};
 
     //Construct edge and set next
-    Edge* edge = new Edge(left, right, weight);
+    Edge* edge = new Edge(left, right);
     edge->next[0] = next[0],
     edge->next[1] = next[1];
 
@@ -44,6 +42,12 @@ Edge* Tree::add_edge(int u, int v, int weight) {
         next[1]->prev[vertex_is_right] = edge;
     }
     return edge;
+}
+
+Edge* Tree::add_edge(int u, int v) {
+    Vertex* left = &this->vertices[u];
+    Vertex* right = &this->vertices[v];
+    return this->add_edge(left,right);
 }
 
 void Tree::del_edge(Edge* edge) {
@@ -64,6 +68,20 @@ void Tree::del_edge_inner(Vertex* vertex, Edge* prev, Edge* next) {
         int vertex_is_right = next->vertex_is_right(vertex);
         next->prev[vertex_is_right] = prev;
     }
+}
+
+Edge* Tree::find_edge(int u_id, int v_id) {
+    Vertex* u = this->get_vertex(u_id);
+    Vertex* v = this->get_vertex(v_id);
+
+    Edge* edge = u->get_first_edge();
+    
+    int vertex_is_right = edge->vertex_is_right(u);
+    while (edge->endpoints[!vertex_is_right] != v) {
+        vertex_is_right = edge->vertex_is_right(u);
+        edge = edge->next[!vertex_is_right];
+    }
+    return edge;
 }
 
 void Tree::print_tree() {
@@ -93,11 +111,10 @@ bool Vertex::has_at_most_one_incident_edge() {
     }
 }
 
-Edge::Edge(Vertex* left, Vertex* right, int weight) {
+Edge::Edge(Vertex* left, Vertex* right) {
     this->endpoints[0] = left;
     this->endpoints[1] = right;
     
-    this->weight = weight;
     this->node = nullptr;
     for (int i = 0; i < 2; i++) {
         this->prev[i] = nullptr;

@@ -14,13 +14,14 @@ class Tree;
 
 class Edge {
     public:
-    Edge(Vertex* left, Vertex* right, int weight);
-    int weight;
+    Edge(Vertex* left, Vertex* right);
     LeafNode* node;
     Vertex* endpoints[2];
     Edge* prev[2];
     Edge* next[2];
     int vertex_is_right(Vertex* v);
+
+    void set_leaf_node(LeafNode* l) { this->node = l; };
 };
 
 class Vertex {
@@ -49,13 +50,16 @@ class Tree {
     public:
     Tree(int num_vertices);
     ~Tree();
-    Edge* add_edge(int u, int v, int weight);
+    Edge* add_edge(int u, int v);
+    Edge* add_edge(Vertex*,Vertex*);
     void del_edge(Edge* edge);
 
     void print_tree();
 
     Vertex* get_vertex(int id) {return &this->vertices[id]; };
     vector<Vertex>* get_vertices() {return &this->vertices; };
+
+    Edge* find_edge(int,int);
 
     int num_vertices;
     

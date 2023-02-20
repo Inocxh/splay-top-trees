@@ -12,6 +12,11 @@ void Node::flip() {
 InternalNode* Node::get_parent() {
     return this->parent;
 }
+
+void Node::set_parent(InternalNode* p) {
+    this->parent = p;
+}
+
 Node* Node::get_sibling() {
     //The parent is *always* an InternalNode
     InternalNode* parent = this->get_parent();
@@ -82,6 +87,8 @@ void Node::rotate_up() {
     grandparent->flipped = flip_grandparent;
     this->parent = grandparent;
     uncle->parent = parent;
+
+    //Using user datas
 }
 Node* Node::semi_splay_step() {
     Node* node = this;

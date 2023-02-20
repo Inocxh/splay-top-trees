@@ -29,9 +29,9 @@ O--------O--------O--------O
 TEST_CASE( "Rotation on path", "[rotations]") {
     int size = 4;
     Tree tree = Tree(size);
-    Edge* node = tree.add_edge(0, 1, 1);
-    Edge* sibling = tree.add_edge(1, 2, 1);
-    Edge* uncle = tree.add_edge(3, 2, 1);
+    Edge* node = tree.add_edge(0, 1);
+    Edge* sibling = tree.add_edge(1, 2);
+    Edge* uncle = tree.add_edge(3, 2);
     
     LeafNode* n = new LeafNode(node, 1, false);
     LeafNode* s = new LeafNode(sibling, 2, false);
@@ -117,9 +117,9 @@ Star top-tree represents:
 TEST_CASE( "Rotation on star same side", "[rotations]") {
     int size = 4;
     Tree tree = Tree(size);
-    Edge* node = tree.add_edge(0, 1, 1);
-    Edge* sibling = tree.add_edge(1, 2, 1);
-    Edge* uncle = tree.add_edge(1, 3, 1);
+    Edge* node = tree.add_edge(0, 1);
+    Edge* sibling = tree.add_edge(1, 2);
+    Edge* uncle = tree.add_edge(1, 3);
     
     LeafNode* n = new LeafNode(node, 1, false);
     LeafNode* s = new LeafNode(sibling, 1, false);
@@ -207,9 +207,9 @@ Star top-tree represents:
 TEST_CASE( "Rotation on star diff. side", "[rotations]") {
     int size = 4;
     Tree tree = Tree(size);
-    Edge* node = tree.add_edge(0, 1, 1);
-    Edge* sibling = tree.add_edge(1, 2, 1);
-    Edge* uncle = tree.add_edge(1, 3, 1);
+    Edge* node = tree.add_edge(0, 1);
+    Edge* sibling = tree.add_edge(1, 2);
+    Edge* uncle = tree.add_edge(1, 3);
     
     LeafNode* n = new LeafNode(node, 1, false);
     LeafNode* s = new LeafNode(sibling, 2, false); //Sib endpoint exposed
@@ -280,10 +280,10 @@ Top tree case 2:
 TEST_CASE("semi_splay_step on path (Case 1 and 3)", "[semi_splay_step]") {
     int size = 5;
     Tree tree = Tree(size);
-    Edge* node = tree.add_edge(0, 1, 1);
-    Edge* sibling = tree.add_edge(1, 2, 1);
-    Edge* uncle = tree.add_edge(2, 3, 1);
-    Edge* granduncle = tree.add_edge(3, 4, 1);
+    Edge* node = tree.add_edge(0, 1);
+    Edge* sibling = tree.add_edge(1, 2);
+    Edge* uncle = tree.add_edge(2, 3);
+    Edge* granduncle = tree.add_edge(3, 4);
 
     //Top tree setup
     LeafNode* top_node = new LeafNode(node, 1, false);
@@ -342,11 +342,11 @@ TEST_CASE("semi_splay_step on path (Case 1 and 3)", "[semi_splay_step]") {
 TEST_CASE("Case 3", "[semi_splay_step]") {
     int size = 6;
     Tree tree = Tree(size);
-    Edge* gguncle = tree.add_edge(0, 1, 1);
-    Edge* node = tree.add_edge(1, 2, 1);
-    Edge* sibling = tree.add_edge(2, 3, 1);
-    Edge* uncle = tree.add_edge(3, 4, 1);
-    Edge* granduncle = tree.add_edge(4, 5, 1);
+    Edge* gguncle = tree.add_edge(0, 1);
+    Edge* node = tree.add_edge(1, 2);
+    Edge* sibling = tree.add_edge(2, 3);
+    Edge* uncle = tree.add_edge(3, 4);
+    Edge* granduncle = tree.add_edge(4, 5);
 
     //Top tree setup
     LeafNode* top_node = new LeafNode(node, 2, false);
@@ -428,10 +428,10 @@ TEST_CASE("Case 3", "[semi_splay_step]") {
 TEST_CASE("semi_splay_step on pronged tree (Case 2 and 4)", "[semi_splay_step]") {
     int size = 5;
     Tree tree = Tree(6);
-    Edge* node = tree.add_edge(3, 1, 0);
-    Edge* sibling = tree.add_edge(0, 1, 0);
-    Edge* uncle = tree.add_edge(2, 1, 0);
-    Edge* granduncle = tree.add_edge(3, 4, 0);
+    Edge* node = tree.add_edge(3, 1);
+    Edge* sibling = tree.add_edge(0, 1);
+    Edge* uncle = tree.add_edge(2, 1);
+    Edge* granduncle = tree.add_edge(3, 4);
     
     SECTION("Case 4", "[semi_splay_step]") {
         LeafNode* top_node = new LeafNode(node, 1, true);

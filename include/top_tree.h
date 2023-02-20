@@ -8,36 +8,49 @@ class Node;
 class InternalNode;
 class LeafNode;
 
-class UserData;
-template <class UserData> class TopTree;
+class UserData {
+    int weight;
 
-// UserData must implement merge and split
-template <class UserData>
-class TopTree {
-
-    typedef Node Node<UserData>;
-    /*static void merge(Node* n1, Node* n2) {
-        user_data.merge();
-    }    */
-    Node* find_consuming_node(Vertex*);
+    public:
+    UserData(int w) {
+        this->weight = w;
+    }
+    
+    UserData* merge(UserData* other) {
+        return new UserData(std::max(this->weight, other->weight));
+    }
+    void split(UserData* parent, UserData* left_child, UserData* right_child) {
+        return;
+    }
 
     
+};
+
+class TopTree {
+    Tree underlying_tree;
+    Node* find_consuming_node(Vertex*);
+    void delete_all_ancestors(Node*);
+    Node* expose_internal(Vertex*);
+    Node* deexpose_internal(Vertex*);
+    Node* link_internal(Vertex*, Vertex*, UserData*);
+    std::tuple<Node*, Node*> cut_internal(Edge*);
+
+    Vertex* get_vertex(int id);
     public:
     Node* expose(int vertex);
-    void deexpose(int vertex);
-    Node* link(int v1, int v2);
-    std::tuple<Node*, Node*> cut(int v1, int v2);
-
+    Node* deexpose(int vertex);
+    Node* link(int u, int v, UserData*);
+    std::tuple<Node*, Node*> cut(int, int);
     
 
+    
 };
 
 class Node {
     protected:
     bool flipped = false;
     InternalNode* parent = nullptr;
-    int num_boundary_vertices;
-
+    
     public:
     void full_splay();
     void semi_splay();
@@ -48,6 +61,7 @@ class Node {
     Node* semi_splay_step();
     void rotate_up();
     void flip();
+    virtual void push_flip() = 0;
 
     bool is_point();
     bool is_path();
@@ -55,8 +69,12 @@ class Node {
 
     Node* get_sibling();
     InternalNode* get_parent();
+    void set_parent(InternalNode*);
+    int num_boundary_vertices;
     
     bool is_left_child();
+    
+    UserData* user_data;
     
     #ifdef TEST
     bool is_flipped() { return flipped; }
@@ -64,14 +82,13 @@ class Node {
         this->flipped = f;
         this->num_boundary_vertices = num_bound;
     }
-    void set_parent(InternalNode* par) {
-        this->parent = par;
-    };
     #endif
 };
 
 class InternalNode : public Node {
     public: 
+
+    InternalNode(Node*, Node*);
     Node* children[2];
     void push_flip();
     
@@ -104,9 +121,10 @@ class LeafNode : public Node {
     bool has_middle_boundary();
     bool has_right_boundary();
 
-    LeafNode(Edge);
+    LeafNode(Edge*, UserData*);
     ~LeafNode();
     bool vertex_is_right(Vertex* v);
+    void push_flip();
 
     #ifdef TEST
     LeafNode(Edge* e, int num_boundary, bool f): Node(num_boundary,f){
