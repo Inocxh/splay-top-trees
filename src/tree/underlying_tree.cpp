@@ -4,18 +4,18 @@
 using namespace std;
 
 
-Tree::Tree(int num_vertices) {
+template<class T> Tree<T>::Tree(int num_vertices) {
     this->num_vertices = num_vertices;
-    vector<Vertex> vertices;
+    vector<Vertex<T>> vertices;
     for (int i = 0; i < num_vertices; i++) {
         vertices.push_back(Vertex(i));
     }
     this->vertices = vertices;
 }
 
-Tree::~Tree() {
+template<class T> Tree<T>::~Tree() {
     for (int i = 0; i < this->vertices.size(); i++) {
-        Edge* current = vertices[i].get_first_edge();
+        Edge<T>* current = vertices[i].get_first_edge();
         while (current) {
             this->del_edge(current);
             current = vertices[i].get_first_edge();
@@ -23,11 +23,11 @@ Tree::~Tree() {
     }
 }
 
-Edge* Tree::add_edge(Vertex* left, Vertex* right) {
-    Edge* next[2] = {left->get_first_edge(), right->get_first_edge()};
+template<class T> Edge<T>* Tree<T>::add_edge(Vertex<T>* left, Vertex<T>* right) {
+    Edge<T>* next[2] = {left->get_first_edge(), right->get_first_edge()};
 
     //Construct edge and set next
-    Edge* edge = new Edge(left, right);
+    Edge<T>* edge = new Edge(left, right);
     edge->next[0] = next[0],
     edge->next[1] = next[1];
 
@@ -44,20 +44,20 @@ Edge* Tree::add_edge(Vertex* left, Vertex* right) {
     return edge;
 }
 
-Edge* Tree::add_edge(int u, int v) {
-    Vertex* left = &this->vertices[u];
-    Vertex* right = &this->vertices[v];
+template<class T> Edge<T>* Tree<T>::add_edge(int u, int v) {
+    Vertex<T>* left = &this->vertices[u];
+    Vertex<T>* right = &this->vertices[v];
     return this->add_edge(left,right);
 }
 
-void Tree::del_edge(Edge* edge) {
+template<class T> void Tree<T>::del_edge(Edge<T>* edge) {
     del_edge_inner(edge->endpoints[0], edge->prev[0], edge->next[0]);
     del_edge_inner(edge->endpoints[1], edge->prev[1], edge->next[1]);
 
     delete edge;
 }
 
-void Tree::del_edge_inner(Vertex* vertex, Edge* prev, Edge* next) {
+template<class T> void Tree<T>::del_edge_inner(Vertex<T>* vertex, Edge<T>* prev, Edge<T>* next) {
     if (prev) {
         int vertex_is_right = prev->vertex_is_right(vertex);
         prev->next[vertex_is_right] = next;
@@ -70,11 +70,11 @@ void Tree::del_edge_inner(Vertex* vertex, Edge* prev, Edge* next) {
     }
 }
 
-Edge* Tree::find_edge(int u_id, int v_id) {
-    Vertex* u = this->get_vertex(u_id);
-    Vertex* v = this->get_vertex(v_id);
+template<class T> Edge<T>* Tree<T>::find_edge(int u_id, int v_id) {
+    Vertex<T>* u = this->get_vertex(u_id);
+    Vertex<T>* v = this->get_vertex(v_id);
 
-    Edge* edge = u->get_first_edge();
+    Edge<T>* edge = u->get_first_edge();
     
     int vertex_is_right = edge->vertex_is_right(u);
     while (edge->endpoints[!vertex_is_right] != v) {
@@ -84,7 +84,7 @@ Edge* Tree::find_edge(int u_id, int v_id) {
     return edge;
 }
 
-void Tree::print_tree() {
+template<class T> void Tree<T>::print_tree() {
     for (int i = 0; i < this->num_vertices; i++) {
         cout << i << ": "; 
         print_edges(&(this->vertices[i]));
@@ -92,8 +92,8 @@ void Tree::print_tree() {
     }
 }
 
-void Tree::print_edges(Vertex *vertex) {
-    Edge *current = vertex->get_first_edge();
+template<class T> void Tree<T>::print_edges(Vertex<T> *vertex) {
+    Edge<T> *current = vertex->get_first_edge();
     while (current) {
         cout << "(" << current->endpoints[0]->id << "," << current->endpoints[1]->id << ") ";
         int vertex_is_right = current->vertex_is_right(vertex);
@@ -101,8 +101,8 @@ void Tree::print_edges(Vertex *vertex) {
     }
 }
 
-bool Vertex::has_at_most_one_incident_edge() {
-    Edge *first_edge = this->get_first_edge();
+template<class T> bool Vertex<T>::has_at_most_one_incident_edge() {
+    Edge<T> *first_edge = this->get_first_edge();
     if (first_edge) {
         int vertex_is_right = first_edge->vertex_is_right(this);
         return first_edge->next[vertex_is_right] == NULL;
@@ -111,7 +111,7 @@ bool Vertex::has_at_most_one_incident_edge() {
     }
 }
 
-Edge::Edge(Vertex* left, Vertex* right) {
+template<class T> Edge<T>::Edge(Vertex<T>* left, Vertex<T>* right) {
     this->endpoints[0] = left;
     this->endpoints[1] = right;
     
@@ -123,7 +123,7 @@ Edge::Edge(Vertex* left, Vertex* right) {
 }
 
 
-int Edge::vertex_is_right(Vertex* vertex) {
+template<class T> int Edge<T>::vertex_is_right(Vertex<T>* vertex) {
     return this->endpoints[1] == vertex;
 }
 

@@ -4,52 +4,38 @@
 
 #include "underlying_tree.h"
 
-class Node; 
-class InternalNode;
-class LeafNode;
+template<class T> class Node; 
+template<class T> class InternalNode;
+template<class T> class LeafNode;
 
-class UserData {
-    int weight;
-
-    public:
-    UserData(int w) {
-        this->weight = w;
-    }
-    
-    UserData* merge(UserData* other) {
-        return new UserData(std::max(this->weight, other->weight));
-    }
-    void split(UserData* parent, UserData* left_child, UserData* right_child) {
-        return;
-    }
-
-    
-};
-
+template<class T>
 class TopTree {
-    Tree underlying_tree;
-    Node* find_consuming_node(Vertex*);
-    void delete_all_ancestors(Node*);
-    Node* expose_internal(Vertex*);
-    Node* deexpose_internal(Vertex*);
-    Node* link_internal(Vertex*, Vertex*, UserData*);
-    std::tuple<Node*, Node*> cut_internal(Edge*);
+    Tree<T> underlying_tree;
+    Node<T>* find_consuming_node(Vertex<T>*);
+    void delete_all_ancestors(Node<T>*);
+    Node<T>* expose_internal(Vertex<T>*);
+    Node<T>* deexpose_internal(Vertex<T>*);
+    Node<T>* link_internal(Vertex<T>*, Vertex<T>*, T);
+    std::tuple<Node<T>*, Node<T>*> cut_internal(Edge<T>*);
 
-    Vertex* get_vertex(int id);
+    Vertex<T>* get_vertex(int id);
     public:
-    Node* expose(int vertex);
-    Node* deexpose(int vertex);
-    Node* link(int u, int v, UserData*);
-    std::tuple<Node*, Node*> cut(int, int);
+    Node<T>* expose(int vertex);
+    Node<T>* deexpose(int vertex);
+    Node<T>* link(int u, int v, T);
+    std::tuple<Node<T>*, Node<T>*> cut(int, int);
     
 
     
 };
 
+template<class T>
 class Node {
+
     protected:
     bool flipped = false;
-    InternalNode* parent = nullptr;
+    InternalNode<T>* parent = nullptr;
+    T data;
     
     public:
     void full_splay();
@@ -65,16 +51,14 @@ class Node {
 
     bool is_point();
     bool is_path();
-    bool vertex_is_right(Vertex* v);
+    bool vertex_is_right(Vertex<T>* v);
 
     Node* get_sibling();
-    InternalNode* get_parent();
-    void set_parent(InternalNode*);
+    InternalNode<T>* get_parent();
+    void set_parent(InternalNode<T>*);
     int num_boundary_vertices;
     
     bool is_left_child();
-    
-    UserData* user_data;
     
     #ifdef TEST
     bool is_flipped() { return flipped; }
@@ -85,11 +69,13 @@ class Node {
     #endif
 };
 
-class InternalNode : public Node {
+template<class T>
+class InternalNode : public Node<T> {
+
     public: 
 
-    InternalNode(Node*, Node*);
-    Node* children[2];
+    InternalNode(Node<T>*, Node<T>*);
+    Node<T>* children[2];
     void push_flip();
     
     bool has_left_boundary();
@@ -100,9 +86,9 @@ class InternalNode : public Node {
 
 
     #ifdef TEST
-    InternalNode(int num_boundary, bool f) : Node(num_boundary, f) {};
+    InternalNode(int num_boundary, bool f) : Node<T>(num_boundary, f) {};
     //Test methods
-    void set_children(Node* left, Node* right) {
+    void set_children(Node<T>* left, Node<T>* right) {
         this->children[0] = left;
         this->children[1] = right;
     }
@@ -113,24 +99,25 @@ class InternalNode : public Node {
     
 };
 
-class LeafNode : public Node {
-    Edge* edge;
+template<class T>
+class LeafNode : public Node<T> {
+    Edge<T>* edge;
 
     public:
     bool has_left_boundary();
     bool has_middle_boundary();
     bool has_right_boundary();
 
-    LeafNode(Edge*, UserData*);
+    LeafNode(Edge<T>*, T);
     ~LeafNode();
-    bool vertex_is_right(Vertex* v);
+    bool vertex_is_right(Vertex<T>* v);
     void push_flip();
 
     #ifdef TEST
-    LeafNode(Edge* e, int num_boundary, bool f): Node(num_boundary,f){
+    LeafNode(Edge<T>* e, int num_boundary, bool f): Node<T>(num_boundary,f){
         this->edge = e;
     }
-    Vertex* get_endpoint(int idx) {
+    Vertex<T>* get_endpoint(int idx) {
         return this->edge->endpoints[idx];
     }
     #endif

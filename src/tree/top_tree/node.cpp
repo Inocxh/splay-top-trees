@@ -1,43 +1,43 @@
 #include "top_tree.h"
 
-bool Node::is_point() {
+template<class T> bool Node<T>::is_point() {
     return num_boundary_vertices < 2;
 }
-bool Node::is_path() {
+template<class T> bool Node<T>::is_path() {
     return num_boundary_vertices == 2;
 }
-void Node::flip() {
+template<class T> void Node<T>::flip() {
     this->flipped = !this->flipped;
 }
-InternalNode* Node::get_parent() {
+template<class T> InternalNode<T>* Node<T>::get_parent() {
     return this->parent;
 }
 
-void Node::set_parent(InternalNode* p) {
+template<class T> void Node<T>::set_parent(InternalNode<T>* p) {
     this->parent = p;
 }
 
-Node* Node::get_sibling() {
+template<class T>Node<T>* Node<T>::get_sibling() {
     //The parent is *always* an InternalNode
-    InternalNode* parent = this->get_parent();
+    InternalNode<T>* parent = this->get_parent();
     if (!parent) {
         return nullptr;
     }
     //Return children[0] if 'this' is children[1] and vica versa
     return parent->children[parent->children[0] == this];
 }
-bool Node::is_left_child() {
+template<class T>bool Node<T>::is_left_child() {
     if (!this->parent) {
         return false;
     }
     return this == this->parent->children[parent->flipped];
 }
 //Assumes that the node can be part of a valid rotation.
-void Node::rotate_up() {
-    InternalNode* parent = this->get_parent();
-    InternalNode* grandparent = parent->get_parent();
-    Node* sibling = this->get_sibling();
-    Node* uncle = parent->get_sibling();
+template<class T> void Node<T>::rotate_up() {
+    InternalNode<T>* parent = this->get_parent();
+    InternalNode<T>* grandparent = parent->get_parent();
+    Node<T>* sibling = this->get_sibling();
+    Node<T>* uncle = parent->get_sibling();
     
     grandparent->push_flip();
     parent->push_flip();
@@ -90,15 +90,15 @@ void Node::rotate_up() {
 
     //Using user datas
 }
-Node* Node::semi_splay_step() {
+template<class T> Node<T>* Node<T>::semi_splay_step() {
     Node* node = this;
 
     while (true) {
-        InternalNode* parent = node->get_parent();
+        InternalNode<T>* parent = node->get_parent();
         if (!parent) {
             return nullptr;
         }
-        InternalNode* grandparent = parent->get_parent();
+        InternalNode<T>* grandparent = parent->get_parent();
         if (!grandparent) {
             return nullptr;
         }
@@ -109,7 +109,7 @@ Node* Node::semi_splay_step() {
             node->rotate_up();
             return grandparent;            
         }
-        InternalNode* ggparent = grandparent->get_parent();
+        InternalNode<T>* ggparent = grandparent->get_parent();
         if (!ggparent) {
             return nullptr;
         }
@@ -137,15 +137,15 @@ Node* Node::semi_splay_step() {
         node = parent;
     }
 }
-void Node::semi_splay() {
+template<class T> void Node<T>::semi_splay() {
     Node* top = this;
     while (top) {
         top = top->semi_splay_step();
     }
 }
-void Node::full_splay() {
+template<class T> void Node<T>::full_splay() {
     while (true) {
-        Node* top = this->semi_splay_step();
+        Node<T>* top = this->semi_splay_step();
         if (!top) { 
             return;
         }

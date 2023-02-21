@@ -2,7 +2,7 @@
 #include "underlying_tree.h"
 
 int main() {
-    Tree t = Tree(10);
+    Tree<int> t = Tree<int>(10);
     t.add_edge(5, 6);
     t.add_edge(6, 7);
     t.add_edge(7, 8);
