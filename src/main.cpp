@@ -1,8 +1,9 @@
 #include <iostream>
 #include "underlying_tree.h"
+#include "user_data.h"
 
 int main() {
-    Tree<int> t = Tree<int>(10);
+    Tree t = Tree(10);
     t.add_edge(5, 6);
     t.add_edge(6, 7);
     t.add_edge(7, 8);

@@ -6,29 +6,26 @@
 
 using namespace std;
 
-template<class T> class LeafNode;
+class LeafNodeBase;
+class Edge; 
+class Vertex;
+class Tree;
 
-template<class T> class Edge; 
-template<class T> class Vertex;
-template<class T> class Tree;
-
-template<class T>
 class Edge {
 
     public:
-    Edge(Vertex<T>* left, Vertex<T>* right);
-    LeafNode<T>* node;
-    Vertex<T>* endpoints[2];
+    Edge(Vertex* left, Vertex* right);
+    LeafNodeBase* node;
+    Vertex* endpoints[2];
     Edge* prev[2];
     Edge* next[2];
-    int vertex_is_right(Vertex<T>* v);
+    int vertex_is_right(Vertex* v);
 
-    void set_leaf_node(LeafNode<T>* l) { this->node = l; };
+    void set_leaf_node(LeafNodeBase* l) { this->node = l; };
 };
 
-template<class T>
 class Vertex {
-    Edge<T> *first_edge;
+    Edge *first_edge;
     
     public: 
     bool exposed;
@@ -39,36 +36,36 @@ class Vertex {
         first_edge = nullptr;
         exposed = false;
     }
-    Edge<T>* get_first_edge() { return first_edge; };
-    void set_first_edge(Edge<T>* e) { first_edge = e; };
+    Edge* get_first_edge() { return first_edge; };
+    void set_first_edge(Edge* e) { first_edge = e; };
     bool has_at_most_one_incident_edge();
     bool is_exposed() { return exposed; }
 };
 
-template<class T>
 class Tree {
     
-    vector<Vertex<T>> vertices;
+    vector<Vertex> vertices;
 
     public:
-    Tree<T>(int num_vertices);
-    ~Tree<T>();
-    Edge<T>* add_edge(int u, int v);
-    Edge<T>* add_edge(Vertex<T>*,Vertex<T>*);
-    void del_edge(Edge<T>* edge);
+    Tree(int num_vertices);
+    //Tree() { };
+    ~Tree();
+    Edge* add_edge(int u, int v);
+    Edge* add_edge(Vertex*,Vertex*);
+    void del_edge(Edge* edge);
 
     void print_tree();
 
-    Vertex<T>* get_vertex(int id) {return &this->vertices[id]; };
-    vector<Vertex<T>>* get_vertices() {return &this->vertices; };
+    Vertex* get_vertex(int id) {return &this->vertices[id]; };
+    vector<Vertex>* get_vertices() {return &this->vertices; };
 
-    Edge<T>* find_edge(int,int);
+    Edge* find_edge(int,int);
 
     int num_vertices;
     
     private:
-    void print_edges(Vertex<T>*);
-    void del_edge_inner(Vertex<T>*, Edge<T>* prev, Edge<T>* next);
+    void print_edges(Vertex*);
+    void del_edge_inner(Vertex*, Edge* prev, Edge* next);
 };
 
 #endif
