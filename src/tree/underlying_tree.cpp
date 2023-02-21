@@ -4,7 +4,8 @@
 using namespace std;
 
 
-template<class T> Tree<T>::Tree(int num_vertices) {
+template<class T>
+Tree<T>::Tree(int num_vertices) {
     this->num_vertices = num_vertices;
     vector<Vertex<T>> vertices;
     for (int i = 0; i < num_vertices; i++) {
@@ -13,7 +14,8 @@ template<class T> Tree<T>::Tree(int num_vertices) {
     this->vertices = vertices;
 }
 
-template<class T> Tree<T>::~Tree() {
+template<class T>
+Tree<T>::~Tree() {
     for (int i = 0; i < this->vertices.size(); i++) {
         Edge<T>* current = vertices[i].get_first_edge();
         while (current) {
@@ -23,7 +25,8 @@ template<class T> Tree<T>::~Tree() {
     }
 }
 
-template<class T> Edge<T>* Tree<T>::add_edge(Vertex<T>* left, Vertex<T>* right) {
+template<class T>
+ Edge<T>* Tree<T>::add_edge(Vertex<T>* left, Vertex<T>* right) {
     Edge<T>* next[2] = {left->get_first_edge(), right->get_first_edge()};
 
     //Construct edge and set next
@@ -44,20 +47,23 @@ template<class T> Edge<T>* Tree<T>::add_edge(Vertex<T>* left, Vertex<T>* right) 
     return edge;
 }
 
-template<class T> Edge<T>* Tree<T>::add_edge(int u, int v) {
+template<class T>
+ Edge<T>* Tree<T>::add_edge(int u, int v) {
     Vertex<T>* left = &this->vertices[u];
     Vertex<T>* right = &this->vertices[v];
     return this->add_edge(left,right);
 }
 
-template<class T> void Tree<T>::del_edge(Edge<T>* edge) {
+template<class T>
+ void Tree<T>::del_edge(Edge<T>* edge) {
     del_edge_inner(edge->endpoints[0], edge->prev[0], edge->next[0]);
     del_edge_inner(edge->endpoints[1], edge->prev[1], edge->next[1]);
 
     delete edge;
 }
 
-template<class T> void Tree<T>::del_edge_inner(Vertex<T>* vertex, Edge<T>* prev, Edge<T>* next) {
+template<class T>
+ void Tree<T>::del_edge_inner(Vertex<T>* vertex, Edge<T>* prev, Edge<T>* next) {
     if (prev) {
         int vertex_is_right = prev->vertex_is_right(vertex);
         prev->next[vertex_is_right] = next;
@@ -70,7 +76,8 @@ template<class T> void Tree<T>::del_edge_inner(Vertex<T>* vertex, Edge<T>* prev,
     }
 }
 
-template<class T> Edge<T>* Tree<T>::find_edge(int u_id, int v_id) {
+template<class T>
+ Edge<T>* Tree<T>::find_edge(int u_id, int v_id) {
     Vertex<T>* u = this->get_vertex(u_id);
     Vertex<T>* v = this->get_vertex(v_id);
 
@@ -84,7 +91,8 @@ template<class T> Edge<T>* Tree<T>::find_edge(int u_id, int v_id) {
     return edge;
 }
 
-template<class T> void Tree<T>::print_tree() {
+template<class T>
+ void Tree<T>::print_tree() {
     for (int i = 0; i < this->num_vertices; i++) {
         cout << i << ": "; 
         print_edges(&(this->vertices[i]));
@@ -92,7 +100,8 @@ template<class T> void Tree<T>::print_tree() {
     }
 }
 
-template<class T> void Tree<T>::print_edges(Vertex<T> *vertex) {
+template<class T>
+ void Tree<T>::print_edges(Vertex<T> *vertex) {
     Edge<T> *current = vertex->get_first_edge();
     while (current) {
         cout << "(" << current->endpoints[0]->id << "," << current->endpoints[1]->id << ") ";
@@ -101,7 +110,8 @@ template<class T> void Tree<T>::print_edges(Vertex<T> *vertex) {
     }
 }
 
-template<class T> bool Vertex<T>::has_at_most_one_incident_edge() {
+template<class T>
+ bool Vertex<T>::has_at_most_one_incident_edge() {
     Edge<T> *first_edge = this->get_first_edge();
     if (first_edge) {
         int vertex_is_right = first_edge->vertex_is_right(this);
@@ -111,7 +121,8 @@ template<class T> bool Vertex<T>::has_at_most_one_incident_edge() {
     }
 }
 
-template<class T> Edge<T>::Edge(Vertex<T>* left, Vertex<T>* right) {
+template<class T>
+ Edge<T>::Edge(Vertex<T>* left, Vertex<T>* right) {
     this->endpoints[0] = left;
     this->endpoints[1] = right;
     
@@ -123,7 +134,8 @@ template<class T> Edge<T>::Edge(Vertex<T>* left, Vertex<T>* right) {
 }
 
 
-template<class T> int Edge<T>::vertex_is_right(Vertex<T>* vertex) {
+template<class T>
+ int Edge<T>::vertex_is_right(Vertex<T>* vertex) {
     return this->endpoints[1] == vertex;
 }
 

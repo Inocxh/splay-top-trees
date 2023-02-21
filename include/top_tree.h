@@ -1,5 +1,4 @@
 #ifndef TOPTREE_H
-
 #define TOPTREE_H
 
 #include "underlying_tree.h"
@@ -20,14 +19,21 @@ class TopTree {
 
     Vertex<T>* get_vertex(int id);
     public:
+    TopTree<T>(int size);
     Node<T>* expose(int vertex);
     Node<T>* deexpose(int vertex);
     Node<T>* link(int u, int v, T);
     std::tuple<Node<T>*, Node<T>*> cut(int, int);
-    
+
+    #ifdef TEST
+    Tree* get_tree() {
+        return this->underlying_tree;
+    };
+    #endif 
 
     
 };
+
 
 template<class T>
 class Node {
@@ -35,9 +41,11 @@ class Node {
     protected:
     bool flipped = false;
     InternalNode<T>* parent = nullptr;
-    T data;
+    T* data;
     
     public:
+    void rotate_up();
+
     void full_splay();
     void semi_splay();
     virtual bool has_left_boundary() = 0;
@@ -45,7 +53,6 @@ class Node {
     virtual bool has_right_boundary() = 0;
     
     Node* semi_splay_step();
-    void rotate_up();
     void flip();
     virtual void push_flip() = 0;
 

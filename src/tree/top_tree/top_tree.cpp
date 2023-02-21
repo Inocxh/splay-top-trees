@@ -2,7 +2,13 @@
 #include <tuple>
 
 //General Node impls
-template<class T> Node<T>* TopTree<T>::find_consuming_node(Vertex<T>* vertex) {
+template<class T>
+TopTree<T>::TopTree(int size) {
+    this->underlying_tree<T> = Tree<T>(size);
+}
+
+template<class T>
+Node<T>* TopTree<T>::find_consuming_node(Vertex<T>* vertex) {
     if (!vertex->get_first_edge()) {
         return nullptr;
     }
@@ -41,19 +47,20 @@ template<class T> Node<T>* TopTree<T>::find_consuming_node(Vertex<T>* vertex) {
     return last_middle_node;
 }
 
-template<class T> Vertex<T>* TopTree<T>::get_vertex(int id) {
+template<class T>
+Vertex<T>* TopTree<T>::get_vertex(int id) {
     return this->underlying_tree.get_vertex(id);
 }
 
 
-template<class T> Node<T>* TopTree<T>::expose(int vertex_id) {
+template<class T>
+Node<T>* TopTree<T>::expose(int vertex_id) {
     Vertex<T>* vertex = this->get_vertex(vertex_id);
     return expose_internal(vertex);
 }
 
-template<class T> Node<T>* TopTree<T>::expose_internal(Vertex<T>* vertex) {
-    //Vertex<T>* vertex = this->get_vertex(id);
-
+template<class T>
+Node<T>* TopTree<T>::expose_internal(Vertex<T>* vertex) {
     Node<T>* node = this->find_consuming_node(vertex);
     if (!node) {
         vertex->exposed = true;
@@ -82,7 +89,8 @@ template<class T> Node<T>* TopTree<T>::expose_internal(Vertex<T>* vertex) {
     vertex->exposed = true;
     return root;
 }
-template<class T> Node<T>* TopTree<T>::deexpose_internal(Vertex<T>* vertex) { 
+template<class T>
+Node<T>* TopTree<T>::deexpose_internal(Vertex<T>* vertex) { 
     Node<T>* root = nullptr;
 
     //Vertex<T>* vertex = this->get_vertex(id);
@@ -96,19 +104,22 @@ template<class T> Node<T>* TopTree<T>::deexpose_internal(Vertex<T>* vertex) {
     return root;
 }
 
-template<class T> Node<T>* TopTree<T>::deexpose(int vertex_id) { 
+template<class T>
+Node<T>* TopTree<T>::deexpose(int vertex_id) { 
     Vertex<T>* vertex = this->get_vertex(vertex_id);
     return deexpose_internal(vertex);
 }
 
-template<class T> Node<T>* TopTree<T>::link(int u_id, int v_id, T data) {
+template<class T>
+Node<T>* TopTree<T>::link(int u_id, int v_id, T data) {
     Vertex<T>* u = this->get_vertex(u_id); 
     Vertex<T>* v = this->get_vertex(v_id); 
     return link_internal(u, v, data);
 }
 
 //Assumes u and v in trees with no exposed vertices!
-template<class T> Node<T>* TopTree<T>::link_internal(Vertex<T>* u, Vertex<T>* v, T data) {
+template<class T>
+Node<T>* TopTree<T>::link_internal(Vertex<T>* u, Vertex<T>* v, T data) {
     
     Node<T>* Tu = expose_internal(u);
     if (Tu && Tu->has_left_boundary()) {
@@ -135,7 +146,8 @@ template<class T> Node<T>* TopTree<T>::link_internal(Vertex<T>* u, Vertex<T>* v,
     return tree;
 }
 
-template<class T> void TopTree<T>::delete_all_ancestors(Node<T>* node) {
+template<class T>
+void TopTree<T>::delete_all_ancestors(Node<T>* node) {
     Node<T>* parent = node->get_parent();
     if (parent) {
         Node<T>* sibling = node->get_sibling();
@@ -147,12 +159,14 @@ template<class T> void TopTree<T>::delete_all_ancestors(Node<T>* node) {
 
 
 
-template<class T> std::tuple<Node<T>*, Node<T>*> TopTree<T>::cut(int u_id, int v_id) {
+template<class T>
+std::tuple<Node<T>*, Node<T>*> TopTree<T>::cut(int u_id, int v_id) {
     Edge<T>* e = this->underlying_tree.find_edge(u_id,v_id);
     return this->cut_internal(e);
 }
     
-template<class T> std::tuple<Node<T>*, Node<T>*> TopTree<T>::cut_internal(Edge<T>* edge) {
+template<class T>
+std::tuple<Node<T>*, Node<T>*> TopTree<T>::cut_internal(Edge<T>* edge) {
     Vertex<T>* u = edge->endpoints[0];
     Vertex<T>* v = edge->endpoints[1];
 

@@ -1,17 +1,22 @@
 #include <catch2/catch_test_macros.hpp>
 #include "underlying_tree.h"
+#include "user_data.h"
 
-TEST_CASE( "Create tree", "[tree constructor]") {
+TEST_CASE("Create tree", "[tree constructor]")
+{
     int size = 10;
-    Tree tree = Tree(size);
+    Tree<EmptyData> tree = Tree<EmptyData>(size);
     REQUIRE(tree.num_vertices == size);
     REQUIRE(tree.get_vertices()->size() == size);
 }
 
-bool vertex_has_edge_incident(Vertex* vertex, Edge* edge) {
-    Edge* current = vertex->get_first_edge();
-    while (current != edge) {
-        if (current == NULL) {
+bool vertex_has_edge_incident(Vertex<EmptyData> *vertex, Edge<EmptyData> *edge)
+{
+    Edge<EmptyData> *current = vertex->get_first_edge();
+    while (current != edge)
+    {
+        if (current == NULL)
+        {
             return false;
         }
         int vertex_is_right = current->vertex_is_right(vertex);
@@ -20,38 +25,42 @@ bool vertex_has_edge_incident(Vertex* vertex, Edge* edge) {
     return current == edge;
 }
 
-TEST_CASE( "Adding edges", "[add_edge]") {
+TEST_CASE("Adding edges", "[add_edge]")
+{
     int size = 10;
-    Tree tree = Tree(size);
+    Tree<EmptyData> tree = Tree<EmptyData>(size);
 
-    SECTION( "Add 1 edge" ) {
-        Edge* e = tree.add_edge(1, 2);
+    SECTION("Add 1 edge")
+    {
+        Edge<EmptyData> *e = tree.add_edge(1, 2);
         REQUIRE(e == tree.get_vertex(1)->get_first_edge());
         REQUIRE(e == tree.get_vertex(2)->get_first_edge());
     }
-    SECTION( "Add multiple edges" ) {
-        Edge* e1 = tree.add_edge(1, 2);
+    SECTION("Add multiple edges")
+    {
+        Edge<EmptyData> *e1 = tree.add_edge(1, 2);
         REQUIRE(e1 == tree.get_vertex(1)->get_first_edge());
         REQUIRE(e1 == tree.get_vertex(2)->get_first_edge());
 
-        Edge* e2 = tree.add_edge(1, 3);
+        Edge<EmptyData> *e2 = tree.add_edge(1, 3);
         REQUIRE(e2 == tree.get_vertex(1)->get_first_edge());
         REQUIRE(vertex_has_edge_incident(tree.get_vertex(1), e1));
         REQUIRE(e2 == tree.get_vertex(3)->get_first_edge());
 
-        Edge* e3 = tree.add_edge(1, 4);
+        Edge<EmptyData> *e3 = tree.add_edge(1, 4);
         REQUIRE(e3 == tree.get_vertex(1)->get_first_edge());
         REQUIRE(vertex_has_edge_incident(tree.get_vertex(1), e1));
         REQUIRE(vertex_has_edge_incident(tree.get_vertex(1), e2));
-        REQUIRE(e3 == tree.get_vertex(4)->get_first_edge());   
+        REQUIRE(e3 == tree.get_vertex(4)->get_first_edge());
     }
 }
 
-TEST_CASE( "Delete edges", "[del_edge]") {
+TEST_CASE("Delete edges", "[del_edge]")
+{
     int size = 10;
-    Tree tree = Tree(size);
-    Edge* e1 = tree.add_edge(1, 2);
-    Edge* e2 = tree.add_edge(1, 3);
+    Tree<EmptyData> tree = Tree<EmptyData>(size);
+    Edge<EmptyData> *e1 = tree.add_edge(1, 2);
+    Edge<EmptyData> *e2 = tree.add_edge(1, 3);
     // Check both exist
     REQUIRE(vertex_has_edge_incident(tree.get_vertex(1), e1));
     REQUIRE(vertex_has_edge_incident(tree.get_vertex(2), e1));
@@ -69,27 +78,31 @@ TEST_CASE( "Delete edges", "[del_edge]") {
     REQUIRE_FALSE(vertex_has_edge_incident(tree.get_vertex(1), e2));
 }
 
-TEST_CASE( "Vertex is right", "[vertex_is_right]") {
+TEST_CASE("Vertex is right", "[vertex_is_right]")
+{
     int size = 10;
-    Tree tree = Tree(size);
+    Tree<EmptyData> tree = Tree<EmptyData>(size);
 
-    SECTION( "Simple" ) {
-        Edge* e1 = tree.add_edge(1, 2);
+    SECTION("Simple")
+    {
+        Edge<EmptyData> *e1 = tree.add_edge(1, 2);
         REQUIRE_FALSE(e1->vertex_is_right(tree.get_vertex(1)));
         REQUIRE(e1->vertex_is_right(tree.get_vertex(2)));
-    }    
-    SECTION( "Simple reversed" ) {
-        Edge* e1 = tree.add_edge(2, 1);
+    }
+    SECTION("Simple reversed")
+    {
+        Edge<EmptyData> *e1 = tree.add_edge(2, 1);
         REQUIRE(e1->vertex_is_right(tree.get_vertex(1)));
         REQUIRE_FALSE(e1->vertex_is_right(tree.get_vertex(2)));
-    } 
-    SECTION( "Traverse edges around vertex with vertex_is_right" ) {
-        Edge* e1 = tree.add_edge(1, 2);
-        Edge* e2 = tree.add_edge(3, 1);
-        Edge* e3 = tree.add_edge(1, 4);
+    }
+    SECTION("Traverse edges around vertex with vertex_is_right")
+    {
+        Edge<EmptyData> *e1 = tree.add_edge(1, 2);
+        Edge<EmptyData> *e2 = tree.add_edge(3, 1);
+        Edge<EmptyData> *e3 = tree.add_edge(1, 4);
 
-        Vertex* v1 = tree.get_vertex(1);
-        Edge* current = v1->get_first_edge();
+        Vertex<EmptyData> *v1 = tree.get_vertex(1);
+        Edge<EmptyData> *current = v1->get_first_edge();
 
         // Iterate linked list of vertex 1
         int vertex_is_right = current->vertex_is_right(v1);
@@ -104,8 +117,5 @@ TEST_CASE( "Vertex is right", "[vertex_is_right]") {
         REQUIRE(vertex_is_right == 0);
     }
 }
- 
 
 // TODO : implement test for next and prev. Maybe also supports deleting middle of linked list edge.
-
-

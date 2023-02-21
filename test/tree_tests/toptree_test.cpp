@@ -3,12 +3,12 @@
 #include <catch2/catch_test_macros.hpp>
 #include <iostream>
 #include "top_tree.h" //Also 'Includes underlying_tree.h'
+#include "user_data.h"
 //#include "underlying_tree.h"
-
 
 TEST_CASE( "test", "[tree constructor]") {
     int size = 10;
-    Tree tree = Tree(size);
+    Tree<EmptyData> tree = Tree<EmptyData>(size);
     REQUIRE(tree.num_vertices == size);
     REQUIRE(tree.get_vertices()->size() == size);
 }
@@ -28,21 +28,21 @@ O--------O--------O--------O
 */
 TEST_CASE( "Rotation on path", "[rotations]") {
     int size = 4;
-    Tree tree = Tree(size);
-    Edge* node = tree.add_edge(0, 1);
-    Edge* sibling = tree.add_edge(1, 2);
-    Edge* uncle = tree.add_edge(3, 2);
+    Tree<EmptyData> tree = Tree<EmptyData>(size);
+    Edge<EmptyData>* node = tree.add_edge(0, 1);
+    Edge<EmptyData>* sibling = tree.add_edge(1, 2);
+    Edge<EmptyData>* uncle = tree.add_edge(3, 2);
     
-    LeafNode* n = new LeafNode(node, 1, false);
-    LeafNode* s = new LeafNode(sibling, 2, false);
-    LeafNode* u = new LeafNode(uncle, 1, true);
+    LeafNode<EmptyData>* n = new LeafNode<EmptyData>(node, 1, false);
+    LeafNode<EmptyData>* s = new LeafNode<EmptyData>(sibling, 2, false);
+    LeafNode<EmptyData>* u = new LeafNode<EmptyData>(uncle, 1, true);
     
-    InternalNode* parent = new InternalNode(1, false);
+    InternalNode<EmptyData>* parent = new InternalNode<EmptyData>(1, false);
     parent->set_children(n, s);
     n->set_parent(parent);
     s->set_parent(parent);
 
-    InternalNode* grandparent = new InternalNode(0, false);
+    InternalNode<EmptyData>* grandparent = new InternalNode<EmptyData>(0, false);
     grandparent->set_children(parent, u);
     parent->set_parent(grandparent);
     u->set_parent(grandparent);
@@ -116,21 +116,21 @@ Star top-tree represents:
 */
 TEST_CASE( "Rotation on star same side", "[rotations]") {
     int size = 4;
-    Tree tree = Tree(size);
-    Edge* node = tree.add_edge(0, 1);
-    Edge* sibling = tree.add_edge(1, 2);
-    Edge* uncle = tree.add_edge(1, 3);
+    Tree<EmptyData> tree = Tree<EmptyData>(size);
+    Edge<EmptyData>* node = tree.add_edge(0, 1);
+    Edge<EmptyData>* sibling = tree.add_edge(1, 2);
+    Edge<EmptyData>* uncle = tree.add_edge(1, 3);
     
-    LeafNode* n = new LeafNode(node, 1, false);
-    LeafNode* s = new LeafNode(sibling, 1, false);
-    LeafNode* u = new LeafNode(uncle, 1, false);
+    LeafNode<EmptyData>* n = new LeafNode(node, 1, false);
+    LeafNode<EmptyData>* s = new LeafNode(sibling, 1, false);
+    LeafNode<EmptyData>* u = new LeafNode(uncle, 1, false);
     
-    InternalNode* parent = new InternalNode(1, false);
+    InternalNode<EmptyData>* parent = new InternalNode<EmptyData>(1, false);
     parent->set_children(n, s);
     n->set_parent(parent);
     s->set_parent(parent);
 
-    InternalNode* grandparent = new InternalNode(0, false);
+    InternalNode<EmptyData>* grandparent = new InternalNode<EmptyData>(0, false);
     grandparent->set_children(parent, u);
     parent->set_parent(grandparent);
     u->set_parent(grandparent);
@@ -206,21 +206,21 @@ Star top-tree represents:
 */
 TEST_CASE( "Rotation on star diff. side", "[rotations]") {
     int size = 4;
-    Tree tree = Tree(size);
-    Edge* node = tree.add_edge(0, 1);
-    Edge* sibling = tree.add_edge(1, 2);
-    Edge* uncle = tree.add_edge(1, 3);
+    Tree<EmptyData> tree = Tree<EmptyData>(size);
+    Edge<EmptyData>* node = tree.add_edge(0, 1);
+    Edge<EmptyData>* sibling = tree.add_edge(1, 2);
+    Edge<EmptyData>* uncle = tree.add_edge(1, 3);
     
-    LeafNode* n = new LeafNode(node, 1, false);
-    LeafNode* s = new LeafNode(sibling, 2, false); //Sib endpoint exposed
-    LeafNode* u = new LeafNode(uncle, 1, true);
+    LeafNode<EmptyData>* n = new LeafNode<EmptyData>(node, 1, false);
+    LeafNode<EmptyData>* s = new LeafNode<EmptyData>(sibling, 2, false); //Sib endpoint exposed
+    LeafNode<EmptyData>* u = new LeafNode<EmptyData>(uncle, 1, true);
     
-    InternalNode* parent = new InternalNode(1, false);
+    InternalNode<EmptyData>* parent = new InternalNode<EmptyData>(1, false);
     parent->set_children(n, s);
     n->set_parent(parent);
     s->set_parent(parent);
 
-    InternalNode* grandparent = new InternalNode(0, false);
+    InternalNode<EmptyData>* grandparent = new InternalNode<EmptyData>(0, false);
     grandparent->set_children(u, parent);
     parent->set_parent(grandparent);
     u->set_parent(grandparent);
@@ -279,36 +279,36 @@ Top tree case 2:
 */
 TEST_CASE("semi_splay_step on path (Case 1 and 3)", "[semi_splay_step]") {
     int size = 5;
-    Tree tree = Tree(size);
-    Edge* node = tree.add_edge(0, 1);
-    Edge* sibling = tree.add_edge(1, 2);
-    Edge* uncle = tree.add_edge(2, 3);
-    Edge* granduncle = tree.add_edge(3, 4);
+    Tree<EmptyData> tree = Tree<EmptyData>(size);
+    Edge<EmptyData>* node = tree.add_edge(0, 1);
+    Edge<EmptyData>* sibling = tree.add_edge(1, 2);
+    Edge<EmptyData>* uncle = tree.add_edge(2, 3);
+    Edge<EmptyData>* granduncle = tree.add_edge(3, 4);
 
     //Top tree setup
-    LeafNode* top_node = new LeafNode(node, 1, false);
-    LeafNode* top_sibling = new LeafNode(sibling, 2, false);
-    LeafNode* top_uncle = new LeafNode(uncle, 2, false);
-    LeafNode* top_granduncle = new LeafNode(granduncle, 1, false);
+    LeafNode<EmptyData>* top_node = new LeafNode<EmptyData>(node, 1, false);
+    LeafNode<EmptyData>* top_sibling = new LeafNode<EmptyData>(sibling, 2, false);
+    LeafNode<EmptyData>* top_uncle = new LeafNode<EmptyData>(uncle, 2, false);
+    LeafNode<EmptyData>* top_granduncle = new LeafNode<EmptyData>(granduncle, 1, false);
     
-    InternalNode* top_parent = new InternalNode(1, false);
+    InternalNode<EmptyData>* top_parent = new InternalNode<EmptyData>(1, false);
     top_parent->set_children(top_node, top_sibling);
     top_sibling->set_parent(top_parent);
     top_node->set_parent(top_parent);
 
-    InternalNode* top_grandparent = new InternalNode(1, false);
+    InternalNode<EmptyData>* top_grandparent = new InternalNode<EmptyData>(1, false);
     top_grandparent->set_children(top_parent, top_uncle);
     top_parent->set_parent(top_grandparent);
     top_uncle->set_parent(top_grandparent);
     
-    InternalNode* top_ggparent = new InternalNode(0, false);
+    InternalNode<EmptyData>* top_ggparent = new InternalNode<EmptyData>(0, false);
     top_ggparent->set_children(top_grandparent, top_granduncle);
     top_grandparent->set_parent(top_ggparent);
     top_granduncle->set_parent(top_ggparent);
 
 
     
-    Node* res = top_node->semi_splay_step();
+    Node<EmptyData>* res = top_node->semi_splay_step();
     
     REQUIRE(res == top_grandparent);
 
@@ -341,42 +341,42 @@ TEST_CASE("semi_splay_step on path (Case 1 and 3)", "[semi_splay_step]") {
 
 TEST_CASE("Case 3", "[semi_splay_step]") {
     int size = 6;
-    Tree tree = Tree(size);
-    Edge* gguncle = tree.add_edge(0, 1);
-    Edge* node = tree.add_edge(1, 2);
-    Edge* sibling = tree.add_edge(2, 3);
-    Edge* uncle = tree.add_edge(3, 4);
-    Edge* granduncle = tree.add_edge(4, 5);
+    Tree<EmptyData> tree = Tree<EmptyData>(size);
+    Edge<EmptyData>* gguncle = tree.add_edge(0, 1);
+    Edge<EmptyData>* node = tree.add_edge(1, 2);
+    Edge<EmptyData>* sibling = tree.add_edge(2, 3);
+    Edge<EmptyData>* uncle = tree.add_edge(3, 4);
+    Edge<EmptyData>* granduncle = tree.add_edge(4, 5);
 
     //Top tree setup
-    LeafNode* top_node = new LeafNode(node, 2, false);
-    LeafNode* top_sibling = new LeafNode(sibling, 2, false); 
-    LeafNode* top_uncle = new LeafNode(uncle, 2, false);
-    LeafNode* top_granduncle = new LeafNode(granduncle, 1, false);
-    LeafNode* top_gguncle = new LeafNode(gguncle, 1, false);
+    LeafNode<EmptyData>* top_node = new LeafNode(node, 2, false);
+    LeafNode<EmptyData>* top_sibling = new LeafNode(sibling, 2, false); 
+    LeafNode<EmptyData>* top_uncle = new LeafNode(uncle, 2, false);
+    LeafNode<EmptyData>* top_granduncle = new LeafNode(granduncle, 1, false);
+    LeafNode<EmptyData>* top_gguncle = new LeafNode(gguncle, 1, false);
     
-    InternalNode* top_parent = new InternalNode(2, false);
+    InternalNode<EmptyData>* top_parent = new InternalNode<EmptyData>(2, false);
     top_parent->set_children(top_node, top_sibling);
     top_sibling->set_parent(top_parent);
     top_node->set_parent(top_parent);
 
-    InternalNode* top_grandparent = new InternalNode(1, false);
+    InternalNode<EmptyData>* top_grandparent = new InternalNode<EmptyData>(1, false);
     top_grandparent->set_children(top_parent, top_uncle);
     top_parent->set_parent(top_grandparent);
     top_uncle->set_parent(top_grandparent);
     
-    InternalNode* top_ggparent = new InternalNode(0, false);
+    InternalNode<EmptyData>* top_ggparent = new InternalNode<EmptyData>(0, false);
     top_ggparent->set_children(top_grandparent, top_granduncle);
     top_grandparent->set_parent(top_ggparent);
     top_granduncle->set_parent(top_ggparent);
 
-    InternalNode* top_gggparent = new InternalNode(0, false);
+    InternalNode<EmptyData>* top_gggparent = new InternalNode<EmptyData>(0, false);
     top_gggparent->set_children(top_ggparent, top_gguncle);
     top_ggparent->set_parent(top_gggparent);
     top_gguncle->set_parent(top_gggparent);
 
 
-    Node* res = top_node->semi_splay_step();
+    Node<EmptyData>* res = top_node->semi_splay_step();
 
     REQUIRE(res == top_grandparent);
 
@@ -427,34 +427,34 @@ TEST_CASE("Case 3", "[semi_splay_step]") {
 
 TEST_CASE("semi_splay_step on pronged tree (Case 2 and 4)", "[semi_splay_step]") {
     int size = 5;
-    Tree tree = Tree(6);
-    Edge* node = tree.add_edge(3, 1);
-    Edge* sibling = tree.add_edge(0, 1);
-    Edge* uncle = tree.add_edge(2, 1);
-    Edge* granduncle = tree.add_edge(3, 4);
+    Tree<EmptyData> tree = Tree<EmptyData>(6);
+    Edge<EmptyData>* node = tree.add_edge(3, 1);
+    Edge<EmptyData>* sibling = tree.add_edge(0, 1);
+    Edge<EmptyData>* uncle = tree.add_edge(2, 1);
+    Edge<EmptyData>* granduncle = tree.add_edge(3, 4);
     
     SECTION("Case 4", "[semi_splay_step]") {
-        LeafNode* top_node = new LeafNode(node, 1, true);
-        LeafNode* top_sibling = new LeafNode(sibling, 2, false);
-        LeafNode* top_uncle = new LeafNode(uncle, 2, false);
-        LeafNode* top_granduncle = new LeafNode(granduncle, 1, false);
+        LeafNode<EmptyData>* top_node = new LeafNode<EmptyData>(node, 1, true);
+        LeafNode<EmptyData>* top_sibling = new LeafNode<EmptyData>(sibling, 2, false);
+        LeafNode<EmptyData>* top_uncle = new LeafNode<EmptyData>(uncle, 2, false);
+        LeafNode<EmptyData>* top_granduncle = new LeafNode<EmptyData>(granduncle, 1, false);
         
-        InternalNode* top_parent = new InternalNode(1, false);
+        InternalNode<EmptyData>* top_parent = new InternalNode<EmptyData>(1, false);
         top_parent->set_children(top_sibling, top_node);
         top_sibling->set_parent(top_parent);
         top_node->set_parent(top_parent);
 
-        InternalNode* top_grandparent = new InternalNode(1, false);
+        InternalNode<EmptyData>* top_grandparent = new InternalNode<EmptyData>(1, false);
         top_grandparent->set_children(top_uncle, top_parent);
         top_parent->set_parent(top_grandparent);
         top_uncle->set_parent(top_grandparent);
         
-        InternalNode* top_ggparent = new InternalNode(0, false);
+        InternalNode<EmptyData>* top_ggparent = new InternalNode<EmptyData>(0, false);
         top_ggparent->set_children(top_grandparent, top_granduncle);
         top_grandparent->set_parent(top_ggparent);
         top_granduncle->set_parent(top_ggparent);
 
-        Node* res = top_node->semi_splay_step();
+        Node<EmptyData>* res = top_node->semi_splay_step();
 
         REQUIRE(res == top_grandparent);
 
