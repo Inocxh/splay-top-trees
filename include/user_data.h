@@ -10,6 +10,10 @@ class EmptyData {
         return new EmptyData();
     };
 };
+
+
+
+
 class MyData {
     int num;
     public:
@@ -25,6 +29,8 @@ class MyData {
         return new MyData(0);
     };
 };
+
+
 
 class WeightData {
     public:

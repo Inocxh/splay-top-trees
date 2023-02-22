@@ -9,7 +9,6 @@ class NodeBase;
 class InternalNodeBase;
 class LeafNodeBase;
 
-template<class T> class Node; 
 template<class T> class InternalNode;
 template<class T> class LeafNode;
 template<class T> class TopTree;
@@ -30,6 +29,8 @@ class TopTree {
     NodeBase* deexpose(int vertex);
     NodeBase* link(int u, int v, T*);
     std::tuple<NodeBase*, NodeBase*> cut(int, int);
+    T* get_data(NodeBase*);
+
 
     TopTree<T>(int size) {
         this->underlying_tree = new Tree(size);
@@ -60,6 +61,7 @@ class NodeBase {
     void semi_splay();
     
     NodeBase* semi_splay_step();
+    
     void flip();
 
     bool is_point();
@@ -216,6 +218,13 @@ NodeBase* TopTree<T>::find_consuming_node(Vertex* vertex) {
 }
 
 template<class T>
+T* TopTree<T>::get_data(NodeBase* node) {
+    T* data =  (dynamic_cast<TContainer<T>*>(node))->user_data;
+    return data;
+}
+
+
+template<class T>
 Vertex* TopTree<T>::get_vertex(int id) {
     return this->underlying_tree->get_vertex(id);
 }
@@ -223,7 +232,6 @@ Vertex* TopTree<T>::get_vertex(int id) {
 
 template<class T>
 NodeBase* TopTree<T>::expose(int vertex_id) {
-    std::cout << "Hello from expose" << std::endl;
     Vertex* vertex = this->get_vertex(vertex_id);
     return expose_internal(vertex);
 }
@@ -238,12 +246,13 @@ NodeBase* TopTree<T>::expose_internal(Vertex* vertex) {
 
     while (node->is_path()) {
         //Is this legal?
-        InternalNode<T>* node_cast = (InternalNode<T>*) node;
-
+        InternalNode<T>* node_int = (InternalNode<T>*) node;
         InternalNode<T>* parent = (InternalNode<T>*) (node->get_parent());
-        node_cast->push_flip();
+
+        node_int->push_flip();
         int node_idx = !node->is_left_child();
-        node_cast->children[node_idx]->rotate_up();
+        node_int->children[node_idx]->rotate_up();
+
         node = parent;
     }
 
@@ -304,17 +313,23 @@ NodeBase* TopTree<T>::link_internal(Vertex* u, Vertex* v, T* data) {
 
 
 
-    Edge* e = this->underlying_tree->add_edge(u, v);
-    NodeBase* tree = new LeafNode(e, data);
+    Edge* edge = this->underlying_tree->add_edge(u, v);
+    NodeBase* tree = new LeafNode<T>(edge, data);
     tree->num_boundary_vertices = (Tu != nullptr) + (Tv != nullptr);
 
     if (Tu) {
-        tree = new InternalNode<T>(Tu, tree);
-        tree->num_boundary_vertices = (Tv != nullptr);
+        InternalNode<T>* tree_new = new InternalNode<T>(Tu, tree);        
+        tree_new->num_boundary_vertices = (Tv != nullptr);
+        Tu->set_parent(tree_new);
+        tree->set_parent(tree_new);
+        tree = tree_new;
     }
     if (Tv) {
-        tree = new InternalNode<T>(tree, Tv);
+        InternalNode<T>* tree_new = new InternalNode<T>(tree, Tv);
         tree->num_boundary_vertices = 0;
+        Tv->set_parent(tree_new);
+        tree->set_parent(tree_new);
+        tree = tree_new;
     }
     return tree;
 }
@@ -350,8 +365,11 @@ std::tuple<NodeBase*, NodeBase*> TopTree<T>::cut_internal(Edge* edge) {
     v->exposed = true;
     NodeBase* Tu = this->deexpose_internal(u);
     NodeBase* Tv = this->deexpose_internal(v);
-    return std::tuple(Tu,Tv);
+    return std::tuple(Tu, Tv);
 }
+
+
+
 #endif
 
 
