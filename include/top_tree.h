@@ -137,6 +137,9 @@ template<class T>
 class TContainer {
     public:
     T* user_data;
+
+    virtual void merge() = 0;
+    virtual void split() = 0;
 };
 
 template<class T>
@@ -146,8 +149,30 @@ class LeafNode : public LeafNodeBase, public TContainer<T> {
         edge->set_leaf_node(this);
         this->edge = edge;
         this->user_data = user_data;
-    }
+    };
     ~LeafNode();
+
+    void merge() { 
+        //Does nothing as no children exist
+        return;
+    };
+    void split() {
+        return;
+    }; 
+
+    void rotate_up() {
+        InternalNode<T>* parent = (InternalNode<T>*) this->get_parent();
+        InternalNode<T>* grandparent =(InternalNode<T>*) parent->get_parent();
+        grandparent->split();
+        parent->split();
+        this->NodeBase::rotate_up();
+        parent->merge();
+        grandparent->merge();
+    };
+
+    
+
+
 
     #ifdef TEST
 
@@ -169,7 +194,32 @@ class InternalNode : public InternalNodeBase, public TContainer<T> {
         T* tright = dynamic_cast<TContainer<T>*>(right)->user_data;
 
         this->user_data = T::merge(tleft, tright);   
-    }
+    };
+    
+    void merge() {
+        T* left_data =  (dynamic_cast<TContainer<T>*>(this->children[0]))->user_data;
+        T* right_data =  (dynamic_cast<TContainer<T>*>(this->children[1]))->user_data;
+        this->user_data = T::merge(left_data, right_data);
+    };
+
+    void split() {
+        std::tuple<T*,T*> new_datas = T::split(this->user_data); 
+        (dynamic_cast<TContainer<T>*>(this->children[0]))->user_data = std::get<0>(new_datas);
+        (dynamic_cast<TContainer<T>*>(this->children[1]))->user_data = std::get<1>(new_datas);
+    };
+
+
+    void rotate_up() {
+        InternalNode<T>* parent = (InternalNode<T>*) this->get_parent();
+        InternalNode<T>* grandparent =(InternalNode<T>*) parent->get_parent();
+        grandparent->split();
+        parent->split();
+        this->NodeBase::rotate_up();
+        parent->merge();
+        grandparent->merge();
+    };
+
+
     #ifdef TEST
     InternalNode(int num_boundary, bool f) : InternalNodeBase(num_boundary, f) {};
     #endif
@@ -255,7 +305,6 @@ NodeBase* TopTree<T>::expose_internal(Vertex* vertex) {
 
         node = parent;
     }
-
     node->full_splay();
 
     NodeBase* root;
@@ -314,24 +363,28 @@ NodeBase* TopTree<T>::link_internal(Vertex* u, Vertex* v, T* data) {
 
 
     Edge* edge = this->underlying_tree->add_edge(u, v);
-    NodeBase* tree = new LeafNode<T>(edge, data);
-    tree->num_boundary_vertices = (Tu != nullptr) + (Tv != nullptr);
-
+    NodeBase* root = new LeafNode<T>(edge, data);
+    root->num_boundary_vertices = (Tu != nullptr) + (Tv != nullptr);
+    
     if (Tu) {
-        InternalNode<T>* tree_new = new InternalNode<T>(Tu, tree);        
-        tree_new->num_boundary_vertices = (Tv != nullptr);
-        Tu->set_parent(tree_new);
-        tree->set_parent(tree_new);
-        tree = tree_new;
+        InternalNode<T>* root_new = new InternalNode<T>(Tu, root);        
+        root_new->num_boundary_vertices = (Tv != nullptr);
+        Tu->set_parent(root_new);
+        root->set_parent(root_new);
+        root_new->merge();
+
+        root = root_new;
     }
     if (Tv) {
-        InternalNode<T>* tree_new = new InternalNode<T>(tree, Tv);
-        tree->num_boundary_vertices = 0;
-        Tv->set_parent(tree_new);
-        tree->set_parent(tree_new);
-        tree = tree_new;
+        InternalNode<T>* root_new = new InternalNode<T>(root, Tv);
+        root->num_boundary_vertices = 0;
+        Tv->set_parent(root_new);
+        root->set_parent(root_new);
+        root_new->merge();
+
+        root = root_new;
     }
-    return tree;
+    return root;
 }
 
 template<class T>

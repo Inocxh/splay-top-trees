@@ -1,4 +1,5 @@
 #include <iostream>
+#include <tuple>
 
 class EmptyData {
     public:
@@ -6,8 +7,8 @@ class EmptyData {
         std::cout << "hello from merge" << std::endl;
         return new EmptyData();
     };
-    static EmptyData* split(EmptyData* left, EmptyData* right) {
-        return new EmptyData();
+    static std::tuple<EmptyData*, EmptyData*> split(EmptyData* data) {
+        return std::tuple(new EmptyData(), new EmptyData());
     };
 };
 
@@ -25,8 +26,8 @@ class MyData {
     static MyData* merge(MyData* left, MyData* right) {
         return new MyData(left->num + right->num);
     };
-    static MyData* split(MyData* left, MyData* right) {
-        return new MyData(0);
+    static std::tuple<MyData*, MyData*> split(MyData* data) {
+        return std::tuple(new MyData(0), new MyData(0));
     };
 };
 
@@ -43,7 +44,7 @@ class WeightData {
     static WeightData* merge(WeightData* left, WeightData* right) {
         return new WeightData(std::max(left->weight, right->weight));
     };
-    static WeightData* split(WeightData* left, WeightData* right) {
-        return new WeightData(0);
+    static std::tuple<WeightData*, WeightData*> split(WeightData* data) {
+        return std::tuple(new WeightData(0), new WeightData(0));
     };
 };
