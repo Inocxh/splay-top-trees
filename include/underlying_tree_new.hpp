@@ -30,6 +30,11 @@ bool Vertex<C,E,V>::is_exposed() {
 };
 
 template<class C, class E, class V>
+V Vertex<C,E,V>::get_data() {
+    return this->vertex_data;
+};
+
+template<class C, class E, class V>
 Edge<C,E,V>::Edge(Vertex<C,E,V>* left, Vertex<C,E,V>* right) {
     this->endpoints[0] = left;
     this->endpoints[1] = right;
@@ -48,6 +53,24 @@ template<class C, class E, class V>
 void Edge<C,E,V>::set_leaf_node(LeafNode<C,E,V>* leaf) {
       this->node = leaf;
 }; 
+
+template<class C, class E, class V>
+Vertex<C,E,V>* Edge<C,E,V>::get_endpoints(int i){
+    return this->endpoints[i];
+};
+template<class C, class E, class V>
+Edge<C,E,V>* Edge<C,E,V>::get_next(int i){
+    return this->next[i];
+};
+template<class C, class E, class V>
+Edge<C,E,V>* Edge<C,E,V>::get_prev(int i){
+    return this->prev[i];
+};
+
+template<class C, class E, class V>
+E Edge<C,E,V>::get_data(){
+    return this->edge_data;
+};
 
 
 

@@ -4,7 +4,6 @@
 
 template<class C, class E, class V>
 Tree<C,E,V>::Tree(int num_vertices) {
-    this->num_vertices = num_vertices;
     std::vector<Vertex<C,E,V>> vertices;
     for (int i = 0; i < num_vertices; i++) {
         vertices.push_back(Vertex<C,E,V>(i));
@@ -90,7 +89,7 @@ void Tree<C,E,V>::del_edge_inner(Vertex<C, E, V>* vertex, Edge<C, E, V>* prev, E
 
 template<class C, class E, class V>
 void Tree<C,E,V>::print_tree() {
-    for (int i = 0; i < this->num_vertices; i++) {
+    for (int i = 0; i < this->get_size(); i++) {
         std::cout << i << ": "; 
         print_edges(&(this->vertices[i]));
         std::cout << std::endl;
@@ -114,4 +113,9 @@ std::vector<Vertex<C, E, V>>* Tree<C,E,V>::get_vertices() {
 template<class C, class E, class V>
 Vertex<C, E, V>* Tree<C,E,V>::get_vertex(int id) {
     return &this->vertices[id];
+};
+
+template<class C, class E, class V>
+int Tree<C,E,V>::get_size() {
+    return this->vertices.size();
 };
