@@ -10,7 +10,7 @@ Vertex<C,E,V>::Vertex(int id) {
     this->exposed = false;
 }
 template<class C, class E, class V>
-Edge<C, E, V>* Vertex<C,E,V>::get_first_edge() {
+Edge<C,E,V>* Vertex<C,E,V>::get_first_edge() {
     return this->first_edge; 
 };
 

@@ -16,25 +16,25 @@ typedef std::monostate None;
 
 template<class C = None, class E = None, class V = None> 
 class Tree {    
-    std::vector<Vertex<C, E, V>> vertices;
+    std::vector<Vertex<C,E,V>> vertices;
 
     public:
     Tree(int num_vertices);
     ~Tree();
     
-    Edge<C, E, V>* add_edge(Vertex<C, E, V>*, Vertex<C, E, V>*);
-    Edge<C, E, V>* add_edge(int, int);
-    Edge<C, E, V>* find_edge(int, int);
+    Edge<C,E,V>* add_edge(Vertex<C,E,V>*, Vertex<C,E,V>*);
+    Edge<C,E,V>* add_edge(int, int);
+    Edge<C,E,V>* find_edge(int, int);
 
-    void del_edge(Edge<C, E, V>*);
-    void del_edge_inner(Vertex<C, E, V>*, Edge<C, E, V>* prev, Edge<C, E, V>* next);
+    void del_edge(Edge<C,E,V>*);
+    void del_edge_inner(Vertex<C,E,V>*, Edge<C,E,V>* prev, Edge<C,E,V>* next);
 
     void print_tree();
-    void print_edges(Vertex<C, E, V>*);
+    void print_edges(Vertex<C,E,V>*);
 
     int get_size();
-    std::vector<Vertex<C, E, V>>* get_vertices();
-    Vertex<C, E, V>* get_vertex(int id);
+    std::vector<Vertex<C,E,V>>* get_vertices();
+    Vertex<C,E,V>* get_vertex(int id);
 
 };
 
@@ -54,10 +54,11 @@ class Vertex : VHolder<V> {
     bool exposed;
     Edge<C, E, V>* first_edge;
     
+    
     public:
     Vertex(int id);
-    Edge<C, E, V>* get_first_edge();
-    void set_first_edge(Edge<C, E, V>*);
+    Edge<C,E,V>* get_first_edge();
+    void set_first_edge(Edge<C,E,V>*);
     bool has_at_most_one_incident_edge();
     bool is_exposed();
 
@@ -68,7 +69,6 @@ template<class E>
 struct EHolder {
     E edge_data;
 };
-
 template<class C = None, class E = None, class V = None>  
 class Edge : EHolder<E>{
     friend class Tree<C,E,V>;
@@ -81,8 +81,8 @@ class Edge : EHolder<E>{
 
     public:
     Edge(Vertex<C,E,V>* left, Vertex<C,E,V>* right);
-    int vertex_is_right(Vertex<C,E,V>* v);
-    void set_leaf_node(LeafNode<C,E,V>* l);    
+    int vertex_is_right(Vertex<C,E,V>*);
+    void set_leaf_node(LeafNode<C,E,V>*);    
     Vertex<C,E,V>* get_endpoints(int);
     Edge<C,E,V>* get_next(int);
     Edge<C,E,V>* get_prev(int);
@@ -92,6 +92,5 @@ class Edge : EHolder<E>{
 
 #include "underlying_tree_new.hpp"
 #include "tree.hpp"
-
 
 #endif
