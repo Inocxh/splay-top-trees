@@ -1,6 +1,6 @@
 
 #include <iostream>
-#include "underlying_tree_new.h"
+#include "underlying_tree.h"
 
 template<class C, class E, class V>
 Tree<C,E,V>::Tree(int num_vertices) {
@@ -22,32 +22,32 @@ Tree<C,E,V>::~Tree() {
 };
 
 template<class C, class E, class V>
-Edge<C, E, V>* Tree<C,E,V>::add_edge(Vertex<C, E, V>* left, Vertex<C, E, V>* right) {
+Edge<C, E, V>* Tree<C,E,V>::add_edge(Vertex<C, E, V>* left, Vertex<C, E, V>* right, E data) {
     Edge<C,E,V>* next[2] = { left->get_first_edge(), right->get_first_edge() };
 
     //Construct edge and set next
-    Edge<C,E,V>* edge = new Edge<C,E,V>(left, right);
+    Edge<C,E,V>* edge = new Edge<C,E,V>(left, right, data);
     edge->next[0] = next[0],
     edge->next[1] = next[1];
 
     left->set_first_edge(edge);
     right->set_first_edge(edge);
     if (next[0]) {
-        int vertex_is_right = next[0]->vertex_is_right(left);
-        next[0]->prev[vertex_is_right] = edge;
+        int is_right_vertex = next[0]->is_right_vertex(left);
+        next[0]->prev[is_right_vertex] = edge;
     }
     if (next[1]) {
-        int vertex_is_right = next[1]->vertex_is_right(right);
-        next[1]->prev[vertex_is_right] = edge;
+        int is_right_vertex = next[1]->is_right_vertex(right);
+        next[1]->prev[is_right_vertex] = edge;
     }
     return edge;
 };
 
 template<class C, class E, class V>
-Edge<C,E,V>* Tree<C,E,V>::add_edge(int u, int v) {
+Edge<C,E,V>* Tree<C,E,V>::add_edge(int u, int v, E data) {
     Vertex<C,E,V>* left = this->get_vertex(u);
     Vertex<C,E,V>* right = this->get_vertex(v);
-    return this->add_edge(left, right);
+    return this->add_edge(left, right, data);
 };
 
 template<class C, class E, class V>
@@ -57,10 +57,10 @@ Edge<C, E, V>* Tree<C,E,V>::find_edge(int u_id, int v_id) {
     
     Edge<C,E,V>* edge = u->get_first_edge();
     
-    int vertex_is_right = edge->vertex_is_right(u);
-    while (edge->endpoints[!vertex_is_right] != v) {
-        vertex_is_right = edge->vertex_is_right(u);
-        edge = edge->next[!vertex_is_right];
+    int is_right_vertex = edge->is_right_vertex(u);
+    while (edge->endpoints[!is_right_vertex] != v) {
+        is_right_vertex = edge->is_right_vertex(u);
+        edge = edge->next[!is_right_vertex];
     }
     return edge;
 };
@@ -71,19 +71,19 @@ void Tree<C,E,V>::del_edge(Edge<C,E,V>* edge) {
     del_edge_inner(edge->endpoints[1], edge->prev[1], edge->next[1]);
 
     delete edge;
-};
+}
 
 template<class C, class E, class V>
 void Tree<C,E,V>::del_edge_inner(Vertex<C, E, V>* vertex, Edge<C, E, V>* prev, Edge<C, E, V>* next) {
     if (prev) {
-        int vertex_is_right = prev->vertex_is_right(vertex);
-        prev->next[vertex_is_right] = next;
+        int is_right_vertex = prev->is_right_vertex(vertex);
+        prev->next[is_right_vertex] = next;
     } else {
         vertex->set_first_edge(next);
     }
     if (next) {
-        int vertex_is_right = next->vertex_is_right(vertex);
-        next->prev[vertex_is_right] = prev;
+        int is_right_vertex = next->is_right_vertex(vertex);
+        next->prev[is_right_vertex] = prev;
     }
 };
 
@@ -100,8 +100,8 @@ void Tree<C,E,V>::print_edges(Vertex<C, E, V>* vertex) {
     Edge<C,E,V> *current = vertex->get_first_edge();
     while (current) {
         std::cout << "(" << current->endpoints[0]->id << "," << current->endpoints[1]->id << ") ";
-        int vertex_is_right = current->vertex_is_right(vertex);
-        current = current->next[vertex_is_right];
+        int is_right_vertex = current->is_right_vertex(vertex);
+        current = current->next[is_right_vertex];
     }
 };
 

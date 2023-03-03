@@ -1,71 +1,112 @@
-#ifndef UNDERLYINGTREE_H
-#define UNDERLYINGTREE_H
+#ifndef UNDERLYING_TREE 
+#define UNDERLYING_TREE 1
 
 #include <vector>
+#include <variant>
 
+template<class C, class E, class V>
+class TopTree;
 
-using namespace std;
+template<class C, class E, class V>
+class LeafNode;
 
-class LeafNodeBase;
-class Edge; 
+template<class C, class E, class V> 
+class Edge;
+
+template<class C, class E, class V>
 class Vertex;
+
+template<class C, class E, class V>
 class Tree;
 
-class Edge {
+//This is an empty type
+//A unit class like None {} would have size one and would take up space for no reason. 
+//Void also creates problems as it cannot be instansiated
+typedef std::monostate None;
+class DefaultC;
 
-    public:
-    Edge(Vertex* left, Vertex* right);
-    LeafNodeBase* node;
-    Vertex* endpoints[2];
-    Edge* prev[2];
-    Edge* next[2];
-    int vertex_is_right(Vertex* v);
+template<class C = DefaultC, class E = None, class V = None> 
 
-    void set_leaf_node(LeafNodeBase* l) { this->node = l; };
-};
-
-class Vertex {
-    Edge *first_edge;
-    
-    public: 
-    bool exposed;
-    int id;
-    
-    Vertex(int id) {
-        this->id = id;
-        first_edge = nullptr;
-        exposed = false;
-    }
-    Edge* get_first_edge() { return first_edge; };
-    void set_first_edge(Edge* e) { first_edge = e; };
-    bool has_at_most_one_incident_edge();
-    bool is_exposed() { return exposed; }
-};
-
-class Tree {
-    
-    vector<Vertex> vertices;
+class Tree {    
+    std::vector<Vertex<C,E,V>> vertices;
 
     public:
     Tree(int num_vertices);
-    //Tree() { };
     ~Tree();
-    Edge* add_edge(int u, int v);
-    Edge* add_edge(Vertex*,Vertex*);
-    void del_edge(Edge* edge);
+    
+    Edge<C,E,V>* add_edge(Vertex<C,E,V>*, Vertex<C,E,V>*, E);
+    Edge<C,E,V>* add_edge(int, int, E);
+    Edge<C,E,V>* find_edge(int, int);
+
+    void del_edge(Edge<C,E,V>*);
+    void del_edge_inner(Vertex<C,E,V>*, Edge<C,E,V>* prev, Edge<C,E,V>* next);
 
     void print_tree();
+    void print_edges(Vertex<C,E,V>*);
 
-    Vertex* get_vertex(int id) {return &this->vertices[id]; };
-    vector<Vertex>* get_vertices() {return &this->vertices; };
+    int get_size();
+    std::vector<Vertex<C,E,V>>* get_vertices();
+    Vertex<C,E,V>* get_vertex(int id);
 
-    Edge* find_edge(int,int);
-
-    int num_vertices;
-    
-    private:
-    void print_edges(Vertex*);
-    void del_edge_inner(Vertex*, Edge* prev, Edge* next);
 };
+
+//Only exists for "empty base class" optimization!
+//If V is an empty type like None the V field would still take up one byte
+// as per c++ standard. However this does not apply if Vertex inherits the field from another class.
+template<class V>
+struct VHolder {
+    V vertex_data;
+};
+
+template<class C = DefaultC, class E = None, class V = None>  
+class Vertex : VHolder<V> {
+    friend class Tree<C,E,V>;
+    friend class TopTree<C,E,V>;
+
+    int id;
+    bool exposed;
+    Edge<C, E, V>* first_edge;
+    
+    
+    public:
+    Vertex(int id);
+    Edge<C,E,V>* get_first_edge();
+    void set_first_edge(Edge<C,E,V>*);
+    bool has_at_most_one_incident_edge();
+    bool is_exposed();
+    int get_id();
+
+    V* get_data();
+};
+
+template<class E>
+struct EHolder {
+    E edge_data;
+};
+
+template<class C = DefaultC, class E = None, class V = None>  
+class Edge : EHolder<E>{
+    friend class TopTree<C,E,V>;
+    friend class Tree<C,E,V>;
+
+    Vertex<C,E,V>* endpoints[2];
+    Edge<C,E,V>* prev[2];
+    Edge<C,E,V>* next[2];
+
+    LeafNode<C,E,V>* node;
+
+    public:
+    Edge(Vertex<C,E,V>*, Vertex<C,E,V>*, E);
+    int is_right_vertex(Vertex<C,E,V>*);
+    void set_leaf_node(LeafNode<C,E,V>*);    
+    Vertex<C,E,V>* get_endpoint(int);
+    Edge<C,E,V>* get_next(int);
+    Edge<C,E,V>* get_prev(int);
+
+    E* get_data();
+};
+
+#include "underlying_tree.hpp"
+#include "tree.hpp"
 
 #endif
