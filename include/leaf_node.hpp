@@ -5,6 +5,7 @@ LeafNode<C,E,V>::LeafNode(Edge<C,E,V>* e, int num_boundary) {
     this->parent = nullptr;
     this->edge = e;  
     this->num_boundary_vertices = num_boundary;
+    this->flipped = false;
     this->merge();  
 }   
 
@@ -16,11 +17,6 @@ bool LeafNode<C,E,V>::has_middle_boundary() {
 template<class C, class E, class V>
 bool LeafNode<C,E,V>::has_left_boundary() {
     Vertex<C,E,V>* endpoint = this->get_endpoint(this->flipped);
-    if (endpoint->get_id() == 9) {
-        bool ost = this->get_endpoint(this->flipped)->is_exposed();
-        ost = this->get_endpoint(this->flipped)->has_at_most_one_incident_edge();
-        ost = false;
-    }
     return endpoint->is_exposed() || !endpoint->has_at_most_one_incident_edge();
 }
 
@@ -42,6 +38,8 @@ Vertex<C,E,V>* LeafNode<C,E,V>::get_endpoint(int idx) {
 
 template<class C, class E, class V>
 void LeafNode<C,E,V>::merge() {
+    // Garantuees that node is not flipped for user
+    this->push_flip();
     E* edge = this->edge->get_data();
     V* left = this->edge->get_endpoint(this->flipped)->get_data();
     V* right = this->edge->get_endpoint(!this->flipped)->get_data();
@@ -70,9 +68,10 @@ void LeafNode<C,E,V>::print(int indent, bool flippe) {
 
 
 }
-/*template<class C, class E, class V>
+template<class C, class E, class V>
 void LeafNode<C,E,V>::push_flip() {
-    if (!this->flipped) {
-        std::swap(this->edge->endpoints[0], this->edge->endpoints[1]);
+    if (this->flipped) {
+        this->edge->flip();
+        this->flipped = false;
     }
-}*/
+}

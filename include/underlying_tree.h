@@ -104,6 +104,7 @@ class Edge : EHolder<E>{
     Edge<C,E,V>* get_prev(int);
 
     E* get_data();
+    void flip();
 };
 
 #include "underlying_tree.hpp"

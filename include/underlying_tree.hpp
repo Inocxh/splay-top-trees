@@ -85,7 +85,12 @@ E* Edge<C,E,V>::get_data(){
     return &(this->edge_data);
 };
 
-
+template<class C, class E, class V>
+void Edge<C,E,V>::flip(){
+    std::swap(this->endpoints[0], this->endpoints[1]);
+    std::swap(this->next[0], this->next[1]);
+    std::swap(this->prev[0], this->prev[1]);
+};
 
 
 

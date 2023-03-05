@@ -43,9 +43,14 @@ bool InternalNode<C,E,V>::has_right_boundary() {
 
 template<class C, class E, class V>
 void InternalNode<C,E,V>::merge() {
-    this->merge_internal(
+    this->push_flip();
+    /*this->merge_internal(
         this->children[this->flipped], 
         this->children[!this->flipped]
+    );*/
+    this->merge_internal(
+        this->children[0], 
+        this->children[1]
     );
 }
 template<class C, class E, class V>

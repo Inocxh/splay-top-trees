@@ -9,37 +9,35 @@
 struct DiameterCluster : Node<DiameterCluster, int, None> {
     int length;
     int diameter;
-    int merge_calls = 0;
 
     int max_dist[2] = {-100,-200}; //0 leftmost, 1 rightmost
 
     void merge_leaf(int* edge_data, None* left, None* right) {
+        assert(!this->is_flipped());
+
         if (this->is_path()) {
             this->length = *edge_data;
         } else {
             this->length = 0;
         }
-        bool lol, lol2;
-        if(*edge_data == 2 && this->num_boundary_vertices == 2) {
-            lol = this->has_left_boundary();
-            lol2 = this->has_right_boundary();
-            int five = 2+2;
-        }
-        
  
-        this->max_dist[this->flipped] = this->has_left_boundary() ? *edge_data : 0;
-        this->max_dist[!this->flipped] = this->has_right_boundary() ? *edge_data : 0;
+        //this->max_dist[this->flipped] = this->has_left_boundary() ? *edge_data : 0;
+        //this->max_dist[!this->flipped] = this->has_right_boundary() ? *edge_data : 0;
+        this->max_dist[0] = this->has_left_boundary() ? *edge_data : 0;
+        this->max_dist[1] = this->has_right_boundary() ? *edge_data : 0;
 
         this->diameter = *edge_data;
-        if (merge_calls >= 1 && *edge_data == 2) {
-            int lol4 = 1;
-        }
-        merge_calls++;
     };
 
     void split_leaf(int* edge_data, None* left, None* right) {};
 
     void merge_internal(DiameterCluster* left, DiameterCluster* right) {
+        assert(!this->is_flipped()); 
+        /*assert(!left->is_flipped()); 
+        assert(!right->is_flipped());*/
+
+
+
         bool left_flipped = left->is_flipped();
         bool right_flipped = right->is_flipped();
         this->length = (left->is_path() ? left->length : 0) +

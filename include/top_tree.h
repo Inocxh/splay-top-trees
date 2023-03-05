@@ -77,6 +77,7 @@ class Node {
     virtual void split() = 0;
     virtual void merge_internal(C*, C*) = 0;
     virtual void merge_leaf(E*, V*, V*) = 0;
+    virtual void push_flip() = 0;
 
     bool is_point();
     bool is_path();
@@ -123,6 +124,7 @@ class LeafNode : public C {
     
     void merge();
     void split();
+    void push_flip();
 
     LeafNode(Edge<C,E,V>*, int);
 
