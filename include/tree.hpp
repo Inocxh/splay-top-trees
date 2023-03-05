@@ -59,8 +59,8 @@ Edge<C, E, V>* Tree<C,E,V>::find_edge(int u_id, int v_id) {
     
     int is_right_vertex = edge->is_right_vertex(u);
     while (edge->endpoints[!is_right_vertex] != v) {
+        edge = edge->next[is_right_vertex];
         is_right_vertex = edge->is_right_vertex(u);
-        edge = edge->next[!is_right_vertex];
     }
     return edge;
 };

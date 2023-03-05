@@ -142,17 +142,56 @@ TEST_CASE("Diameter full example", "[user data]") {
 
         top_tree.link(0, 5, 1);
         root = top_tree.expose(7);
-        InternalNode<DiameterCluster,int,None>* lol = (InternalNode<DiameterCluster,int,None>*) root;
-        lol->print(0, false);
+        //InternalNode<DiameterCluster,int,None>* lol = (InternalNode<DiameterCluster,int,None>*) root;
+        //lol->print(0, false);
         REQUIRE(root->diameter == 14);
-
-        
-
-
 
     }   
 }
 
 
 
+TEST_CASE("Diameter complete example", "[user data]") {
+    int size = 10;
+    TopTree<DiameterCluster, int, None> top_tree = TopTree<DiameterCluster, int, None>(size);
+    DiameterCluster* root;
+
+    top_tree.link(0, 1, 3);
+    root = top_tree.expose(0);        
+    REQUIRE(root->diameter == 3);
+    top_tree.deexpose(0);
+    
+    top_tree.link(2, 3, 4);
+    root = top_tree.expose(3);        
+    REQUIRE(root->diameter == 4);
+    top_tree.deexpose(3);
+
+    top_tree.link(1, 2, 1);
+    root = top_tree.expose(2);        
+    REQUIRE(root->diameter == 8);
+    top_tree.deexpose(2);
+
+    top_tree.link(5, 4, 5);
+    root = top_tree.expose(2);        
+    REQUIRE(root->diameter == 8);
+    top_tree.deexpose(2);
+    root = top_tree.expose(5);        
+    REQUIRE(root->diameter == 5);
+    top_tree.deexpose(5);
+    
+    top_tree.link(1, 4, 1);
+    root = top_tree.expose(2);        
+    REQUIRE(root->diameter == 11);
+    top_tree.deexpose(2);
+    
+    top_tree.cut(1, 2);
+    root = top_tree.expose(0);        
+    REQUIRE(root->diameter == 9);
+    top_tree.deexpose(0);
+
+    top_tree.cut(1, 0);
+    root = top_tree.expose(4);
+    REQUIRE(root->diameter == 6);
+    top_tree.deexpose(4);
+}   
 
