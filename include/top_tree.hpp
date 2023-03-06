@@ -1,7 +1,7 @@
 #include "top_tree.h"
 #include <tuple>
 
-#include <assert.h>
+#include <cassert>
 
 
 
@@ -57,8 +57,8 @@ template<class C, class E, class V>
 C* TopTree<C,E,V>::expose(int vertex1_id, int vertex2_id) {
     assert(this->num_exposed == 0);
     this->num_exposed += 2;
-    Vertex<C,E,V>* vertex1 = this->get_vertex(vertex1_id);
-    Vertex<C,E,V>* vertex2 = this->get_vertex(vertex2_id);
+    Vertex<C,E,V>* vertex1 = this->underlying_tree->get_vertex(vertex1_id);
+    Vertex<C,E,V>* vertex2 = this->underlying_tree->get_vertex(vertex2_id);
     expose_internal(vertex1);
     return expose_internal(vertex2);
 }
@@ -66,7 +66,7 @@ template<class C, class E, class V>
 C* TopTree<C,E,V>::expose(int vertex_id) {
     assert(this->num_exposed < 2);
     this->num_exposed += 1;
-    Vertex<C,E,V>* vertex = this->get_vertex(vertex_id);
+    Vertex<C,E,V>* vertex = this->underlying_tree->get_vertex(vertex_id);
     return expose_internal(vertex);
 }
 
@@ -96,7 +96,7 @@ C* TopTree<C,E,V>::expose_internal(Vertex<C,E,V>* vertex) {
     while (node) {
         root = node;
         root->num_boundary_vertices += 1;
-        root->merge();
+        root->merge_internal();
         node = (C*) (root->get_parent());
     }
     return root;
@@ -106,13 +106,12 @@ template<class C, class E, class V>
 C* TopTree<C,E,V>::deexpose_internal(Vertex<C,E,V>* vertex) { 
     C* root = nullptr;
 
-    //Vertex<C,E,V><T>* vertex = this->get_vertex(id);
     C* node = this->find_consuming_node(vertex); 
     vertex->exposed = false;
     while (node) {
         root = node;
         root->num_boundary_vertices -= 1;
-        root->merge();
+        root->merge_internal();
         node = root->get_parent();
     }
     return root;
@@ -122,8 +121,8 @@ template<class C, class E, class V>
 C* TopTree<C,E,V>::deexpose(int vertex1_id, int vertex2_id) { 
     assert(this->num_exposed == 2);
     this->num_exposed -= 2;
-    Vertex<C,E,V>* vertex1 = this->get_vertex(vertex1_id);
-    Vertex<C,E,V>* vertex2 = this->get_vertex(vertex2_id);
+    Vertex<C,E,V>* vertex1 = this->underlying_tree->get_vertex(vertex1_id);
+    Vertex<C,E,V>* vertex2 = this->underlying_tree->get_vertex(vertex2_id);
     deexpose_internal(vertex1);
     return deexpose_internal(vertex2);
 }
@@ -132,15 +131,15 @@ template<class C, class E, class V>
 C* TopTree<C,E,V>::deexpose(int vertex_id) { 
     assert(this->num_exposed >= 1);
     this->num_exposed -= 1;
-    Vertex<C,E,V>* vertex = this->get_vertex(vertex_id);
+    Vertex<C,E,V>* vertex = this->underlying_tree->get_vertex(vertex_id);
     return deexpose_internal(vertex);
 }
 
 template<class C, class E, class V>
 C* TopTree<C,E,V>::link(int u_id, int v_id, E data) {
     assert(this->num_exposed == 0);
-    Vertex<C,E,V>* u = this->get_vertex(u_id); 
-    Vertex<C,E,V>* v = this->get_vertex(v_id); 
+    Vertex<C,E,V>* u = this->underlying_tree->get_vertex(u_id); 
+    Vertex<C,E,V>* v = this->underlying_tree->get_vertex(v_id); 
     return link_internal(u, v, data);
 }
 
@@ -162,22 +161,13 @@ C* TopTree<C,E,V>::link_internal(Vertex<C,E,V>* u, Vertex<C,E,V>* v, E data) {
     Edge<C,E,V>* edge = this->underlying_tree->add_edge(u, v, data);
     C* root = new LeafNode<C,E,V>(edge, !!Tu + !!Tv);
     edge->set_leaf_node((LeafNode<C,E,V>*) root);
-    //root->num_boundary_vertices = !!Tu + !!Tv;
 
     if (Tu) {
         InternalNode<C,E,V>* root_new = new InternalNode<C,E,V>(Tu, root, !!Tv);        
-        //root_new->num_boundary_vertices = !!Tv;
-        //Tu->set_parent(root_new);
-        //root->set_parent(root_new);
-
         root = root_new;
     }
     if (Tv) {
         InternalNode<C,E,V>* root_new = new InternalNode<C,E,V>(root, Tv, 0);
-        //root->num_boundary_vertices = 0;
-        //Tv->set_parent(root_new);
-        //root->set_parent(root_new);
-
         root = root_new;
     }
     return root;
@@ -191,7 +181,7 @@ void TopTree<C,E,V>::delete_all_ancestors(C* node) {
         delete_all_ancestors(parent);
         sibling->set_parent(nullptr);
     }
-    node->split();
+    node->split_internal();
     delete node;
 }
 
@@ -219,5 +209,4 @@ std::tuple<C*, C*> TopTree<C,E,V>::cut_internal(Edge<C,E,V>* edge) {
     C* Tv = this->deexpose_internal(v);
     return std::tuple(Tu, Tv);
 }
-
 

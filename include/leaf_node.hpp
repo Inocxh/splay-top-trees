@@ -6,7 +6,7 @@ LeafNode<C,E,V>::LeafNode(Edge<C,E,V>* e, int num_boundary) {
     this->edge = e;  
     this->num_boundary_vertices = num_boundary;
     this->flipped = false;
-    this->merge();  
+    this->merge_internal();  
 }   
 
 template<class C, class E, class V>
@@ -37,22 +37,22 @@ Vertex<C,E,V>* LeafNode<C,E,V>::get_endpoint(int idx) {
 }
 
 template<class C, class E, class V>
-void LeafNode<C,E,V>::merge() {
+void LeafNode<C,E,V>::merge_internal() {
     // Garantuees that node is not flipped for user
     this->push_flip();
     E* edge = this->edge->get_data();
     V* left = this->edge->get_endpoint(this->flipped)->get_data();
     V* right = this->edge->get_endpoint(!this->flipped)->get_data();
-    this->merge_leaf(edge, left, right);
+    this->create(edge, left, right);
     return;
 }
 
 template<class C, class E, class V>
-void LeafNode<C,E,V>::split() {
+void LeafNode<C,E,V>::split_internal() {
     E* edge = this->edge->get_data();
     V* left = this->edge->get_endpoint(this->flipped)->get_data();
     V* right = this->edge->get_endpoint(!this->flipped)->get_data();
-    this->split_leaf(edge, left, right);
+    this->split_leaf();
     return;
 }
 
@@ -73,5 +73,6 @@ void LeafNode<C,E,V>::push_flip() {
     if (this->flipped) {
         this->edge->flip();
         this->flipped = false;
+        this->swap_data();
     }
 }

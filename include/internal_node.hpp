@@ -9,7 +9,7 @@ InternalNode<C,E,V>::InternalNode(C* left, C* right, int num_boundary) {
     this->children[1] = right;
     left->set_parent(this);
     right->set_parent(this);
-    this->merge();
+    this->merge_internal();
 }
 
 
@@ -19,6 +19,7 @@ void InternalNode<C,E,V>::push_flip() {
         return;
     }
     this->flipped = false;
+    this->swap_data();
     std::swap(this->children[0], this->children[1]);
     this->children[0]->flip();
     this->children[1]->flip();
@@ -42,23 +43,20 @@ bool InternalNode<C,E,V>::has_right_boundary() {
 }
 
 template<class C, class E, class V>
-void InternalNode<C,E,V>::merge() {
+void InternalNode<C,E,V>::merge_internal() {
     this->push_flip();
-    /*this->merge_internal(
-        this->children[this->flipped], 
-        this->children[!this->flipped]
-    );*/
-    this->merge_internal(
+
+    this->children[0]->push_flip();
+    this->children[1]->push_flip();
+    
+    this->merge(
         this->children[0], 
         this->children[1]
     );
 }
 template<class C, class E, class V>
-void InternalNode<C,E,V>::split() {
-    this->split_internal(
-        this->children[this->flipped], 
-        this->children[!this->flipped]
-    );
+void InternalNode<C,E,V>::split_internal() {
+    this->split();
 }
 
 template<class C, class E, class V>

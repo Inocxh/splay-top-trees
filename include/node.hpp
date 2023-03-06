@@ -19,6 +19,11 @@ bool Node<C,E,V>::is_right_child() {
 }
 
 template<class C, class E, class V>
+bool Node<C,E,V>::is_flipped() {
+    return this->flipped;
+}
+
+template<class C, class E, class V>
 void Node<C,E,V>::flip() {
     this->flipped = !this->flipped;
 }
@@ -34,8 +39,8 @@ void Node<C,E,V>::rotate_up() {
         grandparent->push_flip();
         parent->push_flip();
 
-        grandparent->split();
-        parent->split();
+        grandparent->split_internal();
+        parent->split_internal();
 
         bool to_same_side = uncle->is_right_child() == sibling->is_right_child();
 
@@ -80,8 +85,8 @@ void Node<C,E,V>::rotate_up() {
         this->parent = grandparent;
         uncle->parent = parent;
 
-        parent->merge();
-        grandparent->merge();
+        parent->merge_internal();
+        grandparent->merge_internal();
 }
 
 template<class C, class E, class V>

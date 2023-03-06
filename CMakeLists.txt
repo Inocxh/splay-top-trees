@@ -9,8 +9,8 @@ include_directories(include)
 
 set(TEST_FILES ${TEST_FILES}
 test/tree_tests/tree_test.cpp
-test/toptree_tests/toptree_test.cpp
-test/toptree_tests/user_data_test.cpp
+test/toptree_tests/max_weight_in_component_test.cpp
+test/toptree_tests/max_weight_on_path_test.cpp
 #test/toptree_tests/add_common_weight_test.cpp
 test/toptree_tests/diameter_test.cpp
 )

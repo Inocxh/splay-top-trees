@@ -1,16 +1,12 @@
 #include <catch2/catch_test_macros.hpp>
-#define TEST 1
-
 #include "top_tree.h"
-
-
 
 struct AddWeightCluster : Node<AddWeightCluster, int, None> {
     int max_weight;
     int max_non_path_weight;
     int extra;
 
-    void merge_leaf(int* edge_data, None* left, None* right) {
+    void create(int* edge_data, None* left, None* right) {
         if (this->is_path()) {
             max_weight = *edge_data;
             max_non_path_weight = INT_MIN;
@@ -24,7 +20,7 @@ struct AddWeightCluster : Node<AddWeightCluster, int, None> {
         *edge_data += this->extra;
     };
 
-    void merge_internal(AddWeightCluster* left, AddWeightCluster* right) {
+    void merge(AddWeightCluster* left, AddWeightCluster* right) {
         max_non_path_weight = std::max(left->max_non_path_weight, right->max_non_path_weight);
         if (!this->is_path()) {
             max_non_path_weight = std::max(
@@ -61,26 +57,10 @@ struct AddWeightCluster : Node<AddWeightCluster, int, None> {
         max_weight += weight;
         extra += weight;
     }
-
-    AddWeightCluster(int* edge, None* left, None* right) {
-        this->merge_leaf(edge, left, right);
-    }
-
-    AddWeightCluster(AddWeightCluster* left, AddWeightCluster* right) {
-        this->merge_internal(left, right);
-    }
 };
 
-TEST_CASE("Simple test 2", "[user data]")
-{
-    int size = 10;
-    int vertex_id = 1;
-    TopTree<AddWeightCluster, int, None> top_tree = TopTree<AddWeightCluster, int, None>(size);
-    top_tree.expose(vertex_id);
-    REQUIRE((top_tree.get_vertex(vertex_id)->is_exposed()));
-}
 
-TEST_CASE("Max-edge-weight full example 2", "[user data]") {
+TEST_CASE("Add weight full example", "[user data]") {
     int size = 10;
     TopTree<AddWeightCluster, int, None> top_tree = TopTree<AddWeightCluster, int, None>(size);
     top_tree.link(0, 1, 2);
@@ -115,7 +95,6 @@ TEST_CASE("Max-edge-weight full example 2", "[user data]") {
         top_tree.cut(1, 3);
 
         root = top_tree.expose(0);
-        int lol = root->get_data();
         REQUIRE(root->get_data() == 2);
         top_tree.deexpose(0);
 

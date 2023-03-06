@@ -52,61 +52,58 @@ class TopTree {
 
 
     TopTree(int size);
-
-    #ifdef TEST
-    public:
-    Vertex<C,E,V>* get_vertex(int id) {
-        return this->underlying_tree->get_vertex(id);
-    }
-    #endif
-    
 };
 
 template<class C = DefaultC, class E = None, class V = None> 
 class Node {
     friend class TopTree<C,E,V>;
     friend class InternalNode<C,E,V>;
+    friend class LeafNode<C,E,V>;
 
-    protected:
     InternalNode<C,E,V>* parent;
     int num_boundary_vertices;
     bool flipped = false;
  
+    //Implemented by LeafNode and InternalNode
+    virtual void merge_internal() = 0;
+    virtual void split_internal() = 0;
+
     //These must be implemented by the user!
-    virtual void merge() = 0;
-    virtual void split() = 0;
-    virtual void merge_internal(C*, C*) = 0;
-    virtual void merge_leaf(E*, V*, V*) = 0;
+    virtual void merge(C*, C*) = 0;
+    virtual void create(E*, V*, V*) = 0;
+    
+    //Optional user methods
+    virtual void split() {};
+    virtual void split_leaf() {};
+    virtual void swap_data() {};
+
     virtual void push_flip() = 0;
 
+    void rotate_up();
+    void flip();
+    Node<C,E,V>* semi_splay_step();
+    void full_splay();
+    void semi_splay();
+
+    C* get_sibling();
+    InternalNode<C,E,V>* get_parent();
+    void set_parent(InternalNode<C,E,V>*);
+
+    protected:
     bool is_point();
     bool is_path();
     bool is_right_child();
+    bool is_flipped();
 
     virtual bool has_left_boundary() = 0;
     virtual bool has_middle_boundary() = 0;
     virtual bool has_right_boundary() = 0;
 
-    void full_splay();
-    void semi_splay();
     
     public:
-    C* get_sibling();
-    InternalNode<C,E,V>* get_parent();
-    void set_parent(InternalNode<C,E,V>*);
-
-    #ifdef TEST
-    public:
-    bool is_flipped() {
-        return this->flipped;   
-    }
-    #endif
 
     virtual void print(int, bool) {};
     virtual void print_data() {};
-    void flip();
-    void rotate_up();
-    Node<C,E,V>* semi_splay_step();
     
 };
 
@@ -122,8 +119,8 @@ class LeafNode : public C {
 
     bool is_right_vertex(Vertex<C,E,V>*);
     
-    void merge();
-    void split();
+    void merge_internal();
+    void split_internal();
     void push_flip();
 
     LeafNode(Edge<C,E,V>*, int);
@@ -134,15 +131,6 @@ class LeafNode : public C {
     bool has_right_boundary();
 
     void print(int, bool);
-    //In order to contruct test cases we need a stronger constructor
-    #ifdef TEST
-    public:
-    LeafNode(Edge<C,E,V>* e, int num_boundary, bool f) {
-        this->edge = e;
-        this->num_boundary_vertices = num_boundary;
-        this->flipped = f;
-    }
-    #endif
 
     Vertex<C,E,V>* get_endpoint(int);
 };
@@ -159,8 +147,8 @@ class InternalNode : public C {
 
     void push_flip();
 
-    void merge();
-    void split();
+    void merge_internal();
+    void split_internal();
 
     InternalNode(C*, C*, int);
     public:
@@ -170,20 +158,6 @@ class InternalNode : public C {
 
 
     void print(int, bool);
-    #ifdef TEST
-    void set_children(C* left, C* right) {
-        this->children[0] = left;
-        this->children[1] = right;
-    }
-
-    C* get_child(int idx) {
-        return this->children[idx];
-    }
-    InternalNode(int num_boundary, bool f) {
-        this->num_boundary_vertices = num_boundary;
-        this->flipped = f;
-    };
-    #endif
 };
 
 
@@ -192,26 +166,10 @@ class InternalNode : public C {
 #include "leaf_node.hpp"
 #include "top_tree.hpp"
 
-
-class MyNode : public Node<MyNode, int, void> {
-    protected:
-    void merge() {
-        std::cout <<"hello from merge" << std::endl;
-        return;
-    };
-    void split() {
-        return;
-    };
-    public:
-    MyNode() : Node<MyNode,int,void>() {
-        
-    };
-};
-
 class DefaultC : public Node<DefaultC, None, None> {
     protected:
-    void merge_internal(DefaultC*, DefaultC*) {};
-    void merge_leaf(None*, None*, None*) {};
+    void merge(DefaultC*, DefaultC*) {};
+    void create(None*, None*, None*) {};
     void split_internal(DefaultC*, DefaultC*) {};
     void split_leaf(None*, None*, None*) {};
 };
