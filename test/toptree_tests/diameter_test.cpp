@@ -10,7 +10,7 @@ struct DiameterCluster : Node<DiameterCluster, int, None> {
     int length;
     int diameter;
 
-    int max_dist[2] = {-100,-200}; //0 leftmost, 1 rightmost
+    int max_dist[2]; //0 leftmost, 1 rightmost
 
     void merge_leaf(int* edge_data, None* left, None* right) {
         assert(!this->is_flipped());
@@ -33,6 +33,7 @@ struct DiameterCluster : Node<DiameterCluster, int, None> {
 
     void merge_internal(DiameterCluster* left, DiameterCluster* right) {
         assert(!this->is_flipped()); 
+
         /*assert(!left->is_flipped()); 
         assert(!right->is_flipped());*/
 
