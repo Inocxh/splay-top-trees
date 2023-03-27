@@ -7,12 +7,17 @@ set(CMAKE_CXX_FLAGS_RELEASE_INIT "-O3 -DNDEBUG")
 
 include_directories(include)
 
+set(IMPL_FILES ${IMPL_FILES}
+src/cover_level.cpp
+)
+
 set(TEST_FILES ${TEST_FILES}
 test/tree_tests/tree_test.cpp
 test/toptree_tests/max_weight_in_component_test.cpp
 test/toptree_tests/max_weight_on_path_test.cpp
-#test/toptree_tests/add_common_weight_test.cpp
+test/toptree_tests/add_common_weight_test.cpp
 test/toptree_tests/diameter_test.cpp
+test/2_edge_tests/cover_level_test.cpp
 )
 
 #Main target
@@ -27,6 +32,6 @@ include(Catch)
 enable_testing()
 
 #Create tests target and add it to test list
-add_executable(tests ${TEST_FILES})
+add_executable(tests ${TEST_FILES} ${IMPL_FILES})
 target_link_libraries(tests PRIVATE Catch2 Catch2WithMain)
 catch_discover_tests(tests)

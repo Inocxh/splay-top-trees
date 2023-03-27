@@ -55,8 +55,19 @@ void InternalNode<C,E,V>::merge_internal() {
     );
 }
 template<class C, class E, class V>
-void InternalNode<C,E,V>::split_internal() {
-    this->split();
+void InternalNode<C,E,V>::split_internal() {    
+    this->push_flip();
+
+    this->children[0]->push_flip();
+    this->children[1]->push_flip();
+    this->split(
+        this->children[0], 
+        this->children[1]
+    );
+}
+template<class C, class E, class V>
+C* InternalNode<C,E,V>::get_child(int index) {
+    return this->children[index];
 }
 
 template<class C, class E, class V>

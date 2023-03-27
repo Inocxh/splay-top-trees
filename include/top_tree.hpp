@@ -1,6 +1,6 @@
 #include "top_tree.h"
 #include <tuple>
-
+#include <vector>
 #include <cassert>
 
 
@@ -32,13 +32,13 @@ C* TopTree<C,E,V>::find_consuming_node(Vertex<C,E,V>* vertex) {
 
     C* node = first_node; 
     while (node->get_parent()) {
-        C* parent = (InternalNode<C,E,V>*) (node->get_parent());
+        InternalNode<C,E,V>* parent = (InternalNode<C,E,V>*) (node->get_parent());
         
-        is_middle = node->is_right_child() ? 
+        is_middle = parent->get_child(1) == node ? 
                     is_left  || (is_middle && !node->has_left_boundary()) :
                     is_right || (is_middle && !node->has_right_boundary());
+        is_right = node->is_right_child() && !is_middle;
         is_left = !node->is_right_child() && !is_middle;
-        is_right = node->is_right_child() && !is_middle;        
  
         node = parent;
         if (is_middle) {
@@ -91,15 +91,26 @@ C* TopTree<C,E,V>::expose_internal(Vertex<C,E,V>* vertex) {
     node->full_splay();
 
     C* root;
-    //is needed in C* for merge calls to compute correctly. probably...
-    vertex->exposed = true;
-    while (node) {
-        root = node;
-        root->num_boundary_vertices += 1;
-        root->merge_internal();
-        node = (C*) (root->get_parent());
+
+    //Assert that the depth is at most 1, by lemma 4.3
+    assert(!node->get_parent() || (node->get_parent() && !node->get_parent()->get_parent())); 
+    InternalNode<C,E,V>* parent = node->get_parent();
+    
+    if (parent) {
+        parent->split_internal();
     }
-    return root;
+    node->split_internal();
+
+    // Exposed needed in C* for merge calls to compute correctly. probably...
+    vertex->exposed = true;
+    node->num_boundary_vertices += 1;
+    node->merge_internal();
+    if (parent) {
+        parent->num_boundary_vertices += 1;
+        parent->merge_internal();
+    }
+    
+    return parent ? parent : node;
 }
 
 template<class C, class E, class V>
@@ -107,14 +118,24 @@ C* TopTree<C,E,V>::deexpose_internal(Vertex<C,E,V>* vertex) {
     C* root = nullptr;
 
     C* node = this->find_consuming_node(vertex); 
-    vertex->exposed = false;
+
+    static std::vector<C*> root_path;
+    root_path.clear();
     while (node) {
-        root = node;
-        root->num_boundary_vertices -= 1;
-        root->merge_internal();
-        node = root->get_parent();
+        root_path.push_back(node);
+        node = (C*) node->get_parent();
     }
-    return root;
+    for (int i = root_path.size() - 1; i >= 0; i--) {
+        root_path[i]->split_internal();
+    }
+
+    vertex->exposed = false;
+    for (int i = 0; i < root_path.size(); i++) {
+        root_path[i]->num_boundary_vertices -= 1;
+        root_path[i]->merge_internal();
+    }
+    
+    return root_path.size() != 0 ? root_path.back() : nullptr;
 }
 
 template<class C, class E, class V>

@@ -73,8 +73,8 @@ class Node {
     virtual void create(E*, V*, V*) = 0;
     
     //Optional user methods
-    virtual void split() {};
-    virtual void split_leaf() {};
+    virtual void split(C*, C*) {};
+    virtual void split_leaf(E*, V*, V*) {};
     virtual void swap_data() {};
 
     virtual void push_flip() = 0;
@@ -101,7 +101,7 @@ class Node {
 
     
     public:
-
+    int get_num_boundary_vertices();
     virtual void print(int, bool) {};
     virtual void print_data() {};
     
@@ -155,6 +155,7 @@ class InternalNode : public C {
     bool has_left_boundary();
     bool has_middle_boundary();
     bool has_right_boundary();
+    C* get_child(int);
 
 
     void print(int, bool);
