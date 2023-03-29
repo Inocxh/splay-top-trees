@@ -6,9 +6,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED 20)
 set(CMAKE_CXX_FLAGS_RELEASE_INIT "-O3 -DNDEBUG")
 
 include_directories(include)
+include_directories(include/top_tree)
 
 set(IMPL_FILES ${IMPL_FILES}
 src/cover_level.cpp
+src/two_edge_connected.cpp
+src/connected.cpp
+src/find_size.cpp
 )
 
 set(TEST_FILES ${TEST_FILES}
@@ -18,6 +22,8 @@ test/toptree_tests/max_weight_on_path_test.cpp
 test/toptree_tests/add_common_weight_test.cpp
 test/toptree_tests/diameter_test.cpp
 test/2_edge_tests/cover_level_test.cpp
+test/2_edge_tests/connected_test.cpp
+test/2_edge_tests/find_size_test.cpp
 )
 
 #Main target

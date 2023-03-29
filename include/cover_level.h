@@ -10,7 +10,7 @@ struct EdgeData {
 };
 
 class CoverLevelCluster : public Node<CoverLevelCluster, EdgeData, None> {
-    static int l_max; //floor(log (tree_size))
+    inline static int l_max; //floor(log (tree_size))
     int cover;
     int cover_plus;
     int cover_minus;
@@ -19,8 +19,13 @@ class CoverLevelCluster : public Node<CoverLevelCluster, EdgeData, None> {
     EdgeData* min_path_edge;
     EdgeData* min_global_edge;
 
+    protected:
+    int get_cover_level();
+
     public:
     static void set_l_max(int l);
-    void create(EdgeData* edge_data, None* left, None* right);
-    void merge(CoverLevelCluster* left, CoverLevelCluster* right);
+    static int get_l_max();
+    virtual void create(EdgeData* edge_data, None* left, None* right);
+    virtual void merge(CoverLevelCluster* left, CoverLevelCluster* right);
+    virtual void split(CoverLevelCluster* left, CoverLevelCluster* right);
 };
