@@ -11,6 +11,7 @@ include_directories(include/top_tree)
 set(IMPL_FILES ${IMPL_FILES}
 src/cover_level.cpp
 src/two_edge_connected.cpp
+src/two_edge_cluster.cpp
 src/connected.cpp
 src/find_size.cpp
 )

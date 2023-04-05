@@ -17,5 +17,6 @@ class TwoEdgeConnectivity {
     void two_edge_connected();
     void find_bridge(int);
     void find_bridge(int, int);
+    void cover(int, int); // TODO: move to private and remove test
 };
 
