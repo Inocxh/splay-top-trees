@@ -1,7 +1,4 @@
 #include "top_tree.h"
-#include <variant>
-
-using None = std::monostate;
 
 class ConnectedCluster;
 

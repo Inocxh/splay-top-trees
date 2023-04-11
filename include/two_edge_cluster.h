@@ -3,7 +3,6 @@
 #include <vector>
 
 using CoverLevel = int;
-using None = std::monostate;
 
 using namespace std;
 
