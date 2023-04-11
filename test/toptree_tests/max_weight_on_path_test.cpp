@@ -1,19 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-#include "top_tree.h"
-
-
-struct MaxPathCluster : Node<MaxPathCluster, int, None> {
-    int max_weight;
-    void create(int* edge, None* left, None* right) {
-        this->max_weight = this->is_path() ? *edge : INT_MIN;
-    };    
-    void merge(MaxPathCluster* left, MaxPathCluster* right) {
-        this->max_weight = std::max(
-            left->is_path() ? left->max_weight : INT_MIN, 
-            right->is_path() ? right->max_weight : INT_MIN
-        );
-    };
-};
+#include "max_weight_path_cluster.hpp"
 
 TEST_CASE("Max-edge-weight test (small)", "[user data]") {
     int size = 10;

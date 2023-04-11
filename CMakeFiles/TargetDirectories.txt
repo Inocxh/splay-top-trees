@@ -1,0 +1,13 @@
+/home/inocxh/Dokumenter/DTU/6.semester/bachelor/top-trees/CMakeFiles/main.dir
+/home/inocxh/Dokumenter/DTU/6.semester/bachelor/top-trees/CMakeFiles/tests.dir
+/home/inocxh/Dokumenter/DTU/6.semester/bachelor/top-trees/CMakeFiles/test.dir
+/home/inocxh/Dokumenter/DTU/6.semester/bachelor/top-trees/CMakeFiles/edit_cache.dir
+/home/inocxh/Dokumenter/DTU/6.semester/bachelor/top-trees/CMakeFiles/rebuild_cache.dir
+/home/inocxh/Dokumenter/DTU/6.semester/bachelor/top-trees/src/lib/Catch2/CMakeFiles/test.dir
+/home/inocxh/Dokumenter/DTU/6.semester/bachelor/top-trees/src/lib/Catch2/CMakeFiles/edit_cache.dir
+/home/inocxh/Dokumenter/DTU/6.semester/bachelor/top-trees/src/lib/Catch2/CMakeFiles/rebuild_cache.dir
+/home/inocxh/Dokumenter/DTU/6.semester/bachelor/top-trees/src/lib/Catch2/src/CMakeFiles/Catch2.dir
+/home/inocxh/Dokumenter/DTU/6.semester/bachelor/top-trees/src/lib/Catch2/src/CMakeFiles/Catch2WithMain.dir
+/home/inocxh/Dokumenter/DTU/6.semester/bachelor/top-trees/src/lib/Catch2/src/CMakeFiles/test.dir
+/home/inocxh/Dokumenter/DTU/6.semester/bachelor/top-trees/src/lib/Catch2/src/CMakeFiles/edit_cache.dir
+/home/inocxh/Dokumenter/DTU/6.semester/bachelor/top-trees/src/lib/Catch2/src/CMakeFiles/rebuild_cache.dir

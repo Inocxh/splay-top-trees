@@ -228,6 +228,6 @@ std::tuple<C*, C*> TopTree<C,E,V>::cut_internal(Edge<C,E,V>* edge) {
     v->exposed = true;
     C* Tu = this->deexpose_internal(u);
     C* Tv = this->deexpose_internal(v);
-    return std::tuple(Tu, Tv);
+    return std::tuple<C*,C*>(Tu, Tv);
 }
 
