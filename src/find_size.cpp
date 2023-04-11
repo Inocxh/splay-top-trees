@@ -10,6 +10,7 @@ int TwoEdgeCluster::get_size(int i) {
 }
 
 void TwoEdgeCluster::create_find_size(EdgeData* edge_data, None* left, None* right)  {
+    assert(this->cover_minus == -1 && this->cover_plus == -1);
     int lmax = TwoEdgeCluster::get_l_max();
     
     //Set everything to zero!
@@ -28,17 +29,20 @@ void TwoEdgeCluster::create_find_size(EdgeData* edge_data, None* left, None* rig
         There is no point set thus part_size and diag_size are also 0
     1 boundary vertex:
         There is only one vertex on the cluster path, the boundary with cover_level = lmax.
-        Since part_size and diag_size are only maintainted for 0 <= i < lmax, we let these be 0.
+        Since part_size and diag_size are only maintainted for 0 <= i < lmax, we let these be 0. let the lmax row be 1.
     2 boundary vertices:
         The cluster path consists of the two boundary vertices:
         -> point_size = [1,1,..] => size = [2,2,...]
         Only one part_path for each boundary in i=cover_level where part_size=[1,1,...]
     */
     int cover_level = edge_data->cover_level;
-
-
+    
     //TODO: Cache inefficient?
     if (this->is_path()) {
+        cout << this->cover_level << "; (" << this->min_path_edge->endpoints[0] << "," << this->min_path_edge->endpoints[1] << ")" << endl;
+        
+        //int cover_level = this->get_cover_level();
+
         fill(this->size.begin(), this->size.end(), 2);
         for (int i = 0; i < 2; i++) {
             //Fill the row of the coverlevel
@@ -52,6 +56,7 @@ void TwoEdgeCluster::create_find_size(EdgeData* edge_data, None* left, None* rig
         }
         
     } else if (this->get_num_boundary_vertices() == 1) {
+        //int cover_level = edge_data->cover_level;
         fill(size.begin(), size.begin() + cover_level + 1, 2);
         fill(size.begin() + cover_level + 1, size.end(), 1);
         for (int i = 0; i < 2; i++) {
@@ -64,20 +69,38 @@ void TwoEdgeCluster::create_find_size(EdgeData* edge_data, None* left, None* rig
 }
 
 void TwoEdgeCluster::merge_find_size(TwoEdgeCluster* left, TwoEdgeCluster* right) {
+
+    assert(this->cover_minus == -1 && this->cover_plus == -1);
+
     int lmax = TwoEdgeCluster::get_l_max();
     //Initialize vectors?
+    
+
+    /*
+    For a leaf node we have 3 cases:
+    0 boundary vertices:
+        There is no cluster path, thus size_C is 0 
+        There is no point set thus part_size and diag_size are also 0 
+    1 boundary vertex:
+        There is only one vertex on the cluster path, the boundary with cover_level = lmax.
+        Since part_size and diag_size are only maintainted for 0 <= i < lmax, we let these be 0. 
+    2 boundary vertices:
+        The cluster path consists of the two boundary vertices:
+        -> point_size = [1,1,..] => size = [2,2,...]
+        Only one part_path for each boundary in i=cover_level where part_size=[1,1,...]
+    */
+    //int cover_level = edge_data->cover_level;
+
+
 
     //Heterogenous children into point cluster
     if (this->get_num_boundary_vertices() == 1 && !this->has_middle_boundary()) {
         //We need to write to size, part and diag, so we first delete old data.
-        fill(this->size.begin(), this->size.end(), 0);
-        vector<vector<int>> part_vec = this->part_size[!this->has_left_boundary()];
-        vector<vector<int>> diag_vec = this->diag_size[!this->has_left_boundary()];
-        for (int i = 0; i < lmax + 1; i++) {
-            fill(part_vec[i].begin(), part_vec[i].end(), 0);
-            fill(diag_vec[i].begin(), diag_vec[i].end(), 0);
-        }
+        //vector<vector<int>> part_vec = this->part_size[!this->has_left_boundary()];
+        //vector<vector<int>> diag_vec = this->diag_size[!this->has_left_boundary()];
+        //TODO fix the part and diagsize shits
         
+        fill(this->size.begin(), this->size.end(), 0);
         if (this->has_left_boundary()) { 
             //left->cover_level() correct as left -- mid is the cluster path of left
             //Matrix multiply
@@ -92,8 +115,18 @@ void TwoEdgeCluster::merge_find_size(TwoEdgeCluster* left, TwoEdgeCluster* right
             }
             sum_rows_from(this->size, right->diag_size[1], 0);   
         }
-        //TODO fix the part and diagsize shits
 
+        
+        for (int i = 0; i < lmax + 1; i++) {
+            fill(this->part_size[0][i].begin(), this->part_size[0][i].end(), 0);
+            fill(this->part_size[1][i].begin(), this->part_size[1][i].end(), 0);
+            fill(this->diag_size[0][i].begin(), this->diag_size[0][i].end(), 0);
+            fill(this->diag_size[1][i].begin(), this->diag_size[1][i].end(), 0);
+        }
+        
+        // Copy size into partsize and diagsize row: lmax. 
+        copy(this->size.begin(), this->size.end(), this->part_size[!this->has_left_boundary()][lmax].begin());
+        copy(this->size.begin(), this->size.end(), this->diag_size[!this->has_left_boundary()][lmax].begin());
     //The general case
     } else {
         // Compute size
@@ -154,7 +187,7 @@ void TwoEdgeCluster::compute_part_size(vector<vector<int>>& target_part_size, ve
 }
 
 void TwoEdgeCluster::sum_rows_from(vector<int>& target_row, vector<vector<int>>& part_size, int row_index) { 
-    cout << "Before size in sum: ";
+    /*cout << "Before size in sum: ";
     for (int i = 0; i < l_max; i++) {
         cout << target_row[i] << ", ";
     }
@@ -165,17 +198,17 @@ void TwoEdgeCluster::sum_rows_from(vector<int>& target_row, vector<vector<int>>&
             cout << part_size[i][j] << " ";
         }
         cout << " , ";
-    }
+    }*/
     for (int i = row_index; i < l_max + 1; i++) {
         for (int j = 0; j < l_max; j++) {
             target_row[j] += part_size[i][j];
         }   
     }
-    cout << "After size in sum: ";
+    /*cout << "After size in sum: ";
     for (int i = 0; i < l_max; i++) {
         cout << target_row[i] << ", ";
     }
-    cout << endl;
+    cout << endl;*/
 }
 void TwoEdgeCluster::sum_diag_size(vector<int>& target_diag_size, vector<vector<int>>& diag_size, int row_index) { 
     int lmax = TwoEdgeCluster::get_l_max();

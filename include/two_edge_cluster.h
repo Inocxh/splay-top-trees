@@ -10,6 +10,11 @@ using namespace std;
 struct EdgeData {
     int cover_level = -1;
     int endpoints[2];
+    EdgeData(int v1, int v2) {
+        endpoints[0] = v1;
+        endpoints[1] = v2;
+    }; 
+    EdgeData(){};
 };
 
 class TwoEdgeCluster : public Node<TwoEdgeCluster, EdgeData, None> {
@@ -68,7 +73,7 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, EdgeData, None> {
         }
         std::cout << "] ";
         for (int i = 0; i < 2; i++) {
-            std::cout << "part " << i << ": [";
+            std::cout << "diag " << i << ": [";
             for (int j = 0; j < l_max + 1; j++) {
                 std::cout << "[";
                 for (int k = 0; k < l_max; k++) {
@@ -77,6 +82,8 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, EdgeData, None> {
                 std::cout << "]";
             }
             std::cout << "];  ";
+            
         }
+        std::cout << " c: " << this->cover_level << " c-: " << this->cover_minus << " c+: " << cover_plus << "   ";
     }
 };

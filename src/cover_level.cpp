@@ -137,22 +137,24 @@ void TwoEdgeCluster::merge_cover(TwoEdgeCluster* left, TwoEdgeCluster* right) {
 };
 
 void TwoEdgeCluster::split_cover(TwoEdgeCluster* left, TwoEdgeCluster* right) {
-    if (left->is_path()) {
-        if (std::max(left->cover_level, left->cover_minus) <= this->cover_minus) {
-            left->cover_minus = this->cover_minus;
+    if (this->is_path()) {
+        if (left->is_path()) {
+            if (std::max(left->cover_level, left->cover_minus) <= this->cover_minus) {
+                left->cover_minus = this->cover_minus;
+            }
+            if (left->cover_level <= std::max(this->cover_minus, this->cover_plus)) {
+                left->cover_level = this->cover_plus;
+                left->cover_plus = this->cover_plus;
+            }
         }
-        if (left->cover_level <= std::max(this->cover_minus, this->cover_plus)) {
-            left->cover_level = this->cover_plus;
-            left->cover_plus = this->cover_plus;
-        }
-    }
-    if (right->is_path()) {
-        if (std::max(right->cover_level, right->cover_minus) <= this->cover_minus) {
-            right->cover_minus = this->cover_minus;
-        }
-        if (right->cover_level <= std::max(this->cover_minus, this->cover_plus)) {
-            right->cover_level = this->cover_plus;
-            right->cover_plus = this->cover_plus;
+        if (right->is_path()) {
+            if (std::max(right->cover_level, right->cover_minus) <= this->cover_minus) {
+                right->cover_minus = this->cover_minus;
+            }
+            if (right->cover_level <= std::max(this->cover_minus, this->cover_plus)) {
+                right->cover_level = this->cover_plus;
+                right->cover_plus = this->cover_plus;
+            }
         }
     }
     this->cover_minus = -1;
