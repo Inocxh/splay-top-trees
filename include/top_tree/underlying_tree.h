@@ -19,7 +19,6 @@ class Vertex;
 template<class C, class E, class V>
 class Tree;
 
-//This is an empty type
 class None {
 
 };

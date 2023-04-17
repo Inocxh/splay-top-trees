@@ -1,5 +1,44 @@
 #include <catch2/catch_test_macros.hpp>
-#include "max_weight_path_cluster.hpp"
+#include "top_tree.h"
+#include <climits>
+
+struct MaxPathCluster : Node<MaxPathCluster, int, None> {
+    int max_weight;
+    void create(int* edge, None* left, None* right) {
+        this->max_weight = this->is_path() ? *edge : INT_MIN;
+    };    
+    void merge(MaxPathCluster* left, MaxPathCluster* right) {
+        this->max_weight = std::max(
+            left->is_path() ? left->max_weight : INT_MIN, 
+            right->is_path() ? right->max_weight : INT_MIN
+        );
+    };
+    void add_weight(int weight) {
+        
+    }
+    void print_data() {
+        std::cout << "num_b: "  << this->get_num_boundary_vertices() << " ";
+    }
+};
+
+TEST_CASE("Max-edge-weight all edges removed", "[user data]") {
+    int size = 10;
+    TopTree<MaxPathCluster, int, None> top_tree = TopTree<MaxPathCluster,int,None>(size);
+    top_tree.link(0,1,1);
+    top_tree.link(2,1,1);
+    top_tree.link(3,0,1);
+    top_tree.link(4,3,1);
+    top_tree.link(5,3,1);
+    top_tree.link(6,3,1);
+    top_tree.link(7,2,1);
+    std::get<0>(top_tree.cut(3,0));
+    std::get<0>(top_tree.cut(3,4));
+    top_tree.cut(1,0);
+    top_tree.link(2,4,1);
+    top_tree.expose(7);
+    top_tree.deexpose(7);
+    top_tree.link(4,1,1);
+}
 
 TEST_CASE("Max-edge-weight test (small)", "[user data]") {
     int size = 10;

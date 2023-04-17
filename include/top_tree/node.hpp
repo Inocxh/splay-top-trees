@@ -118,9 +118,10 @@ Node<C,E,V>* Node<C,E,V>::semi_splay_step() {
         // path, point, point
         // path, path,  path 
         if (parent->is_path() && (grandparent->is_path() || ggparent->is_point())) {
+            ggparent->push_flip();
             grandparent->push_flip();
             parent->push_flip();
-        
+
             if (node->is_right_child() == parent->is_right_child()) {
                 node->rotate_up();
                 return grandparent;
