@@ -228,7 +228,12 @@ void TwoEdgeCluster::split_find_size(TwoEdgeCluster* left, TwoEdgeCluster* right
 
     if (this->is_path()) {
         if (left->is_path()) {
-
+            if (std::max(left->cover_level, left->cover_minus) <= this->cover_minus) {
+                // TODO: sum left from this->cover_minus into -1. i.e. uncover
+            }
+            if (left->cover_level <= this->cover_plus) {
+                // TODO: sum left from -1 into this->cover_plus, i.e. cover
+            }
         }
         if (right->is_path()) {
             
