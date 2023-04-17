@@ -19,10 +19,9 @@ class Vertex;
 template<class C, class E, class V>
 class Tree;
 
-//This is an empty type
-//A unit class like None {} would have size one and would take up space for no reason. 
-//Void also creates problems as it cannot be instansiated
-typedef std::monostate None;
+class None {
+
+};
 class DefaultC;
 
 template<class C = DefaultC, class E = None, class V = None> 

@@ -1,5 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include "top_tree.h"
+#include <climits>
 
 struct MaxWeightCluster : Node<MaxWeightCluster, int, None> {
     int max_non_path_weight;

@@ -38,7 +38,7 @@ class TopTree {
     void delete_all_ancestors(C*);
     C* expose_internal(Vertex<C,E,V>*);
     C* deexpose_internal(Vertex<C,E,V>*);
-    C* link_internal(Vertex<C,E,V>*, Vertex<C,E,V>*, E);
+    std::tuple<C*,Edge<C,E,V>*> link_internal(Vertex<C,E,V>*, Vertex<C,E,V>*, E);
     std::tuple<C*, C*> cut_internal(Edge<C,E,V>*);
 
 
@@ -50,8 +50,16 @@ class TopTree {
     C* link(int u, int v, E);
     std::tuple<C*, C*> cut(int, int);
 
+    Edge<C,E,V>* link_ptr(int u, int v, E);
+    std::tuple<C*,C*> cut_ptr(Edge<C,E,V>*);
+
 
     TopTree(int size);
+
+    void print_tree() {
+        this->underlying_tree->print_tree();
+    }
+
 };
 
 template<class C = DefaultC, class E = None, class V = None> 

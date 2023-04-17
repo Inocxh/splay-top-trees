@@ -1,6 +1,7 @@
 #include "top_tree.h"
 #include <tuple>
 #include <vector>
+
 #include <cassert>
 
 
@@ -90,8 +91,6 @@ C* TopTree<C,E,V>::expose_internal(Vertex<C,E,V>* vertex) {
     }
     node->full_splay();
 
-    C* root;
-
     //Assert that the depth is at most 1, by lemma 4.3
     assert(!node->get_parent() || (node->get_parent() && !node->get_parent()->get_parent())); 
     InternalNode<C,E,V>* parent = node->get_parent();
@@ -161,22 +160,41 @@ C* TopTree<C,E,V>::link(int u_id, int v_id, E data) {
     assert(this->num_exposed == 0);
     Vertex<C,E,V>* u = this->underlying_tree->get_vertex(u_id); 
     Vertex<C,E,V>* v = this->underlying_tree->get_vertex(v_id); 
-    return link_internal(u, v, data);
+    return std::get<0>(link_internal(u, v, data));
+}
+
+template<class C, class E, class V>
+Edge<C,E,V>* TopTree<C,E,V>::link_ptr(int u_id, int v_id, E data) {
+    assert(this->num_exposed == 0);
+    Vertex<C,E,V>* u = this->underlying_tree->get_vertex(u_id); 
+    Vertex<C,E,V>* v = this->underlying_tree->get_vertex(v_id); 
+    return std::get<1>(link_internal(u, v, data));
 }
 
 //Assumes u and v in trees with no exposed vertices!
 template<class C, class E, class V>
-C* TopTree<C,E,V>::link_internal(Vertex<C,E,V>* u, Vertex<C,E,V>* v, E data) {
-    
+std::tuple<C*,Edge<C,E,V>*> TopTree<C,E,V>::link_internal(Vertex<C,E,V>* u, Vertex<C,E,V>* v, E data) {
     C* Tu = expose_internal(u);
+    C* Tv = expose_internal(v);
+    //Tu now has constant depth (TODO PROVE).
+    C* root_u = Tu;
+    while (root_u && root_u->get_parent()) {
+        root_u = root_u->get_parent();
+    }
+    //Compare the root of Tu, Tv.
+    // if (root_u = Tv) {
+    //     deexpose_internal(u);
+    //     deexpose_internal(v);
+    //     return std::make_tuple(nullptr,nullptr);
+    // }
+
     if (Tu && Tu->has_left_boundary()) {
         Tu->flip();
     }
-    u->exposed = false;
-    C* Tv = expose_internal(v);
     if (Tv && Tv->has_right_boundary()) {
         Tv->flip();
     }
+    u->exposed = false;
     v->exposed = false;
 
     Edge<C,E,V>* edge = this->underlying_tree->add_edge(u, v, data);
@@ -191,7 +209,7 @@ C* TopTree<C,E,V>::link_internal(Vertex<C,E,V>* u, Vertex<C,E,V>* v, E data) {
         InternalNode<C,E,V>* root_new = new InternalNode<C,E,V>(root, Tv, 0);
         root = root_new;
     }
-    return root;
+    return std::make_tuple(root,edge);
 }
 
 template<class C, class E, class V>
@@ -214,12 +232,17 @@ std::tuple<C*, C*> TopTree<C,E,V>::cut(int u_id, int v_id) {
     Edge<C,E,V>* e = this->underlying_tree->find_edge(u_id, v_id);
     return this->cut_internal(e);
 }
+
+template<class C, class E, class V>
+std::tuple<C*, C*> TopTree<C,E,V>::cut_ptr(Edge<C,E,V>* edge) {
+    assert(this->num_exposed == 0);
+    return this->cut_internal(edge);
+}
     
 template<class C, class E, class V>
 std::tuple<C*, C*> TopTree<C,E,V>::cut_internal(Edge<C,E,V>* edge) {
     Vertex<C,E,V>* u = edge->endpoints[0];
     Vertex<C,E,V>* v = edge->endpoints[1];
-
     edge->node->full_splay();
     this->delete_all_ancestors(edge->node);
     this->underlying_tree->del_edge(edge);    
@@ -228,6 +251,6 @@ std::tuple<C*, C*> TopTree<C,E,V>::cut_internal(Edge<C,E,V>* edge) {
     v->exposed = true;
     C* Tu = this->deexpose_internal(u);
     C* Tv = this->deexpose_internal(v);
-    return std::tuple(Tu, Tv);
+    return std::tuple<C*,C*>(Tu, Tv);
 }
 
