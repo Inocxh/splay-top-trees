@@ -45,7 +45,7 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, EdgeData, None> {
 
     void merge_find_size(TwoEdgeCluster*, TwoEdgeCluster*);
     void create_find_size(EdgeData*, None*, None*);
-    
+    void split_find_size(TwoEdgeCluster*, TwoEdgeCluster*);
     public:
 
     TwoEdgeCluster();

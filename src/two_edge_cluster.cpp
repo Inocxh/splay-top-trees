@@ -34,6 +34,7 @@ void TwoEdgeCluster::merge(TwoEdgeCluster* l, TwoEdgeCluster* r) {
 };
 void TwoEdgeCluster::split(TwoEdgeCluster* l, TwoEdgeCluster* r) {
     split_cover(l, r);
+    split_find_size(l, r);
 };
 
 void TwoEdgeCluster::split_leaf(EdgeData* edge_data, None* left, None* right) {

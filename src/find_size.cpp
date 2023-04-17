@@ -221,3 +221,21 @@ void TwoEdgeCluster::sum_diag_size(vector<int>& target_diag_size, vector<vector<
         target_diag_size[j] = 0;
     }
 }
+
+
+
+void TwoEdgeCluster::split_find_size(TwoEdgeCluster* left, TwoEdgeCluster* right) {
+
+    if (this->is_path()) {
+        if (left->is_path()) {
+
+        }
+        if (right->is_path()) {
+            
+        }
+
+
+    }
+
+
+}

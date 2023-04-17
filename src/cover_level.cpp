@@ -40,7 +40,7 @@ void TwoEdgeCluster::create_cover(EdgeData* edge, None* left, None* right) {
 };
 
 void TwoEdgeCluster::merge_cover(TwoEdgeCluster* left, TwoEdgeCluster* right) {
-    if (this->is_path()) {
+    if (this->is_path() || this->has_middle_boundary()) {
         if (left->cover_level <= right->cover_level) {
             this->cover_level = left->cover_level;
             this->min_path_edge = left->min_path_edge;

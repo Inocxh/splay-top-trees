@@ -76,3 +76,24 @@ TEST_CASE("Max-edge-weight cut test", "[user data]") {
 
     REQUIRE(root->max_weight == 1);
 }
+
+
+TEST_CASE("Test123") {
+    TopTree<MaxPathCluster, int, None> top_tree = TopTree<MaxPathCluster, int, None>(10);
+
+    top_tree.link(0,1,1);
+    top_tree.link(2,1,1);
+    top_tree.link(3,0,1);
+    top_tree.link(4,3,1);
+    top_tree.link(5,3,1);
+    top_tree.link(6,3,1);
+    top_tree.link(7,2,1);
+    top_tree.cut(3,0);
+    top_tree.cut(3,4);
+    top_tree.cut(1,0);
+    top_tree.link(2,4,1);
+    top_tree.cut(3,6);
+    top_tree.expose(7)->print(0,false);
+    top_tree.deexpose(7);
+    top_tree.expose(4,1);
+}

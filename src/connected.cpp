@@ -11,15 +11,30 @@ void Connected::cut(int u, int v){
     std::tuple<ConnectedCluster*, ConnectedCluster*> roots = top_tree->cut(u, v);
     ConnectedCluster* left = std::get<0>(roots);
     ConnectedCluster* right = std::get<1>(roots);
-    left->id = (size_t) left;
-    right->id = (size_t) right;
+    if (left)
+        left->id = (size_t) left;
+    if (right)
+        right->id = (size_t) right;
 };
 
 bool Connected::connected(int u, int v){
-    int u_id = this->top_tree->expose(u)->id;
+    
+    ConnectedCluster* u_root = this->top_tree->expose(u);
+    if (!u_root) {
+        this->top_tree->deexpose(u);
+        return false;
+    }
+    int u_id = u_root->id;
     this->top_tree->deexpose(u);
-    int v_id = this->top_tree->expose(v)->id;
+
+    ConnectedCluster* v_root = this->top_tree->expose(v);
+    if (!v_root) {
+        this->top_tree->deexpose(v);
+        return false;
+    }
+    int v_id = v_root->id;
     this->top_tree->deexpose(v);
+
     return u_id == v_id;
 };
 
