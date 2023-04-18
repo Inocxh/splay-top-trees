@@ -5,7 +5,11 @@ void TwoEdgeCluster::cover(int i) {
     this->cover_plus = std::max(this->cover_plus,i);
 }
 void TwoEdgeCluster::uncover(int i) {
-    
+    if (this->cover_level <= i) {
+        this->cover_level = -1;
+        this->cover_plus = -1;
+        this->cover_minus = std::max(this->cover_minus, i);
+    }
 }
 
 void TwoEdgeCluster::create_cover(EdgeData* edge, None* left, None* right) {
@@ -94,46 +98,7 @@ void TwoEdgeCluster::merge_cover(TwoEdgeCluster* left, TwoEdgeCluster* right) {
     }
     this->cover_plus = -1;
     this->cover_minus = -1;
-    
 
-
-
-
-
-
-
-
-
-/*
-    this->cover_level = get_l_max();
-    this->min_path_edge = nullptr;
-    this->global_cover = get_l_max();
-    this->min_global_edge = nullptr;
-    
-    TwoEdgeCluster* children[2] = {left, right};
-    for (int i = 0; i < 2; i++) {
-        //bool is_subset_of_path = (i == 0 ? this->has_right_boundary() : this->has_left_boundary());
-        TwoEdgeCluster* child = children[i];
-        //TODO: Prove correctness of this.
-        if (this->has_middle_boundary() || (this->has_left_boundary() && this->has_right_boundary())) {
-            if (child->cover_level < this->cover_level) {
-                this->cover_level = child->cover_level;
-                this->min_path_edge = child->min_path_edge;
-            }   
-        } else {
-            if (child->cover_level < this->global_cover) {
-                this->global_cover = child->cover_level;
-                this->min_global_edge = child->min_path_edge;
-            }
-        }
-        if (child->global_cover < this->global_cover) {
-            this->global_cover = child->global_cover;
-            this->min_global_edge = child->min_global_edge;
-        }
-    }
-    this->cover_minus = -1;
-    this->cover_plus = -1;
-*/
 };
 
 void TwoEdgeCluster::split_cover(TwoEdgeCluster* left, TwoEdgeCluster* right) {
@@ -150,23 +115,29 @@ void TwoEdgeCluster::split_cover(TwoEdgeCluster* left, TwoEdgeCluster* right) {
         if (right->is_path()) {
             if (std::max(right->cover_level, right->cover_minus) <= this->cover_minus) {
                 right->cover_minus = this->cover_minus;
+                right->uncover_val = this->cover_minus;
             }
             if (right->cover_level <= std::max(this->cover_minus, this->cover_plus)) {
                 right->cover_level = this->cover_plus;
                 right->cover_plus = this->cover_plus;
+                if (this->cover_minus > this->cover_plus) {
+                    right->uncover_val = this->cover_minus;
+                } else {
+                    right->cover_val = this->cover_plus;
+                }
             }
         }
     }
-    this->cover_minus = -1;
-    this->cover_plus = -1;
+    //this->cover_minus = -1;
+    //this->cover_plus = -1;
 };
 
 void TwoEdgeCluster::split_leaf_cover(EdgeData* edge_data, None* left, None* right) {
     if (this->is_path()) {
         edge_data->cover_level = this->cover_level;
     }
-    this->cover_minus = -1;
-    this->cover_plus = -1;
+    //this->cover_minus = -1;
+    //this->cover_plus = -1;
 }
 
 int TwoEdgeCluster::get_cover_level() {

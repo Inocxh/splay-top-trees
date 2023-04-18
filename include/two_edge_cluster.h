@@ -24,6 +24,9 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, EdgeData, None> {
     int cover_minus;
     int global_cover;
 
+    int uncover_val = -1;
+    int cover_val = -1;
+
     EdgeData* min_path_edge;
     EdgeData* min_global_edge;
 
@@ -34,13 +37,12 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, EdgeData, None> {
 
     //Find size
     vector<int> size;//[]
-    vector<vector<int>> part_size[2];//[][] Could be binary trees.
-    vector<vector<int>> diag_size[2];//[][]
+    vector<vector<int>> part_size[2]; //[][] Could be binary trees.
 
-    void compute_part_size(vector<vector<int>>&, vector<vector<int>>&, vector<vector<int>>&);
-    void compute_diag_size(vector<vector<int>>&, vector<vector<int>>&, vector<vector<int>>&);
-    void sum_rows_from(vector<int>&, vector<vector<int>>&, int);
-    void sum_diag_size(vector<int>&, vector<vector<int>>&, int);
+    void compute_part_size(vector<vector<int>>&, vector<vector<int>>&, vector<vector<int>>&, int);
+    void sum_row_range(vector<int>&, vector<vector<int>>&, int, int);
+    void delete_row_range(vector<vector<int>>&, int, int);
+    void sum_diagonal(vector<int>&, vector<vector<int>>&);
 
     void merge_find_size(TwoEdgeCluster*, TwoEdgeCluster*);
     void create_find_size(EdgeData*, None*, None*);
@@ -72,16 +74,15 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, EdgeData, None> {
         }
         std::cout << "] ";
         for (int i = 0; i < 2; i++) {
-            std::cout << "diag " << i << ": [";
-            for (int j = 0; j < l_max + 1; j++) {
+            std::cout << " p" << i << ": [";
+            for (int j = 0; j < l_max + 2; j++) {
                 std::cout << "[";
                 for (int k = 0; k < l_max; k++) {
-                    std::cout << this->diag_size[i][j][k] << ", ";
+                    std::cout << this->part_size[i][j][k] << ", ";
                 }
                 std::cout << "]";
             }
-            std::cout << "];  ";
-            
+            std::cout << "];";
         }
         std::cout << " c: " << this->cover_level << " c-: " << this->cover_minus << " c+: " << cover_plus << "   ";
     }

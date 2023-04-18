@@ -4,15 +4,11 @@ TwoEdgeCluster::TwoEdgeCluster() {
     int lmax = TwoEdgeCluster::get_l_max();
 
     size = std::vector<int>(lmax);
-    this->diag_size[0] = std::vector<vector<int>>(lmax + 1);
-    this->part_size[0] = std::vector<vector<int>>(lmax + 1);
-    this->part_size[1] = std::vector<vector<int>>(lmax + 1);
-    this->diag_size[1] = std::vector<vector<int>>(lmax + 1);
-    for (int i = 0; i < lmax + 1; i++) {
-        this->diag_size[0][i] = std::vector<int>(lmax);
+    this->part_size[0] = std::vector<vector<int>>(lmax + 2);
+    this->part_size[1] = std::vector<vector<int>>(lmax + 2);
+    for (int i = 0; i < lmax + 2; i++) {
         this->part_size[0][i] = std::vector<int>(lmax);
         this->part_size[1][i] = std::vector<int>(lmax);
-        this->diag_size[1][i] = std::vector<int>(lmax);
     }
 }
 
@@ -33,8 +29,9 @@ void TwoEdgeCluster::merge(TwoEdgeCluster* l, TwoEdgeCluster* r) {
     merge_find_size(l, r);
 };
 void TwoEdgeCluster::split(TwoEdgeCluster* l, TwoEdgeCluster* r) {
-    split_cover(l, r);
     split_find_size(l, r);
+    split_cover(l, r);
+    
 };
 
 void TwoEdgeCluster::split_leaf(EdgeData* edge_data, None* left, None* right) {
