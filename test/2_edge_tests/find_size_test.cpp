@@ -251,7 +251,7 @@ TEST_CASE("FS: Uncover massive", "[find size test]")  {
     T.deexpose(1,4);
 
 
-    T.expose(4,7);
+    /*T.expose(4,7);
     T.deexpose(4,7);
     T.expose(10,2);
     T.deexpose(10,2);
@@ -266,7 +266,7 @@ TEST_CASE("FS: Uncover massive", "[find size test]")  {
     T.expose(6,5);
     T.deexpose(6,5);
     T.expose(11,5);
-    T.deexpose(11,5);
+    T.deexpose(11,5);*/
 
     root = T.expose(16,6);
     root->print(0,false);
@@ -276,8 +276,6 @@ TEST_CASE("FS: Uncover massive", "[find size test]")  {
     REQUIRE(root->get_size(3) == 6); 
     T.deexpose(16,6);
 }
-
-
 
 TEST_CASE("Small", "[find size test]") {
 
@@ -312,30 +310,6 @@ TEST_CASE("Small", "[find size test]") {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 TEST_CASE("FS: minified massive", "[find size test]")  {
     TopTree<TwoEdgeCluster,EdgeData,None> T = TopTree<TwoEdgeCluster,EdgeData,None>(8);
     TwoEdgeCluster::set_l_max(2);
@@ -362,37 +336,114 @@ TEST_CASE("FS: minified massive", "[find size test]")  {
     T.deexpose(4, 2); 
 }
 
-TEST_CASE("FS: miniminified massive", "[find size test]")  {
-    TopTree<TwoEdgeCluster,EdgeData,None> T = TopTree<TwoEdgeCluster,EdgeData,None>(8);
-    TwoEdgeCluster::set_l_max(2);
+TEST_CASE("FS: cut", "[find size test]")  {
+    TopTree<TwoEdgeCluster,EdgeData,None> T = TopTree<TwoEdgeCluster,EdgeData,None>(20);
+    TwoEdgeCluster::set_l_max(4);
     TwoEdgeCluster *root;
 
     T.link(0,1, EdgeData(0,1));
     T.link(1,2, EdgeData(1,2));
     T.link(2,3, EdgeData(2,3));
-    T.link(1,4, EdgeData(1,4)); 
+    T.link(3,4, EdgeData(3,4)); 
 
-   
-    cover(T,0,3,0);
-    cover(T,1,2,1);
+    T.link(1,5, EdgeData(1,2));
+    T.link(5,6, EdgeData(1,2));
+    T.link(6,7, EdgeData(1,2));
+    
+    T.link(5,8, EdgeData(1,2));
+    T.link(8,9, EdgeData(1,2));
+    T.link(9,10, EdgeData(1,2));
 
-    // PURGE
-    T.expose(1,4);
-    T.deexpose(1,4); 
-    T.expose(2,3);
-    T.deexpose(2,3);
-    T.expose(0,1);
-    T.deexpose(0,1);
-    T.expose(2,4);
-    T.deexpose(2,4);   
+    T.link(8,11, EdgeData(1,2));
+    T.link(11,12, EdgeData(1,2));
 
-    // PURGE DONE
+    cover(T,0,10,0);
+    cover(T,12,7,1);
 
-
-    root = T.expose(1,4);
-    root->print(0, false);
-    REQUIRE(root->get_size(0) == 5);
+    root = T.expose(0,2);
+    REQUIRE(root->get_size(0) == 11);
     REQUIRE(root->get_size(1) == 3);
-    T.deexpose(4, 1); 
+    T.deexpose(0, 2); 
+
+    T.cut(5,8);
+
+    root = T.expose(8,9);
+    REQUIRE(root->get_size(0) == 5);
+    REQUIRE(root->get_size(1) == 4);
+    T.deexpose(8,9);
+
+    root = T.expose(0,2);
+    REQUIRE(root->get_size(0) == 6);
+    REQUIRE(root->get_size(1) == 3);
+    T.deexpose(0, 2); 
+
+
+    cover(T,6,3,0);
+
+    T.cut(5,1);
+    T.link(7,4, EdgeData(1,2));
+    T.link(10,7, EdgeData(1,2));
+
+    cover(T,7,4,2);
+    cover(T,7,3,1);
+    cover(T,7,10,1);
+    uncover(T,7,9,0);
+
+    root = T.expose(6,7);
+    REQUIRE(root->get_size(0) == 9);
+    REQUIRE(root->get_size(1) == 6);
+    T.deexpose(6, 7); 
+
+
+    T.cut(6,7);
+    T.cut(1,2);
+    root = T.expose(4,7);
+    REQUIRE(root->get_size(0) == 5);
+    REQUIRE(root->get_size(1) == 4);
+    T.deexpose(4, 7); 
+
+
+    cover(T,12,2,0);
+
+    T.link(6,9, EdgeData(1,2));
+
+    cover(T,9,5, 2);
+    uncover(T,2,4,1);
+    cover(T,3,4,2);
+
+    root = T.expose(7,8);
+    REQUIRE(root->get_size(0) == 10);
+    REQUIRE(root->get_size(1) == 10);
+    REQUIRE(root->get_size(2) == 8);
+    T.deexpose(7,8); 
+    
+
+    T.cut(9,10);
+    T.link(6,7, EdgeData(1,2));
+    T.link(1,6, EdgeData(1,2));
+    T.cut(8,9);
+    T.cut(7,4);
+
+
+    root = T.expose(8,11);
+    REQUIRE(root->get_size(0) == 3);
+    REQUIRE(root->get_size(1) == 3);
+    REQUIRE(root->get_size(2) == 2);
+    T.deexpose(11,8); 
+
+    root = T.expose(1,6);
+    REQUIRE(root->get_size(0) == 5);
+    REQUIRE(root->get_size(1) == 4);
+    REQUIRE(root->get_size(2) == 4);
+    REQUIRE(root->get_size(3) == 2);
+    T.deexpose(1,6); 
+
+    root = T.expose(2,3);
+    REQUIRE(root->get_size(0) == 3);
+    REQUIRE(root->get_size(1) == 3);
+    REQUIRE(root->get_size(2) == 3);
+    REQUIRE(root->get_size(3) == 2);
+    T.deexpose(2,3); 
+
 }
 

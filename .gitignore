@@ -35,6 +35,7 @@
 build/
 CMakeFiles/
 Testing/
+x64/
 
 .vscode/
 src/lib/Catch2
