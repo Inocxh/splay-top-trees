@@ -62,9 +62,9 @@ void LeafNode<C,E,V>::print(int indent, bool flippe) {
         std::cout << "    ";
     }
     this->print_data();
-    std::cout << "endpoints:" <<
-    this->edge->get_endpoint(this->flipped != flippe)->get_id() << "; " << 
-    this->edge->get_endpoint(!this->flipped !=flippe)->get_id() << std::endl;
+    std::cout << "ep: (" <<
+    this->edge->get_endpoint(this->flipped != flippe)->get_id() << "," << 
+    this->edge->get_endpoint(!this->flipped !=flippe)->get_id() << ")" << std::endl;
 
 
 }

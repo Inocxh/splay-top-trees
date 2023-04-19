@@ -36,6 +36,9 @@ void Node<C,E,V>::rotate_up() {
         C* sibling = this->get_sibling();
         C* uncle = parent->get_sibling();
 
+        if (grandparent->get_parent()) { // TODO: DOes this need to be recursive?
+            grandparent->get_parent()->push_flip();
+        }
         grandparent->push_flip();
         parent->push_flip();
 
@@ -48,6 +51,9 @@ void Node<C,E,V>::rotate_up() {
         bool uncle_is_path = uncle->is_path();
         bool gp_is_path = grandparent->is_path();
 
+        bool uncle_is_right = uncle->is_right_child();
+
+
         bool new_parent_is_path, flip_new_parent, flip_grandparent;
 
         //Rotation on path
@@ -58,7 +64,7 @@ void Node<C,E,V>::rotate_up() {
             flip_grandparent = false;
             if (gp_middle && !gp_is_path && grandparent->parent) {
                 //Equivalent to pseudo-code from 'Splay Top Trees'
-                flip_grandparent = grandparent->is_right_child() == uncle->is_right_child();
+                flip_grandparent = grandparent->is_right_child() == uncle_is_right;
             }         
         //Rotation on star
         } else if (to_same_side) {
@@ -73,13 +79,13 @@ void Node<C,E,V>::rotate_up() {
             this->flip();
         }
 
-        parent->children[!uncle->is_right_child()] = sibling;
-        parent->children[uncle->is_right_child()] = uncle;
+        parent->children[!uncle_is_right] = sibling;
+        parent->children[uncle_is_right] = uncle;
         parent->flipped = flip_new_parent;
         parent->num_boundary_vertices = new_parent_is_path + 1;
         
-        grandparent->children[!uncle->is_right_child()] = (C*) this;
-        grandparent->children[uncle->is_right_child()] = parent;
+        grandparent->children[!uncle_is_right] = (C*) this;
+        grandparent->children[uncle_is_right] = parent;
 
         grandparent->flipped = flip_grandparent;
         this->parent = grandparent;

@@ -78,9 +78,9 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, EdgeData, None> {
             for (int j = 0; j < l_max + 2; j++) {
                 std::cout << "[";
                 for (int k = 0; k < l_max; k++) {
-                    std::cout << this->part_size[i][j][k] << ", ";
+                    std::cout << this->part_size[i][j][k] << ",";
                 }
-                std::cout << "]";
+                std::cout << "] ";
             }
             std::cout << "];";
         }

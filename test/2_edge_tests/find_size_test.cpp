@@ -250,16 +250,65 @@ TEST_CASE("FS: Uncover massive", "[find size test]")  {
     REQUIRE(root->get_size(2) == 6);
     T.deexpose(1,4);
 
+
+    T.expose(4,7);
+    T.deexpose(4,7);
+    T.expose(10,2);
+    T.deexpose(10,2);
+    T.expose(9,3);
+    T.deexpose(9,3);
+    T.expose(11,7);
+    T.deexpose(11,7);
+    T.expose(16,14);
+    T.deexpose(16,14);
+    T.expose(0,10);
+    T.deexpose(0,10);
+    T.expose(6,5);
+    T.deexpose(6,5);
+    T.expose(11,5);
+    T.deexpose(11,5);
+
     root = T.expose(16,6);
-    REQUIRE(root->get_size(0) == 11);
-    REQUIRE(root->get_size(1) == 7); // TODO; it finds one less here
-    REQUIRE(root->get_size(2) == 6); // TODO; also here
-    REQUIRE(root->get_size(3) == 6); // TODO; and here.
+    root->print(0,false);
+    REQUIRE(root->get_size(0) == 11); 
+    REQUIRE(root->get_size(1) == 7); 
+    REQUIRE(root->get_size(2) == 6); 
+    REQUIRE(root->get_size(3) == 6); 
     T.deexpose(16,6);
+}
 
 
 
+TEST_CASE("Small", "[find size test]") {
 
+    TopTree<TwoEdgeCluster,EdgeData,None> T = TopTree<TwoEdgeCluster,EdgeData,None>(7);
+    TwoEdgeCluster::set_l_max(4);
+    TwoEdgeCluster *root;
+
+    T.link(0,6, EdgeData(0,1));
+    T.link(0,1, EdgeData(0,1));
+    T.link(1,2, EdgeData(1,2));
+    T.link(2,3, EdgeData(2,3));
+    T.link(3,4, EdgeData(2,3));
+    T.link(4,5, EdgeData(2,3));
+    
+    cover(T, 1, 5, 0);
+    cover(T, 2, 5, 1);
+    cover(T, 3, 5, 2);
+    cover(T, 4, 5, 3);
+
+    cover(T, 0, 6, 3);
+
+    uncover(T, 0, 5, 0);
+    uncover(T, 0, 5, 1);
+    uncover(T, 0, 5, 2);
+
+    T.expose(0,6);
+    T.deexpose(0,6);
+    T.expose(3,4);
+    T.deexpose(3,4);
+    T.expose(0,4)->print(0, false);
+    T.deexpose(0,4);
 }
 
 
