@@ -80,3 +80,9 @@ void InternalNode<C,E,V>::print(int indent, bool was_flip) {
     this->children[this->flipped != was_flip]->print(indent + 1, this->flipped != was_flip);
     this->children[!this->flipped != was_flip]->print(indent + 1, this->flipped != was_flip);
 }
+
+template<class C, class E, class V>
+int InternalNode<C,E,V>::get_endpoint_id(int e) {
+    //TODO proper error handling.
+    return -1;
+};
