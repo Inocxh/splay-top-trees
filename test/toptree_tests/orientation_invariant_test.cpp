@@ -52,27 +52,6 @@ struct OrientationCluster : Node<OrientationCluster, None, None> {
         std::cout << "fl:" << this->is_flipped() << " l: " << leftmost_boundary 
         << "; r: " << rightmost_boundary << " id: " << std::hex <<(long long int) this<< std::dec << " " << this->get_num_boundary_vertices() << " " ;
     }
-
-    void check_invariant() {
-        this->push_flip();
-        if (left && right) {
-            int ll = left->is_flipped() ? left->rightmost_boundary : left->leftmost_boundary;
-            int lr = !left->is_flipped() ? left->rightmost_boundary : left->leftmost_boundary;
-            int rl = right->is_flipped() ? right->rightmost_boundary : right->leftmost_boundary;
-            int rr = !right->is_flipped() ? right->rightmost_boundary : right->leftmost_boundary;
-            assert(lr == rl);
-
-            left->check_invariant();
-            right->check_invariant();
-        } else if (is_edge) {
-            if (this->has_left_boundary()) {
-                assert(this->leftmost_boundary == this->get_endpoint_id(0));
-            }
-            if (this->has_right_boundary()) {
-                assert(this->rightmost_boundary == this->get_endpoint_id(1));
-            }
-        }
-    }
 };
 
 TEST_CASE("Orientation test 1", "[user data]") {
@@ -99,8 +78,6 @@ TEST_CASE("Orientation test 1", "[user data]") {
     top_tree.link(21,18, None())->print(0,false);
     auto l = top_tree.link(23,16, None());
     l->print(0,false);
-    //l->check_invariant();
-    //l->print(0,false);
 
 
     top_tree.expose(2);
