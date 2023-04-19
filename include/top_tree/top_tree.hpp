@@ -84,7 +84,7 @@ C* TopTree<C,E,V>::expose_internal(Vertex<C,E,V>* vertex) {
         //Is this legal? 
         InternalNode<C,E,V>* node_int = (InternalNode<C,E,V>*) node;
         InternalNode<C,E,V>* parent = (InternalNode<C,E,V>*) (node->get_parent());
-
+        parent->push_flip();
         node_int->push_flip();
         node_int->children[node->is_right_child()]->rotate_up();
 
