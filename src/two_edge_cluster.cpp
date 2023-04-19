@@ -13,8 +13,8 @@ TwoEdgeCluster::TwoEdgeCluster() {
 }
 
 TwoEdgeCluster::~TwoEdgeCluster() {
-    /*delete [] size;
-    delete [] part_size[0];
+    //delete size;
+    /*delete [] part_size[0];
     delete [] part_size[1];
     delete [] diag_size[0];
     delete [] diag_size[1];*/
