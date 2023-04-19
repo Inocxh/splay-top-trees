@@ -76,3 +76,8 @@ void LeafNode<C,E,V>::push_flip() {
         this->swap_data();
     }
 }
+
+template<class C, class E, class V>
+int LeafNode<C,E,V>::get_endpoint_id(int e) {
+    return this->get_endpoint(e)->get_id();
+};

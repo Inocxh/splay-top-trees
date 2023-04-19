@@ -34,12 +34,14 @@ C* TopTree<C,E,V>::find_consuming_node(Vertex<C,E,V>* vertex) {
     C* node = first_node; 
     while (node->get_parent()) {
         InternalNode<C,E,V>* parent = (InternalNode<C,E,V>*) (node->get_parent());
-        
-        is_middle = parent->get_child(1) == node ? 
-                    is_left  || (is_middle && !node->has_left_boundary()) :
-                    is_right || (is_middle && !node->has_right_boundary());
-        is_right = node->is_right_child() && !is_middle;
-        is_left = !node->is_right_child() && !is_middle;
+
+
+        bool is_left_child = parent->children[0] == node;
+        bool is_middle = is_left_child ?
+                        is_right || (is_middle && !node->has_right_boundary()) :
+                        is_left || (is_middle && !node->has_left_boundary()) ;
+        is_left = (is_left_child != parent->is_flipped()) && !is_middle;
+        is_right = (is_left_child == parent->is_flipped()) && !is_middle;
  
         node = parent;
         if (is_middle) {
@@ -78,7 +80,6 @@ C* TopTree<C,E,V>::expose_internal(Vertex<C,E,V>* vertex) {
         vertex->exposed = true;
         return nullptr;
     }
-
     while (node->is_path()) {
         //Is this legal? 
         InternalNode<C,E,V>* node_int = (InternalNode<C,E,V>*) node;
@@ -88,7 +89,8 @@ C* TopTree<C,E,V>::expose_internal(Vertex<C,E,V>* vertex) {
         node_int->children[node->is_right_child()]->rotate_up();
 
         node = parent;
-    }
+    } 
+
     node->full_splay();
 
     //Assert that the depth is at most 1, by lemma 4.3
@@ -176,18 +178,23 @@ template<class C, class E, class V>
 std::tuple<C*,Edge<C,E,V>*> TopTree<C,E,V>::link_internal(Vertex<C,E,V>* u, Vertex<C,E,V>* v, E data) {
     C* Tu = expose_internal(u);
     C* Tv = expose_internal(v);
-    //Tu now has constant depth (TODO PROVE).
+
+    //Tu now has constant depth 
+    // TODO:PROVE.
     C* root_u = Tu;
+    int depth = 0;
     while (root_u && root_u->get_parent()) {
         root_u = root_u->get_parent();
+        depth++;
     }
-    //Compare the root of Tu, Tv.
-    // if (root_u = Tv) {
-    //     deexpose_internal(u);
-    //     deexpose_internal(v);
-    //     return std::make_tuple(nullptr,nullptr);
-    // }
+    assert(depth <= 5);
 
+    //Compare the root of Tu, Tv if u and v already connected, return null.
+    if (root_u == Tv && root_u && Tv) {
+        deexpose_internal(u);
+        deexpose_internal(v);
+        return std::make_tuple(nullptr,nullptr);
+    }
     if (Tu && Tu->has_left_boundary()) {
         Tu->flip();
     }
@@ -251,6 +258,7 @@ std::tuple<C*, C*> TopTree<C,E,V>::cut_internal(Edge<C,E,V>* edge) {
     v->exposed = true;
     C* Tu = this->deexpose_internal(u);
     C* Tv = this->deexpose_internal(v);
+    
     return std::tuple<C*,C*>(Tu, Tv);
 }
 

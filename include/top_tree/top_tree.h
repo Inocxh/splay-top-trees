@@ -106,6 +106,7 @@ class Node {
     virtual bool has_left_boundary() = 0;
     virtual bool has_middle_boundary() = 0;
     virtual bool has_right_boundary() = 0;
+    virtual int get_endpoint_id(int) = 0;
 
     
     public:
@@ -137,6 +138,7 @@ class LeafNode : public C {
     bool has_left_boundary();
     bool has_middle_boundary();
     bool has_right_boundary();
+    int get_endpoint_id(int);
 
     void print(int, bool);
 
@@ -163,6 +165,7 @@ class InternalNode : public C {
     bool has_left_boundary();
     bool has_middle_boundary();
     bool has_right_boundary();
+    int get_endpoint_id(int);
     C* get_child(int);
 
 
