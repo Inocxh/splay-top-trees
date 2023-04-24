@@ -1,22 +1,17 @@
-#include "top_tree.h"
+#ifndef TWO_EDGE_CLUSTER
+#define TWO_EDGE_CLUSTER
 #include <variant>
 #include <vector>
+#include <bitset>
+#include "edge.h"
 
-using CoverLevel = int;
+#include "top_tree.h"
 
 using namespace std;
 
-struct EdgeData {
-    int cover_level = -1;
-    int endpoints[2];
-    EdgeData(int v1, int v2) {
-        endpoints[0] = v1;
-        endpoints[1] = v2;
-    }; 
-    EdgeData(){};
-};
+struct VertexLabel;
 
-class TwoEdgeCluster : public Node<TwoEdgeCluster, EdgeData, None> {
+class TwoEdgeCluster : public Node<TwoEdgeCluster, TreeEdge, VertexLabel> {
     //Cover level
     inline static int l_max; //floor(log (tree_size))
     int cover_level;
@@ -27,17 +22,17 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, EdgeData, None> {
     int uncover_val = -1;
     int cover_val = -1;
 
-    EdgeData* min_path_edge;
-    EdgeData* min_global_edge;
+    TreeEdge* min_path_edge;
+    TreeEdge* min_global_edge;
 
     void merge_cover(TwoEdgeCluster*, TwoEdgeCluster*);
-    void create_cover(EdgeData*, None*, None*);
+    void create_cover(TreeEdge*, VertexLabel*, VertexLabel*);
     void split_cover(TwoEdgeCluster*, TwoEdgeCluster*);
-    void split_leaf_cover(EdgeData*, None*, None*);
+    void destroy_cover(TreeEdge*, VertexLabel*, VertexLabel*);
 
-    //Find size
-    vector<int> size;//[]
-    vector<vector<int>> part_size[2]; //[][] Could be binary trees.
+    //Find Size
+    vector<int> size;
+    vector<vector<int>> part_size[2]; // could be binary tree
 
     void compute_part_size(vector<vector<int>>&, vector<vector<int>>&, vector<vector<int>>&, int);
     void sum_row_range(vector<int>&, vector<vector<int>>&, int, int);
@@ -45,10 +40,27 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, EdgeData, None> {
     void sum_diagonal(vector<int>&, vector<vector<int>>&);
 
     void merge_find_size(TwoEdgeCluster*, TwoEdgeCluster*);
-    void create_find_size(EdgeData*, None*, None*);
+    void create_find_size(TreeEdge*, VertexLabel*, VertexLabel*);
     void split_find_size(TwoEdgeCluster*, TwoEdgeCluster*);
-    public:
+    
+    
+    
+    // Find First Label
+    VertexLabel* vertex[2] = {nullptr,nullptr};
+    long int incident;
+    vector<long int> part_incident[2];
 
+    VertexLabel* find_vertex_label(TwoEdgeCluster*, int v, int w, int i);
+    NonTreeEdge* find_first_label(TwoEdgeCluster*, int, int , int);
+
+
+    void merge_find_first_label(TwoEdgeCluster*, TwoEdgeCluster*);
+    void create_find_first_label(TreeEdge*, VertexLabel*, VertexLabel*);
+    void split_find_first_label(TwoEdgeCluster*, TwoEdgeCluster*);
+
+
+
+    public:
     TwoEdgeCluster();
     ~TwoEdgeCluster();
 
@@ -59,31 +71,56 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, EdgeData, None> {
     void cover(int);
     void uncover(int);
 
-    int get_size(int);
+    void assign_vertex(int, VertexLabel*);
 
-    void create(EdgeData*, None*, None*);
+    int get_size(int);
+    long int get_incident();
+
+    void create(TreeEdge*, VertexLabel*, VertexLabel*);
     void merge(TwoEdgeCluster*, TwoEdgeCluster*);
     void split(TwoEdgeCluster*, TwoEdgeCluster*);
-    void split_leaf(EdgeData*, None*, None*);
+    void destroy(TreeEdge*, VertexLabel*, VertexLabel*);
     void swap_data();
 
+
     void print_data() {
-        std::cout << "size: [";
+        cout << "incident: " << bitset<4>(this->incident) << " ";
+    }
+    void print_data2() {
+        cout << "size: [";
         for (int i = 0; i < l_max; i++) {
-            std::cout << this->size[i] << ", ";
+            cout << this->size[i] << ", ";
         }
-        std::cout << "] ";
+        cout << "] ";
         for (int i = 0; i < 2; i++) {
-            std::cout << " p" << i << ": [";
+            cout << " p" << i << ": [";
             for (int j = 0; j < l_max + 2; j++) {
-                std::cout << "[";
+                cout << "[";
                 for (int k = 0; k < l_max; k++) {
-                    std::cout << this->part_size[i][j][k] << ",";
+                    cout << this->part_size[i][j][k] << ",";
                 }
-                std::cout << "] ";
+                cout << "] ";
             }
-            std::cout << "];";
+            cout << "];";
         }
-        std::cout << " c: " << this->cover_level << " c-: " << this->cover_minus << " c+: " << cover_plus << "   ";
+        cout << " c: " << this->cover_level << " c-: " << this->cover_minus << " c+: " << cover_plus << "   ";
     }
 };
+
+
+struct VertexLabel {
+    vector<vector<NonTreeEdge>> labels;
+    TwoEdgeCluster* leaf_node = nullptr; 
+
+    VertexLabel() {
+        int lmax = TwoEdgeCluster::get_l_max();
+        this->labels = std::vector<vector<NonTreeEdge>>(lmax);
+        for (int i = 0; i < this->labels.size(); i++) {
+            this->labels[i] = std::vector<NonTreeEdge>();
+        }
+    };
+
+};
+
+
+#endif

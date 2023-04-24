@@ -14,6 +14,7 @@ src/two_edge_connected.cpp
 src/two_edge_cluster.cpp
 src/connected.cpp
 src/find_size.cpp
+src/find_first_label.cpp
 )
 
 set(TEST_FILES ${TEST_FILES}
@@ -26,6 +27,7 @@ test/toptree_tests/diameter_test.cpp
 test/2_edge_tests/cover_level_test.cpp
 test/2_edge_tests/connected_test.cpp
 test/2_edge_tests/find_size_test.cpp
+test/2_edge_tests/find_first_label_test.cpp
 )
 
 #Main target

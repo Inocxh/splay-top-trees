@@ -53,6 +53,7 @@ class TopTree {
     Edge<C,E,V>* link_ptr(int u, int v, E);
     std::tuple<C*,C*> cut_ptr(Edge<C,E,V>*);
 
+    C* get_adjacent_leaf_node(int);
 
     TopTree(int size);
 
@@ -82,7 +83,7 @@ class Node {
     
     //Optional user methods
     virtual void split(C*, C*) {};
-    virtual void split_leaf(E*, V*, V*) {};
+    virtual void destroy(E*, V*, V*) {};
     virtual void swap_data() {};
 
     virtual void push_flip() = 0;
@@ -90,8 +91,6 @@ class Node {
     void rotate_up();
     void flip();
     Node<C,E,V>* semi_splay_step();
-    void full_splay();
-    void semi_splay();
 
     C* get_sibling();
     InternalNode<C,E,V>* get_parent();
@@ -110,6 +109,9 @@ class Node {
 
     
     public:
+    void full_splay();
+    void semi_splay();
+    void recompute_root_path();
     int get_num_boundary_vertices();
     virtual void print(int, bool) {};
     virtual void print_data() {};
@@ -183,6 +185,6 @@ class DefaultC : public Node<DefaultC, None, None> {
     void merge(DefaultC*, DefaultC*) {};
     void create(None*, None*, None*) {};
     void split_internal(DefaultC*, DefaultC*) {};
-    void split_leaf(None*, None*, None*) {};
+    void destroy(None*, None*, None*) {};
 };
 #endif

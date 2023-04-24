@@ -262,3 +262,9 @@ std::tuple<C*, C*> TopTree<C,E,V>::cut_internal(Edge<C,E,V>* edge) {
     return std::tuple<C*,C*>(Tu, Tv);
 }
 
+template<class C, class E, class V>
+C* TopTree<C,E,V>::get_adjacent_leaf_node(int vertex_id) {
+    Vertex<C,E,V>* vertex = this->underlying_tree->get_vertex(vertex_id);
+    return vertex->get_first_edge()->node;
+}
+

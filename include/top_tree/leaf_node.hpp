@@ -52,7 +52,7 @@ void LeafNode<C,E,V>::split_internal() {
     E* edge = this->edge->get_data();
     V* left = this->edge->get_endpoint(this->flipped)->get_data();
     V* right = this->edge->get_endpoint(!this->flipped)->get_data();
-    this->split_leaf(edge, left, right);
+    this->destroy(edge, left, right);
     return;
 }
 

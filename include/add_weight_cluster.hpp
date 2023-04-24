@@ -15,7 +15,7 @@ struct AddWeightCluster : Node<AddWeightCluster, int, None> {
         }
     };
 
-    void split_leaf(int* edge_data, None* left, None* right) {
+    void destroy(int* edge_data, None* left, None* right) {
         *edge_data += this->extra;
     };
 

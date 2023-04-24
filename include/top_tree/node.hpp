@@ -169,6 +169,24 @@ void Node<C,E,V>::full_splay() {
 }
 
 template<class C, class E, class V>
+void Node<C,E,V>::recompute_root_path() {
+    C* node = (C*) this;
+    std::vector<C*> root_path;
+    while (node) {
+        root_path.push_back(node);
+        node = (C*) node->get_parent();
+    }
+
+    for (int i = root_path.size() - 1; i >= 0; i--) {
+        root_path[i]->split_internal();
+    }
+    
+    for (int i = 0; i < root_path.size(); i++) {
+        root_path[i]->merge_internal();
+    }
+}
+
+template<class C, class E, class V>
 InternalNode<C,E,V>* Node<C,E,V>::get_parent() {
     return this->parent;
 }

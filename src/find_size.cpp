@@ -1,14 +1,11 @@
 #include "two_edge_cluster.h"
 #include <cstring>
 
-void TwoEdgeCluster::swap_data() {
-    std::swap(this->part_size[0], this->part_size[1]);
-}
 int TwoEdgeCluster::get_size(int i) {
     return this->size[i];
 }
 
-void TwoEdgeCluster::create_find_size(EdgeData* edge_data, None* left, None* right)  {
+void TwoEdgeCluster::create_find_size(TreeEdge* edge_data, VertexLabel* left, VertexLabel* right)  {
     assert(this->cover_minus == -1 && this->cover_plus == -1);
     int lmax = TwoEdgeCluster::get_l_max();
     int lmax_idx = lmax + 1;
@@ -73,7 +70,7 @@ void TwoEdgeCluster::merge_find_size(TwoEdgeCluster* left, TwoEdgeCluster* right
     //Heterogenous children into point cluster
     if (this->get_num_boundary_vertices() == 1 && !this->has_middle_boundary()) {
         // Handle this->size. Delete data and write new.
-        fill(this->size.begin(), this->size.end(), 0);
+        fill(this->size.begin(), this->size.end(), 0); // TODO NECESSARY?
         if (this->has_left_boundary()) { 
             //left->cover_level() correct as left -- mid is the cluster path of left
             for (int j = 0; j <= left->get_cover_level(); j++) {
