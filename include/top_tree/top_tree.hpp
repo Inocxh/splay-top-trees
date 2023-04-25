@@ -173,6 +173,19 @@ Edge<C,E,V>* TopTree<C,E,V>::link_ptr(int u_id, int v_id, E data) {
     return std::get<1>(link_internal(u, v, data));
 }
 
+template<class C, class E, class V>
+C* TopTree<C,E,V>::link_leaf(int u_id, int v_id, E data) {
+    assert(this->num_exposed == 0);
+    Vertex<C,E,V>* u = this->underlying_tree->get_vertex(u_id); 
+    Vertex<C,E,V>* v = this->underlying_tree->get_vertex(v_id); 
+    Edge<C,E,V>* new_edge = std::get<1>(link_internal(u, v, data));
+    if (new_edge == nullptr) {
+        return nullptr;
+    } else {
+        return new_edge->node;
+    }
+}
+
 //Assumes u and v in trees with no exposed vertices!
 template<class C, class E, class V>
 std::tuple<C*,Edge<C,E,V>*> TopTree<C,E,V>::link_internal(Vertex<C,E,V>* u, Vertex<C,E,V>* v, E data) {
@@ -193,8 +206,9 @@ std::tuple<C*,Edge<C,E,V>*> TopTree<C,E,V>::link_internal(Vertex<C,E,V>* u, Vert
     if (root_u == Tv && root_u && Tv) {
         deexpose_internal(u);
         deexpose_internal(v);
-        return std::make_tuple(nullptr,nullptr);
+        return std::make_tuple(nullptr, nullptr);
     }
+
     if (Tu && Tu->has_left_boundary()) {
         Tu->flip();
     }
@@ -216,7 +230,7 @@ std::tuple<C*,Edge<C,E,V>*> TopTree<C,E,V>::link_internal(Vertex<C,E,V>* u, Vert
         InternalNode<C,E,V>* root_new = new InternalNode<C,E,V>(root, Tv, 0);
         root = root_new;
     }
-    return std::make_tuple(root,edge);
+    return std::make_tuple(root, edge);
 }
 
 template<class C, class E, class V>
@@ -245,6 +259,13 @@ std::tuple<C*, C*> TopTree<C,E,V>::cut_ptr(Edge<C,E,V>* edge) {
     assert(this->num_exposed == 0);
     return this->cut_internal(edge);
 }
+
+template<class C, class E, class V>
+std::tuple<C*, C*> TopTree<C,E,V>::cut_leaf(C* node) {
+    assert(this->num_exposed == 0);
+    LeafNode<C,E,V>* leaf_node = (LeafNode<C,E,V> *) node;
+    return this->cut_internal(leaf_node->edge);
+}
     
 template<class C, class E, class V>
 std::tuple<C*, C*> TopTree<C,E,V>::cut_internal(Edge<C,E,V>* edge) {
@@ -262,9 +283,43 @@ std::tuple<C*, C*> TopTree<C,E,V>::cut_internal(Edge<C,E,V>* edge) {
     return std::tuple<C*,C*>(Tu, Tv);
 }
 
+
+//Takes O(index) time
 template<class C, class E, class V>
-C* TopTree<C,E,V>::get_adjacent_leaf_node(int vertex_id) {
+C* TopTree<C,E,V>::get_adjacent_leaf_node(int vertex_id, int index) {
     Vertex<C,E,V>* vertex = this->underlying_tree->get_vertex(vertex_id);
-    return vertex->get_first_edge()->node;
+    Edge<C,E,V>* current = vertex->get_first_edge();
+    for (int i = 0; i < index; i++) {
+        if (!current) {
+            return nullptr;
+        }
+        int is_right_vertex = current->is_right_vertex(vertex);
+        current = current->next[is_right_vertex];
+    }
+    return current->node;
 }
 
+//Takes O(1) time
+template<class C, class E, class V>
+C* TopTree<C,E,V>::get_adjacent_leaf_node(int vertex_id) {
+    return this->get_adjacent_leaf_node(vertex_id, 0);
+}
+
+template<class C, class E, class V>
+bool TopTree<C,E,V>::connected(int u, int v) {
+    assert(this->num_exposed == 0);
+    C* Tu = expose(u);
+    C* Tv = expose(v);
+
+    C* root_u = Tu;
+    int depth = 0;
+    while (root_u && root_u->get_parent()) {
+        root_u = root_u->get_parent();
+        depth++;
+    }
+    assert(depth <= 5);
+    bool result = root_u == Tv;
+    deexpose(u);
+    deexpose(v);
+    return result;
+}

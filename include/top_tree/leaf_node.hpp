@@ -81,3 +81,8 @@ template<class C, class E, class V>
 int LeafNode<C,E,V>::get_endpoint_id(int e) {
     return this->get_endpoint(e)->get_id();
 };
+
+template<class C, class E, class V>
+C* LeafNode<C,E,V>::get_child(int e) {
+    return nullptr;
+};

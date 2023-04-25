@@ -210,6 +210,9 @@ template<class C, class E, class V>
 int Node<C,E,V>::get_num_boundary_vertices() {
     return this->num_boundary_vertices;
 }
-
+template<class C, class E, class V>
+void Node<C,E,V>::clean() {
+    this->split_internal();
+}
 
 

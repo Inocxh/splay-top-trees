@@ -13,6 +13,7 @@ struct GEdge {
         endpoints[0] = u;
         endpoints[1] = v;
     }
+    ~GEdge() {};
 };
 
 struct TreeEdge : GEdge {
@@ -28,10 +29,16 @@ struct TreeEdge : GEdge {
     TreeEdge(int u, int v, int cl) : GEdge(u, v) {
         this->cover_level = cl;
     }
+    TreeEdge(int u, int v, int cl, TwoEdgeCluster* leaf_node) : GEdge(u, v) {
+        this->cover_level = cl;
+        this->leaf_node = leaf_node;
+    }
+    ~TreeEdge() {};
 };
 
 struct NonTreeEdge : GEdge {
     int level;
+    int index[2];
 
     bool is_tree_edge() {
         return false;
@@ -40,6 +47,7 @@ struct NonTreeEdge : GEdge {
     NonTreeEdge(int u, int v, int l) : GEdge(u, v) {
         this->level = l;
     }
+    ~NonTreeEdge() {};
 };
 
 

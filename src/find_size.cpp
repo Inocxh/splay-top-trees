@@ -45,14 +45,19 @@ void TwoEdgeCluster::create_find_size(TreeEdge* edge_data, VertexLabel* left, Ve
         }
         
     } else if (this->get_num_boundary_vertices() == 1) {
+        if (cover_level == 5) {
+            int ost = 0;
+        }
+
         
-        fill(size.begin(), size.begin() + cover_level + 1, 2);
-        fill(size.begin() + cover_level + 1, size.end(), 1);
+        fill(size.begin(), size.begin() + (cover_level + 1), 2);
+        fill(size.begin() + (cover_level + 1), size.end(), 1);
         
         // There is only a lmax part
         int is_right = this->has_right_boundary();
-        fill(this->part_size[is_right][lmax_idx].begin(), this->part_size[is_right][lmax_idx].begin() + cover_level + 1, 2);
-        fill(this->part_size[is_right][lmax_idx].begin() + cover_level + 1, this->part_size[is_right][lmax_idx].end(), 1);        
+        
+        fill(this->part_size[is_right][lmax_idx].begin(), this->part_size[is_right][lmax_idx].begin() + (cover_level + 1), 2);
+        fill(this->part_size[is_right][lmax_idx].begin() + (cover_level + 1), this->part_size[is_right][lmax_idx].end(), 1);        
         
     }
     // Do nothing if num bound is 0.
@@ -74,12 +79,15 @@ void TwoEdgeCluster::merge_find_size(TwoEdgeCluster* left, TwoEdgeCluster* right
         if (this->has_left_boundary()) { 
             //left->cover_level() correct as left -- mid is the cluster path of left
             for (int j = 0; j <= left->get_cover_level(); j++) {
+                if (j == lmax) continue;
                 this->size[j] = right->size[j] - 1;
             }
             sum_diagonal(this->size, left->part_size[0]); 
         } else if (this->has_right_boundary()) {
             for (int j = 0; j <= right->get_cover_level(); j++) {
+                if (j == lmax) continue;
                 this->size[j] = left->size[j] - 1;
+                
             }
             sum_diagonal(this->size, right->part_size[1]);   
         }
@@ -158,8 +166,9 @@ void TwoEdgeCluster::sum_diagonal(vector<int>& target_row, vector<vector<int>>& 
     int lmax_idx = lmax + 1;
 
     // Start from 1, i.e. row 0, as row -1 is 0s.
-    for (int i = 1; i < lmax_idx + 1; i++) {
-        for (int j = 0; j < i; j++) {
+    for (int i = 1; i < lmax_idx + 1 ; i++) {
+        for (int j = 0; j < min(i,lmax); j++) {
+
             target_row[j] += source[i][j];
         }   
     }

@@ -3,6 +3,7 @@ project(top-trees)
 
 set(CMAKE_CXX_STANDARD_REQUIRED 20)
 
+set(CMAKE_CXX_FLAGS "-D_GLIBCXX_DEBUG -ggdb")
 set(CMAKE_CXX_FLAGS_RELEASE_INIT "-O3 -DNDEBUG")
 
 include_directories(include)
@@ -28,6 +29,7 @@ test/2_edge_tests/cover_level_test.cpp
 test/2_edge_tests/connected_test.cpp
 test/2_edge_tests/find_size_test.cpp
 test/2_edge_tests/find_first_label_test.cpp
+test/2_edge_tests/two_edge_connected_test.cpp
 )
 
 #Main target

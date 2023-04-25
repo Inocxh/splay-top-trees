@@ -10,8 +10,11 @@
 using namespace std;
 
 struct VertexLabel;
+struct TwoEdgeConnectivty;
 
 class TwoEdgeCluster : public Node<TwoEdgeCluster, TreeEdge, VertexLabel> {
+    friend class TwoEdgeConnectivity;
+
     //Cover level
     inline static int l_max; //floor(log (tree_size))
     int cover_level;
@@ -47,11 +50,11 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, TreeEdge, VertexLabel> {
     
     // Find First Label
     VertexLabel* vertex[2] = {nullptr,nullptr};
+    int boundary_vertices_id[2] = {-1,-1};
     long int incident;
     vector<long int> part_incident[2];
 
-    VertexLabel* find_vertex_label(TwoEdgeCluster*, int v, int w, int i);
-    NonTreeEdge* find_first_label(TwoEdgeCluster*, int, int , int);
+    //VertexLabel* find_vertex_label(TwoEdgeCluster*, int v, int w, int i);
 
 
     void merge_find_first_label(TwoEdgeCluster*, TwoEdgeCluster*);
@@ -61,8 +64,10 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, TreeEdge, VertexLabel> {
 
 
     public:
+    VertexLabel* find_first_label(int, int , int);
     TwoEdgeCluster();
-    ~TwoEdgeCluster();
+    ~TwoEdgeCluster() {
+    };
 
     static void set_l_max(int);
     static int get_l_max();
@@ -84,40 +89,31 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, TreeEdge, VertexLabel> {
 
 
     void print_data() {
-        cout << "incident: " << bitset<4>(this->incident) << " ";
-    }
-    void print_data2() {
-        cout << "size: [";
-        for (int i = 0; i < l_max; i++) {
-            cout << this->size[i] << ", ";
-        }
-        cout << "] ";
-        for (int i = 0; i < 2; i++) {
-            cout << " p" << i << ": [";
-            for (int j = 0; j < l_max + 2; j++) {
-                cout << "[";
-                for (int k = 0; k < l_max; k++) {
-                    cout << this->part_size[i][j][k] << ",";
-                }
-                cout << "] ";
-            }
-            cout << "];";
-        }
-        cout << " c: " << this->cover_level << " c-: " << this->cover_minus << " c+: " << cover_plus << "   ";
+        //cout << "incident: " << bitset<4>(this->incident) << " ";
+        cout << "bounds: (" << this->boundary_vertices_id[0] << "," << this->boundary_vertices_id[1] << ") ";
+        cout << " c: " << this->cover_level << " c+: " << this->cover_plus << " c-: " << this->cover_minus << " ";
     }
 };
 
 
 struct VertexLabel {
-    vector<vector<NonTreeEdge>> labels;
+    vector<vector<NonTreeEdge*>> labels;
     TwoEdgeCluster* leaf_node = nullptr; 
 
     VertexLabel() {
         int lmax = TwoEdgeCluster::get_l_max();
-        this->labels = std::vector<vector<NonTreeEdge>>(lmax);
+        this->labels = std::vector<vector<NonTreeEdge*>>(lmax);
         for (int i = 0; i < this->labels.size(); i++) {
-            this->labels[i] = std::vector<NonTreeEdge>();
+            this->labels[i] = std::vector<NonTreeEdge*>();
         }
+    };
+
+    ~VertexLabel() {
+        /*for (int i = 0; i < labels.size(); i++) {
+            for (int j = 0; j < labels[i].size(); j++) {
+                delete labels[i][j];
+            }
+        }*/
     };
 
 };

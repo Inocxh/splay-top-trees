@@ -46,6 +46,7 @@ class TopTree {
     C* expose(int v1, int v2);
     C* expose(int vertex);
     C* deexpose(int v1, int v2);
+    
     C* deexpose(int vertex);
     C* link(int u, int v, E);
     std::tuple<C*, C*> cut(int, int);
@@ -53,8 +54,14 @@ class TopTree {
     Edge<C,E,V>* link_ptr(int u, int v, E);
     std::tuple<C*,C*> cut_ptr(Edge<C,E,V>*);
 
-    C* get_adjacent_leaf_node(int);
+    C* link_leaf(int u, int v, E);
+    std::tuple<C*,C*> cut_leaf(C*);
 
+    C* get_adjacent_leaf_node(int);
+    C* get_adjacent_leaf_node(int, int);
+
+    bool connected(int v1, int v2);
+    
     TopTree(int size);
 
     void print_tree() {
@@ -109,12 +116,17 @@ class Node {
 
     
     public:
+    virtual C* get_child(int) = 0;
+    void clean();
     void full_splay();
     void semi_splay();
     void recompute_root_path();
     int get_num_boundary_vertices();
     virtual void print(int, bool) {};
     virtual void print_data() {};
+
+    Node<C,E,V>() {};
+    ~Node<C,E,V>() {};
     
 };
 
@@ -135,6 +147,8 @@ class LeafNode : public C {
     void push_flip();
 
     LeafNode(Edge<C,E,V>*, int);
+
+    C* get_child(int);
 
     public:
     bool has_left_boundary();
