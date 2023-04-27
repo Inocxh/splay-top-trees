@@ -89,7 +89,7 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, TreeEdge, VertexLabel> {
 
 
     void print_data() {
-        //cout << "incident: " << bitset<4>(this->incident) << " ";
+        cout << "incident: " << bitset<4>(this->incident) << " ";
         cout << "bounds: (" << this->boundary_vertices_id[0] << "," << this->boundary_vertices_id[1] << ") ";
         cout << " c: " << this->cover_level << " c+: " << this->cover_plus << " c-: " << this->cover_minus << " ";
     }

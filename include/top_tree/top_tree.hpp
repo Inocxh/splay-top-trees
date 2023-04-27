@@ -289,12 +289,15 @@ template<class C, class E, class V>
 C* TopTree<C,E,V>::get_adjacent_leaf_node(int vertex_id, int index) {
     Vertex<C,E,V>* vertex = this->underlying_tree->get_vertex(vertex_id);
     Edge<C,E,V>* current = vertex->get_first_edge();
+    if (!current) {
+        return nullptr;
+    }
     for (int i = 0; i < index; i++) {
+        int is_right_vertex = current->is_right_vertex(vertex);
+        current = current->next[is_right_vertex];
         if (!current) {
             return nullptr;
         }
-        int is_right_vertex = current->is_right_vertex(vertex);
-        current = current->next[is_right_vertex];
     }
     return current->node;
 }
