@@ -194,13 +194,10 @@ TEST_CASE("2-edge: delete all", "[2-edge]") {
     edges[22] = tree.insert(1,12);
     edges[23] = tree.insert(8,6);
     edges[24] = tree.insert(13,4);
+
     edges[25] = tree.insert(0,7);
 
     for (int i = 0; i < 26; i++) {
-        if (i == 3) {
-            tree.expose(3)->print(0,false);
-            tree.deexpose(3);
-        }
         tree.remove(edges[i]);
     }
 }
@@ -224,11 +221,8 @@ TEST_CASE("2-edge: delete mini", "[2-edge]") {
     edges[2] = tree.insert(2,3);
     edges[3] = tree.insert(3,0);
 
-
-    tree.expose(0, 1)->print(0,false);
-    tree.deexpose(0, 1);
     for (int i = 0; i < 4; i++) {
-        bool ost = edges[3]->edge_type == TreeEdge1;
+        bool ost = edges[3]->edge_type == TreeEdge;
         tree.remove(edges[i]);
     }
 }
@@ -238,7 +232,7 @@ TEST_CASE("2-edge: delete micro", "[2-edge]") {
     NewEdge* lol2 = NewEdge::new_tree_edge(1,1,1,0);
     NewEdge::swap(lol,lol2);
     
-    REQUIRE(lol->edge_type == TreeEdge1);
+    REQUIRE(lol->edge_type == TreeEdge);
     REQUIRE(lol->endpoints[0] == 1);
 
     

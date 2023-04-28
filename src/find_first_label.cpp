@@ -54,7 +54,7 @@ void or_row_range(long int *target_row, vector<long int>& source, int start, int
 }
 
 void TwoEdgeCluster::create_find_first_label(NewEdge* edge, VertexLabel*, VertexLabel*) {
-    assert(edge->edge_type == TreeEdge1);
+    assert(edge->edge_type == TreeEdge);
     this->boundary_vertices_id[0] = -1;
     this->boundary_vertices_id[1] = -1;
     if (this->has_left_boundary()) {
@@ -216,11 +216,13 @@ VertexLabel* TwoEdgeCluster::find_first_label(int u, int v, int level) {
     // u is now leftmost of this cluster.
     int u_is_right = this->boundary_vertices_id[1] == u;
     if (this->vertex[u_is_right] && this->vertex[u_is_right]->labels[level].size() > 0) {
+        VertexLabel* result = this->vertex[u_is_right];
         this->full_splay();
-        return this->vertex[u_is_right];
+        return result;
     } else if (this->vertex[!u_is_right] && this->cover_level >= level) {
+        VertexLabel* result = this->vertex[!u_is_right];
         this->full_splay();
-        return this->vertex[!u_is_right];
+        return result;
     } else if (!this->get_child(0) || !this->get_child(1)) {
         this->full_splay();
         return nullptr;
@@ -261,7 +263,7 @@ VertexLabel* TwoEdgeCluster::find_first_label(int u, int v, int level) {
 
         return close_child->find_first_label(close_child->boundary_vertices_id[index], close_child->boundary_vertices_id[!index], level);
         
-    } else if (get_bit(far_child->incident, level) && close_child->get_cover_level() >= level) { 
+    } else if (get_bit(far_child->incident, level) && (this->is_point() || close_child->get_cover_level() >= level)) { 
         if (close_child->is_point()) {
             index = !index;
         }    

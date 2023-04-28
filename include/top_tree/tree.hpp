@@ -1,6 +1,6 @@
 
-#include <iostream>
 #include "underlying_tree.h"
+#include <iostream>
 
 template<class C, class E, class V>
 Tree<C,E,V>::Tree(int num_vertices) {

@@ -1,7 +1,7 @@
 #include "top_tree.h"
+
 #include <tuple>
 #include <vector>
-
 #include <cassert>
 
 

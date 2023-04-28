@@ -1,9 +1,11 @@
 #ifndef EDGE
 #define EDGE
 
+#include <utility> //Swap
+
 struct TwoEdgeCluster;
 
-enum EdgeType { TreeEdge1, NonTreeEdge1 };
+enum EdgeType { TreeEdge, NonTreeEdge };
 union EdgeData {
     TwoEdgeCluster* leaf_node;
     int index[2];
@@ -24,29 +26,29 @@ struct NewEdge {
     };
     
     static NewEdge tree_edge(int u, int v, int cl, TwoEdgeCluster* leaf_node) {
-        NewEdge edge = NewEdge(TreeEdge1, u, v, cl);
+        NewEdge edge = NewEdge(TreeEdge, u, v, cl);
         edge.extra_data.leaf_node = leaf_node;
         return edge;
     };
 
     static NewEdge* new_tree_edge(int u, int v, int cl, TwoEdgeCluster* leaf_node) {
-        NewEdge* edge = new NewEdge(TreeEdge1, u, v, cl);
+        NewEdge* edge = new NewEdge(TreeEdge, u, v, cl);
         edge->extra_data.leaf_node = leaf_node;
         return edge;
     };
     static NewEdge* new_non_tree_edge(int u, int v, int level) {
-        return new NewEdge(NonTreeEdge1, u, v, level);
+        return new NewEdge(NonTreeEdge, u, v, level);
     };
 
     NewEdge(int u, int v) {
-        edge_type = TreeEdge1;
+        edge_type = TreeEdge;
         endpoints[0] = u;
         endpoints[1] = v;
         level = -1;
     };
 
     NewEdge() {
-        edge_type = TreeEdge1;
+        edge_type = TreeEdge;
         level = -1;
     };
     private:

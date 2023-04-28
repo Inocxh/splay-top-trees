@@ -1,9 +1,9 @@
 #ifndef TOP_TREE 
 #define TOP_TREE 1
 
+#include "underlying_tree.h"
 #include <vector>
 
-#include "underlying_tree.h"
 
 /*
 C: Cluster data,

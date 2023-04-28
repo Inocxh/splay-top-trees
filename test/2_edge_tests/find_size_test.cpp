@@ -4,14 +4,14 @@
 
 //TODO: Change NewEdge() arguments
 
-void cover(TopTree<TwoEdgeCluster,NewEdge,VertexLabel> T, int v, int w, int i) {
+void cover(TwoEdgeTree T, int v, int w, int i) {
     TwoEdgeCluster *root = T.expose(v,w);
     root->cover(i);
     root->print(0, false);
     std::cout << std::endl;
     T.deexpose(v,w);
 }
-void uncover(TopTree<TwoEdgeCluster,NewEdge,VertexLabel> T, int v, int w, int i) {
+void uncover(TwoEdgeTree T, int v, int w, int i) {
     TwoEdgeCluster *root = T.expose(v,w);
     root->uncover(i);
     root->print(0, false);
@@ -20,7 +20,7 @@ void uncover(TopTree<TwoEdgeCluster,NewEdge,VertexLabel> T, int v, int w, int i)
 }
 
 TEST_CASE("Simple find size test", "[find size test]")  {
-    TopTree<TwoEdgeCluster,NewEdge,VertexLabel> T = TopTree<TwoEdgeCluster,NewEdge,VertexLabel>(10);
+    TwoEdgeTree T = TwoEdgeTree(10);
     TwoEdgeCluster::set_l_max(3);
 
     T.link(1,2,NewEdge(1,2));
@@ -39,7 +39,7 @@ TEST_CASE("Simple find size test", "[find size test]")  {
 
 }
 TEST_CASE("Small find size", "[find size test]")  {
-    TopTree<TwoEdgeCluster,NewEdge,VertexLabel> T = TopTree<TwoEdgeCluster,NewEdge,VertexLabel>(8);
+    TwoEdgeTree T = TwoEdgeTree(8);
     TwoEdgeCluster::set_l_max(4);
     NewEdge* ed[10];
     for (int i = 0; i < 10; i++) {
@@ -58,7 +58,7 @@ TEST_CASE("Small find size", "[find size test]")  {
 
 
 TEST_CASE("Find size test", "[find size test]")  {
-    TopTree<TwoEdgeCluster,NewEdge,VertexLabel> T = TopTree<TwoEdgeCluster,NewEdge,VertexLabel>(12);
+    TwoEdgeTree T = TwoEdgeTree(12);
     TwoEdgeCluster::set_l_max(3);
     TwoEdgeCluster *root;
 
@@ -95,7 +95,7 @@ TEST_CASE("Find size test", "[find size test]")  {
 
 
 TEST_CASE("FS: Massive", "[find size test]")  {
-    TopTree<TwoEdgeCluster,NewEdge,VertexLabel> T = TopTree<TwoEdgeCluster,NewEdge,VertexLabel>(20);
+    TwoEdgeTree T = TwoEdgeTree(20);
     TwoEdgeCluster::set_l_max(4);
     TwoEdgeCluster *root;
 
@@ -136,7 +136,7 @@ TEST_CASE("FS: Massive", "[find size test]")  {
 
 
 TEST_CASE("FS: Uncover", "[find size test]")  {
-    TopTree<TwoEdgeCluster,NewEdge,VertexLabel> T = TopTree<TwoEdgeCluster,NewEdge,VertexLabel>(20);
+    TwoEdgeTree T = TwoEdgeTree(20);
     TwoEdgeCluster::set_l_max(4);
     TwoEdgeCluster *root;
 
@@ -188,7 +188,7 @@ TEST_CASE("FS: Uncover", "[find size test]")  {
 }
 
 TEST_CASE("FS: Uncover massive", "[find size test]")  {
-    TopTree<TwoEdgeCluster,NewEdge,VertexLabel> T = TopTree<TwoEdgeCluster,NewEdge,VertexLabel>(20);
+    TwoEdgeTree T = TwoEdgeTree(20);
     TwoEdgeCluster::set_l_max(4);
     TwoEdgeCluster *root;
 
@@ -261,7 +261,7 @@ TEST_CASE("FS: Uncover massive", "[find size test]")  {
 
 TEST_CASE("Small", "[find size test]") {
 
-    TopTree<TwoEdgeCluster,NewEdge,VertexLabel> T = TopTree<TwoEdgeCluster,NewEdge,VertexLabel>(7);
+    TwoEdgeTree T = TwoEdgeTree(7);
     TwoEdgeCluster::set_l_max(4);
     TwoEdgeCluster *root;
 
@@ -293,7 +293,7 @@ TEST_CASE("Small", "[find size test]") {
 
 
 TEST_CASE("FS: minified massive", "[find size test]")  {
-    TopTree<TwoEdgeCluster,NewEdge,VertexLabel> T = TopTree<TwoEdgeCluster,NewEdge,VertexLabel>(8);
+    TwoEdgeTree T = TwoEdgeTree(8);
     TwoEdgeCluster::set_l_max(2);
     TwoEdgeCluster *root;
 
@@ -319,7 +319,7 @@ TEST_CASE("FS: minified massive", "[find size test]")  {
 }
 
 TEST_CASE("FS: cut", "[find size test]")  {
-    TopTree<TwoEdgeCluster,NewEdge,VertexLabel> T = TopTree<TwoEdgeCluster,NewEdge,VertexLabel>(20);
+    TwoEdgeTree T = TwoEdgeTree(20);
     TwoEdgeCluster::set_l_max(4);
     TwoEdgeCluster *root;
 

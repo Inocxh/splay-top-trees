@@ -74,7 +74,7 @@ void TwoEdgeConnectivity::remove_labels(NewEdge* edge) {
         VertexLabel* ep_label = this->vertex_labels[ep];
         
         NewEdge* last_label = ep_label->labels[level].back();
-        assert(last_label->edge_type == NonTreeEdge1);
+        assert(last_label->edge_type == NonTreeEdge);
         int ep_is_right_new = last_label->endpoints[1] == ep;
 
         ep_label->labels[level][ep_idx] = last_label;
@@ -117,7 +117,7 @@ void TwoEdgeConnectivity::remove(NewEdge* edge) {
     int u = edge->endpoints[0];
     int v = edge->endpoints[1];
 
-    if (edge->edge_type == TreeEdge1) {
+    if (edge->edge_type == TreeEdge) {
         int cover_level = this->cover_level(u, v);
         if (cover_level == -1) {
             reassign_vertices(edge->extra_data.leaf_node);
@@ -126,7 +126,7 @@ void TwoEdgeConnectivity::remove(NewEdge* edge) {
         }
         edge = this->swap(edge);
     } 
-    assert(edge->edge_type == NonTreeEdge1);
+    assert(edge->edge_type == NonTreeEdge);
     this->remove_labels(edge);
     this->uncover(u, v, edge->level);
     for (int i = edge->level; i >= 0; i--) {
@@ -263,6 +263,7 @@ NewEdge* TwoEdgeConnectivity::recover_phase(int u, int v, int cover_level, int s
             label->level = cover_level + 1;
             this->add_label(q, label);
             this->add_label(r, label);
+
             this->cover(q, r, cover_level + 1);
         } else {
             this->cover(q, r, cover_level); 

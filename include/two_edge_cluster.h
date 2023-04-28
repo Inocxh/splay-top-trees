@@ -1,27 +1,34 @@
 #ifndef TWO_EDGE_CLUSTER
 #define TWO_EDGE_CLUSTER
+
+#include "edge.h"
+#include <cassert>
+#include <tuple>
+#include <iostream>
 #include <variant>
 #include <vector>
 #include <bitset>
-#include "edge.h"
 
-//namespace TopTree {
+namespace Splay {
     #include "top_tree.h"
-//}
+}
 
-//using TopTree::Node;
 
-//using TopTree::TopTree;
 
 using std::vector;
 using std::cout;
 using std::endl;
 using std::bitset;
 
+
 struct VertexLabel;
 struct TwoEdgeConnectivty;
+struct TwoEdgeCluster;
 
-class TwoEdgeCluster : public Node<TwoEdgeCluster, NewEdge, VertexLabel> {
+using Node = Splay::Node<TwoEdgeCluster,NewEdge,VertexLabel>;
+using TwoEdgeTree = Splay::TopTree<TwoEdgeCluster,NewEdge,VertexLabel>;
+
+class TwoEdgeCluster : public Node {
     friend class TwoEdgeConnectivity;
 
     //Cover level

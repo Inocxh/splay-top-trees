@@ -9,7 +9,7 @@ int TwoEdgeCluster::get_size(int i) {
 
 void TwoEdgeCluster::create_find_size(NewEdge* edge_data, VertexLabel* left, VertexLabel* right)  {
     assert(this->cover_minus == -1 && this->cover_plus == -1);
-    assert(edge_data->edge_type == TreeEdge1);
+    assert(edge_data->edge_type == TreeEdge);
     int lmax = TwoEdgeCluster::get_l_max();
     int lmax_idx = lmax + 1;
     

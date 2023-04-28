@@ -5,7 +5,7 @@
 using CoverLevel = int;
 
 class TwoEdgeConnectivity {
-    TopTree<TwoEdgeCluster,NewEdge,VertexLabel> *top_tree;
+    TwoEdgeTree *top_tree;
     vector<VertexLabel*> vertex_labels;
 
     int size();
@@ -47,7 +47,7 @@ class TwoEdgeConnectivity {
     TwoEdgeConnectivity();
     TwoEdgeConnectivity(int size) {
         TwoEdgeCluster::set_l_max((int) floor(log2(size)));
-        this->top_tree = new TopTree<TwoEdgeCluster, NewEdge, VertexLabel>(size);
+        this->top_tree = new TwoEdgeTree(size);
         this->vertex_labels = vector<VertexLabel*>(size);
         for (int i = 0; i < size; i++) {
             vertex_labels[i] = new VertexLabel();
