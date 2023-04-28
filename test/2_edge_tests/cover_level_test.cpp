@@ -2,9 +2,9 @@
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("Simple cover level test", "[cover_level]")  {
-    TopTree<TwoEdgeCluster,TreeEdge,VertexLabel> t = TopTree<TwoEdgeCluster,TreeEdge,VertexLabel>(5);
-    TreeEdge* ed = new TreeEdge();
+    TopTree<TwoEdgeCluster,NewEdge,VertexLabel> t = TopTree<TwoEdgeCluster,NewEdge,VertexLabel>(5);
+    NewEdge ed = NewEdge();
     TwoEdgeCluster::set_l_max(3);
-    t.link(1,2, *ed);
+    t.link(1,2, ed);
 }
 

@@ -53,7 +53,8 @@ void or_row_range(long int *target_row, vector<long int>& source, int start, int
     }
 }
 
-void TwoEdgeCluster::create_find_first_label(TreeEdge* edge, VertexLabel*, VertexLabel*) {
+void TwoEdgeCluster::create_find_first_label(NewEdge* edge, VertexLabel*, VertexLabel*) {
+    assert(edge->edge_type == TreeEdge1);
     this->boundary_vertices_id[0] = -1;
     this->boundary_vertices_id[1] = -1;
     if (this->has_left_boundary()) {
@@ -63,7 +64,7 @@ void TwoEdgeCluster::create_find_first_label(TreeEdge* edge, VertexLabel*, Verte
         this->boundary_vertices_id[1] = this->get_endpoint_id(1);
     }
 
-    int cover_level_idx = edge->cover_level + 1;
+    int cover_level_idx = edge->level + 1;
     int lmax_idx = this->l_max + 1;
     
     this->incident = 0;

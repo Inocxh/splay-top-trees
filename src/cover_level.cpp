@@ -12,16 +12,17 @@ void TwoEdgeCluster::uncover(int i) {
     }
 }
 
-void TwoEdgeCluster::create_cover(TreeEdge* edge, VertexLabel* left, VertexLabel* right) {
+void TwoEdgeCluster::create_cover(NewEdge* edge, VertexLabel* left, VertexLabel* right) {
+    assert(edge->edge_type == TreeEdge1);
     if (this->is_path()) {
-        this->cover_level = edge->cover_level;
+        this->cover_level = edge->level;
         this->global_cover = l_max;
         
         this->min_path_edge = edge;
         this->min_global_edge = nullptr;
     } else {
         this->cover_level = l_max;
-        this->global_cover = edge->cover_level;
+        this->global_cover = edge->level;
         
         this->min_path_edge = nullptr;
         this->min_global_edge = edge;    
@@ -67,9 +68,9 @@ void TwoEdgeCluster::merge_cover(TwoEdgeCluster* left, TwoEdgeCluster* right) {
         this->min_path_edge = nullptr;
 
         int global_cover_left;
-        TreeEdge* min_global_edge_left;
+        NewEdge* min_global_edge_left;
         int global_cover_right;
-        TreeEdge* min_global_edge_right;
+        NewEdge* min_global_edge_right;
 
         if (left->global_cover <= left->cover_level) {
             global_cover_left = left->global_cover;
@@ -132,9 +133,10 @@ void TwoEdgeCluster::split_cover(TwoEdgeCluster* left, TwoEdgeCluster* right) {
     //this->cover_plus = -1;
 };
 
-void TwoEdgeCluster::destroy_cover(TreeEdge* edge_data, VertexLabel* left, VertexLabel* right) {
+void TwoEdgeCluster::destroy_cover(NewEdge* edge_data, VertexLabel* left, VertexLabel* right) {
+    assert(edge_data->edge_type == TreeEdge1);
     if (this->is_path()) {
-        edge_data->cover_level = this->cover_level;
+        edge_data->level = this->cover_level;
     }
     //this->cover_minus = -1;
     //this->cover_plus = -1;

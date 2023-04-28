@@ -1,12 +1,15 @@
 #include "two_edge_cluster.h"
 #include <cstring>
 
+
+
 int TwoEdgeCluster::get_size(int i) {
     return this->size[i];
 }
 
-void TwoEdgeCluster::create_find_size(TreeEdge* edge_data, VertexLabel* left, VertexLabel* right)  {
+void TwoEdgeCluster::create_find_size(NewEdge* edge_data, VertexLabel* left, VertexLabel* right)  {
     assert(this->cover_minus == -1 && this->cover_plus == -1);
+    assert(edge_data->edge_type == TreeEdge1);
     int lmax = TwoEdgeCluster::get_l_max();
     int lmax_idx = lmax + 1;
     
@@ -31,7 +34,7 @@ void TwoEdgeCluster::create_find_size(TreeEdge* edge_data, VertexLabel* left, Ve
         -> point_size = [1,1,..] => size = [2,2,...]
         Only one part_path for each boundary in i=cover_level where part_size=[1,1,...]
     */
-    int cover_level = edge_data->cover_level;
+    int cover_level = edge_data->level;
     int cover_level_idx = cover_level + 1;
     
     //TODO: Cache inefficient?
@@ -167,7 +170,7 @@ void TwoEdgeCluster::sum_diagonal(vector<int>& target_row, vector<vector<int>>& 
 
     // Start from 1, i.e. row 0, as row -1 is 0s.
     for (int i = 1; i < lmax_idx + 1 ; i++) {
-        for (int j = 0; j < min(i,lmax); j++) {
+        for (int j = 0; j < std::min(i,lmax); j++) {
 
             target_row[j] += source[i][j];
         }   

@@ -4,13 +4,13 @@
 
 
 
-bool has_endpoints(TreeEdge* bridge, int u, int v) {
+bool has_endpoints(NewEdge* bridge, int u, int v) {
     return (bridge->endpoints[0] == u && bridge->endpoints[1] == v) || (bridge->endpoints[0] == v && bridge->endpoints[1] == u);
 }
 
 TEST_CASE("2-edge: small", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(50);
-    vector<GEdge*> edges;
+    vector<NewEdge*> edges;
     
     edges.push_back(tree.insert(0,1));
     edges.push_back(tree.insert(1,2));
@@ -35,8 +35,8 @@ TEST_CASE("2-edge: small", "[2-edge]") {
 }
 TEST_CASE("2-edge: Medium", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(50);
-    vector<GEdge*> edges = vector<GEdge*>(40);
-    TreeEdge* bridge;
+    vector<NewEdge*> edges = vector<NewEdge*>(40);
+    NewEdge* bridge;
     
     edges[0] = tree.insert(0,1);
     edges[1] = tree.insert(1,2);
@@ -88,8 +88,8 @@ TEST_CASE("2-edge: Medium", "[2-edge]") {
 }
 TEST_CASE("2-edge: large", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(50);
-    vector<GEdge*> edges = vector<GEdge*>(40);
-    TreeEdge* bridge;
+    vector<NewEdge*> edges = vector<NewEdge*>(40);
+    NewEdge* bridge;
     
     edges[0] = tree.insert(0,1);
     edges[1] = tree.insert(1,2);
@@ -165,8 +165,8 @@ TEST_CASE("2-edge: large", "[2-edge]") {
 }
 TEST_CASE("2-edge: delete all", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(50);
-    vector<GEdge*> edges = vector<GEdge*>(40);
-    TreeEdge* bridge;
+    vector<NewEdge*> edges = vector<NewEdge*>(40);
+    NewEdge* bridge;
     
     edges[0] = tree.insert(0,1);
     edges[1] = tree.insert(1,2);
@@ -207,8 +207,8 @@ TEST_CASE("2-edge: delete all", "[2-edge]") {
 
 TEST_CASE("2-edge: delete mini", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(50);
-    vector<GEdge*> edges = vector<GEdge*>(5);
-    TreeEdge* bridge;
+    vector<NewEdge*> edges = vector<NewEdge*>(40);
+    NewEdge* bridge;
     
     /*edges[0] = tree.insert(0,1);
     edges[1] = tree.insert(1,2);
@@ -228,27 +228,18 @@ TEST_CASE("2-edge: delete mini", "[2-edge]") {
     tree.expose(0, 1)->print(0,false);
     tree.deexpose(0, 1);
     for (int i = 0; i < 4; i++) {
-        bool ost = edges[3]->is_tree_edge();
+        bool ost = edges[3]->edge_type == TreeEdge1;
         tree.remove(edges[i]);
     }
 }
 
 TEST_CASE("2-edge: delete micro", "[2-edge]") {
-    NonTreeEdge* lol = new NonTreeEdge(0,0,0);
-    GEdge* test = dynamic_cast<GEdge*>(lol);
-    GEdge* test = &lol;
+    NewEdge* lol = NewEdge::new_non_tree_edge(0,0,0);
+    NewEdge* lol2 = NewEdge::new_tree_edge(1,1,1,0);
+    NewEdge::swap(lol,lol2);
     
+    REQUIRE(lol->edge_type == TreeEdge1);
+    REQUIRE(lol->endpoints[0] == 1);
 
-
-    *test = TreeEdge(1,1,1);
-    REQUIRE(test->is_tree_edge());
-
-    //GEdge* test = new NonTreeEdge(0,0,0);
     
-    /*GEdge* test = new GEdge();
-    *test = NonTreeEdge(0,0,0);
-    REQUIRE(!test->is_tree_edge());
-    NonTreeEdge* non_ptr = (NonTreeEdge*) test;
-    GEdge* e_ptr = (GEdge*) non_ptr;
-    REQUIRE(test->is_tree_edge());*/
 }

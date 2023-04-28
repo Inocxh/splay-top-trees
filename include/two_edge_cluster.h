@@ -5,14 +5,23 @@
 #include <bitset>
 #include "edge.h"
 
-#include "top_tree.h"
+//namespace TopTree {
+    #include "top_tree.h"
+//}
 
-using namespace std;
+//using TopTree::Node;
+
+//using TopTree::TopTree;
+
+using std::vector;
+using std::cout;
+using std::endl;
+using std::bitset;
 
 struct VertexLabel;
 struct TwoEdgeConnectivty;
 
-class TwoEdgeCluster : public Node<TwoEdgeCluster, TreeEdge, VertexLabel> {
+class TwoEdgeCluster : public Node<TwoEdgeCluster, NewEdge, VertexLabel> {
     friend class TwoEdgeConnectivity;
 
     //Cover level
@@ -25,13 +34,13 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, TreeEdge, VertexLabel> {
     int uncover_val = -1;
     int cover_val = -1;
 
-    TreeEdge* min_path_edge;
-    TreeEdge* min_global_edge;
+    NewEdge* min_path_edge;
+    NewEdge* min_global_edge;
 
     void merge_cover(TwoEdgeCluster*, TwoEdgeCluster*);
-    void create_cover(TreeEdge*, VertexLabel*, VertexLabel*);
+    void create_cover(NewEdge*, VertexLabel*, VertexLabel*);
     void split_cover(TwoEdgeCluster*, TwoEdgeCluster*);
-    void destroy_cover(TreeEdge*, VertexLabel*, VertexLabel*);
+    void destroy_cover(NewEdge*, VertexLabel*, VertexLabel*);
 
     //Find Size
     vector<int> size;
@@ -43,7 +52,7 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, TreeEdge, VertexLabel> {
     void sum_diagonal(vector<int>&, vector<vector<int>>&);
 
     void merge_find_size(TwoEdgeCluster*, TwoEdgeCluster*);
-    void create_find_size(TreeEdge*, VertexLabel*, VertexLabel*);
+    void create_find_size(NewEdge*, VertexLabel*, VertexLabel*);
     void split_find_size(TwoEdgeCluster*, TwoEdgeCluster*);
     
     
@@ -58,7 +67,7 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, TreeEdge, VertexLabel> {
 
 
     void merge_find_first_label(TwoEdgeCluster*, TwoEdgeCluster*);
-    void create_find_first_label(TreeEdge*, VertexLabel*, VertexLabel*);
+    void create_find_first_label(NewEdge*, VertexLabel*, VertexLabel*);
     void split_find_first_label(TwoEdgeCluster*, TwoEdgeCluster*);
 
 
@@ -81,10 +90,10 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, TreeEdge, VertexLabel> {
     int get_size(int);
     long int get_incident();
 
-    void create(TreeEdge*, VertexLabel*, VertexLabel*);
+    void create(NewEdge*, VertexLabel*, VertexLabel*);
     void merge(TwoEdgeCluster*, TwoEdgeCluster*);
     void split(TwoEdgeCluster*, TwoEdgeCluster*);
-    void destroy(TreeEdge*, VertexLabel*, VertexLabel*);
+    void destroy(NewEdge*, VertexLabel*, VertexLabel*);
     void swap_data();
 
 
@@ -97,14 +106,14 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster, TreeEdge, VertexLabel> {
 
 
 struct VertexLabel {
-    vector<vector<NonTreeEdge*>> labels;
+    vector<vector<NewEdge*>> labels;
     TwoEdgeCluster* leaf_node = nullptr; 
 
     VertexLabel() {
         int lmax = TwoEdgeCluster::get_l_max();
-        this->labels = std::vector<vector<NonTreeEdge*>>(lmax);
+        this->labels = std::vector<vector<NewEdge*>>(lmax);
         for (int i = 0; i < this->labels.size(); i++) {
-            this->labels[i] = std::vector<NonTreeEdge*>();
+            this->labels[i] = std::vector<NewEdge*>();
         }
     };
 

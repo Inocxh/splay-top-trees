@@ -12,9 +12,11 @@ void TwoEdgeConnectivity::uncover(int u, int v, int level) {
     this->top_tree->deexpose(u, v);
 }
 
-GEdge* TwoEdgeConnectivity::insert(int u, int v) {
+NewEdge* TwoEdgeConnectivity::insert(int u, int v) {
     //Try to link u,v in tree
-    TwoEdgeCluster* result = this->top_tree->link_leaf(u, v, TreeEdge(u, v, -1)); //TODO level = lmax?
+    NewEdge edge_data = NewEdge::tree_edge(u, v, -1, nullptr);
+    TwoEdgeCluster* result = this->top_tree->link_leaf(u, v, edge_data); //TODO level = lmax?
+    
     if (result) {
         //If successfull, try to assign vertex endpoints to new leaf
         if (!vertex_labels[u]->leaf_node) {
@@ -27,34 +29,34 @@ GEdge* TwoEdgeConnectivity::insert(int u, int v) {
         }
         result->full_splay();
         result->recompute_root_path();
-        return new TreeEdge(u, v, -1, result);
+        return NewEdge::new_tree_edge(u, v, -1, result);
     }
-    NonTreeEdge* edge = new NonTreeEdge(u, v, 0);
+    NewEdge* edge = NewEdge::new_non_tree_edge(u, v, 0);
     this->add_label(u, edge);
     this->add_label(v, edge);
     this->cover(u, v, 0);
     return edge;
 }
 
-GEdge* TwoEdgeConnectivity::insert(int u, int v, int level) {
-    TwoEdgeCluster* result = this->top_tree->link_leaf(u, v,TreeEdge(u, v, -1)); //TODO level = lmax?
+NewEdge* TwoEdgeConnectivity::insert(int u, int v, int level) {
+    TwoEdgeCluster* result = this->top_tree->link_leaf(u, v, NewEdge::tree_edge(u, v, -1, nullptr)); //TODO level = lmax?
     if (result) {
-        return new TreeEdge(u, v, -1, result);
+        return NewEdge::new_tree_edge(u, v, -1, result);
     }
-    NonTreeEdge* edge = new NonTreeEdge(u, v, level);
+    NewEdge* edge = NewEdge::new_non_tree_edge(u, v, level);
     this->add_label(u, edge);
     this->add_label(v, edge);
     this->cover(u, v, level);
     return edge;
 }
 
-void TwoEdgeConnectivity::add_label(int vertex, NonTreeEdge* edge) {
+void TwoEdgeConnectivity::add_label(int vertex, NewEdge* edge) {
     VertexLabel* vertex_label = this->vertex_labels[vertex];
     int index = vertex_label->labels[edge->level].size();
     if (edge->endpoints[0] == vertex) {
-        edge->index[0] = index;
+        edge->extra_data.index[0] = index;
     } else {
-        edge->index[1] = index;
+        edge->extra_data.index[1] = index;
     }
     vertex_label->labels[edge->level].push_back(edge);
     
@@ -63,19 +65,20 @@ void TwoEdgeConnectivity::add_label(int vertex, NonTreeEdge* edge) {
     vertex_label->leaf_node->recompute_root_path(); //takes O(depth) = O(1) time
 }
 
-void TwoEdgeConnectivity::remove_labels(NonTreeEdge* edge) {
+void TwoEdgeConnectivity::remove_labels(NewEdge* edge) {
     int level = edge->level;
     for (int i = 0; i < 2; i++) {
         int ep = edge->endpoints[i];
-        int ep_idx = edge->index[i];
+        int ep_idx = edge->extra_data.index[i];
 
         VertexLabel* ep_label = this->vertex_labels[ep];
         
-        NonTreeEdge* last_label = ep_label->labels[level].back();
+        NewEdge* last_label = ep_label->labels[level].back();
+        assert(last_label->edge_type == NonTreeEdge1);
         int ep_is_right_new = last_label->endpoints[1] == ep;
 
         ep_label->labels[level][ep_idx] = last_label;
-        ep_label->labels[level][ep_idx]->index[ep_is_right_new] = ep_idx;
+        ep_label->labels[level][ep_idx]->extra_data.index[ep_is_right_new] = ep_idx;
         ep_label->labels[level].pop_back();
 
         if (ep_label->leaf_node) {
@@ -110,27 +113,23 @@ void TwoEdgeConnectivity::reassign_vertices(TwoEdgeCluster* leaf_node) {
 }
 
 
-void TwoEdgeConnectivity::remove(GEdge* edge) {
+void TwoEdgeConnectivity::remove(NewEdge* edge) {
     int u = edge->endpoints[0];
     int v = edge->endpoints[1];
-    if (u == 0 && v == 3) {
-        int ost = 0;
-    }
 
-    if (edge->is_tree_edge()) {
+    if (edge->edge_type == TreeEdge1) {
         int cover_level = this->cover_level(u, v);
-        TreeEdge* tree_edge = (TreeEdge*) edge; //Safe as is_tree_edge is true
         if (cover_level == -1) {
-            reassign_vertices(tree_edge->leaf_node);
-            top_tree->cut_leaf(tree_edge->leaf_node);
+            reassign_vertices(edge->extra_data.leaf_node);
+            top_tree->cut_leaf(edge->extra_data.leaf_node);
             return;
         }
-        edge = (GEdge*) this->swap(tree_edge);
+        edge = this->swap(edge);
     } 
-    NonTreeEdge* non_tree_edge = (NonTreeEdge*) edge;
-    this->remove_labels(non_tree_edge);
-    this->uncover(u, v, non_tree_edge->level);
-    for (int i = non_tree_edge->level; i >= 0; i--) {
+    assert(edge->edge_type == NonTreeEdge1);
+    this->remove_labels(edge);
+    this->uncover(u, v, edge->level);
+    for (int i = edge->level; i >= 0; i--) {
         this->recover(v, u, i);
     }
 
@@ -143,20 +142,21 @@ int TwoEdgeConnectivity::cover_level(int u, int v) {
     return cover_level;    
 }
 
-NonTreeEdge* TwoEdgeConnectivity::swap(TreeEdge* tree_edge) {
+NewEdge* TwoEdgeConnectivity::swap(NewEdge* tree_edge) {
     int u = tree_edge->endpoints[0];
     int v = tree_edge->endpoints[1];
     int cover_level = this->cover_level(u, v);
-    reassign_vertices(tree_edge->leaf_node);
-    auto root = this->top_tree->cut_leaf(tree_edge->leaf_node);
+    reassign_vertices(tree_edge->extra_data.leaf_node);
+    auto root = this->top_tree->cut_leaf(tree_edge->extra_data.leaf_node);
 
 
-    NonTreeEdge* non_tree_edge = find_replacement(u, v, cover_level);
+    NewEdge* non_tree_edge = find_replacement(u, v, cover_level);
     int x = non_tree_edge->endpoints[0];
     int y = non_tree_edge->endpoints[1];
     this->remove_labels(non_tree_edge);
     
-    TwoEdgeCluster* new_leaf = this->top_tree->link_leaf(x, y, TreeEdge(x, y, -1));
+    NewEdge e = NewEdge::tree_edge(x,u,-1,nullptr);
+    TwoEdgeCluster* new_leaf = this->top_tree->link_leaf(x, y, e);
     if (new_leaf) {
         //If successfull, try to assign vertex endpoints to new leaf
         if (!vertex_labels[x]->leaf_node) {
@@ -170,12 +170,12 @@ NonTreeEdge* TwoEdgeConnectivity::swap(TreeEdge* tree_edge) {
         new_leaf->full_splay();
         new_leaf->recompute_root_path();
     }
+
     // TODO comment
-    GEdge* edge_ptr = (GEdge*) non_tree_edge;
-    *edge_ptr = TreeEdge(x,y,-1,new_leaf);
+    NewEdge::swap(non_tree_edge,NewEdge::new_tree_edge(x,y,-1,new_leaf));
 
     
-    NonTreeEdge* edge = new NonTreeEdge(u, v, cover_level);
+    NewEdge* edge = NewEdge::new_non_tree_edge(u, v, cover_level);
     this->add_label(u, edge);
     this->add_label(v, edge);
     this->cover(u, v, cover_level);
@@ -200,7 +200,7 @@ int TwoEdgeConnectivity::find_size(int u, int v, int cover_level) {
     return size;
 }
 
-NonTreeEdge* TwoEdgeConnectivity::find_replacement(int u, int v, int cover_level) {
+NewEdge* TwoEdgeConnectivity::find_replacement(int u, int v, int cover_level) {
     int size_u = this->find_size(u, u, cover_level);
     int size_v = this->find_size(v, v, cover_level);
     if (size_u <= size_v) {
@@ -210,9 +210,9 @@ NonTreeEdge* TwoEdgeConnectivity::find_replacement(int u, int v, int cover_level
     }
 }
 
-NonTreeEdge* TwoEdgeConnectivity::find_first_label(int u, int v, int cover_level) {
+NewEdge* TwoEdgeConnectivity::find_first_label(int u, int v, int cover_level) {
     TwoEdgeCluster* root = this->top_tree->expose(u);
-    NonTreeEdge* res;
+    NewEdge* res;
     VertexLabel* label;
 
     if (u != v) {
@@ -250,8 +250,8 @@ void TwoEdgeConnectivity::recover(int u, int v, int cover_level) {
     this->recover_phase(v, u, cover_level, size);
 }
 
-NonTreeEdge* TwoEdgeConnectivity::recover_phase(int u, int v, int cover_level, int size) {
-    NonTreeEdge* label = this->find_first_label(u, v, cover_level);
+NewEdge* TwoEdgeConnectivity::recover_phase(int u, int v, int cover_level, int size) {
+    NewEdge* label = this->find_first_label(u, v, cover_level);
     while (label) {
         int q = label->endpoints[0];
         int r = label->endpoints[1];
@@ -277,9 +277,9 @@ bool TwoEdgeConnectivity::two_edge_connected(int u, int v) {
     return (this->top_tree->connected(u,v) && (this->cover_level(u,v) >= 0));
 }
 
-TreeEdge* TwoEdgeConnectivity::find_bridge(int u, int v) {
+NewEdge* TwoEdgeConnectivity::find_bridge(int u, int v) {
     TwoEdgeCluster* root = this->top_tree->expose(u,v);
-    TreeEdge* bridge;
+    NewEdge* bridge;
     if (root->cover_level == -1) {
         bridge = root->min_path_edge;
     } else {

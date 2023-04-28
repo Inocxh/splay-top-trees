@@ -30,7 +30,7 @@ void TwoEdgeCluster::assign_vertex(int vertex, VertexLabel* label) {
     this->vertex[is_right_endpoint] = label;     
 }
 
-void TwoEdgeCluster::create(TreeEdge* edge_data, VertexLabel* left, VertexLabel* right) {
+void TwoEdgeCluster::create(NewEdge* edge_data, VertexLabel* left, VertexLabel* right) {
     create_cover(edge_data, left, right);
     create_find_size(edge_data, left, right);
     create_find_first_label(edge_data, left, right);
@@ -47,6 +47,6 @@ void TwoEdgeCluster::split(TwoEdgeCluster* left, TwoEdgeCluster* right) {
     
 };
 
-void TwoEdgeCluster::destroy(TreeEdge* edge_data, VertexLabel* left, VertexLabel* right) {
+void TwoEdgeCluster::destroy(NewEdge* edge_data, VertexLabel* left, VertexLabel* right) {
     destroy_cover(edge_data, left, right);
 }
