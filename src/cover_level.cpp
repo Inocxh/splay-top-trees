@@ -116,21 +116,15 @@ void TwoEdgeCluster::split_cover(TwoEdgeCluster* left, TwoEdgeCluster* right) {
         if (right->is_path()) {
             if (std::max(right->cover_level, right->cover_minus) <= this->cover_minus) {
                 right->cover_minus = this->cover_minus;
-                right->uncover_val = this->cover_minus;
             }
             if (right->cover_level <= std::max(this->cover_minus, this->cover_plus)) {
                 right->cover_level = this->cover_plus;
                 right->cover_plus = this->cover_plus;
-                if (this->cover_minus > this->cover_plus) {
-                    right->uncover_val = this->cover_minus;
-                } else {
-                    right->cover_val = this->cover_plus;
-                }
             }
         }
     }
-    //this->cover_minus = -1;
-    //this->cover_plus = -1;
+    this->cover_minus = -1;
+    this->cover_plus = -1;
 };
 
 void TwoEdgeCluster::destroy_cover(NewEdge* edge_data, VertexLabel* left, VertexLabel* right) {
@@ -138,8 +132,8 @@ void TwoEdgeCluster::destroy_cover(NewEdge* edge_data, VertexLabel* left, Vertex
     if (this->is_path()) {
         edge_data->level = this->cover_level;
     }
-    //this->cover_minus = -1;
-    //this->cover_plus = -1;
+    this->cover_minus = -1;
+    this->cover_plus = -1;
 }
 
 int TwoEdgeCluster::get_cover_level() {

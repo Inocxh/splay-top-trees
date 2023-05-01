@@ -1,5 +1,7 @@
 #include "top_tree.h"
 
+#include <iostream>
+
 template<class C, class E, class V>
 InternalNode<C,E,V>::InternalNode(C* left, C* right, int num_boundary) {
     this->parent = nullptr;

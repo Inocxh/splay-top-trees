@@ -117,7 +117,6 @@ C* TopTree<C,E,V>::expose_internal(Vertex<C,E,V>* vertex) {
 template<class C, class E, class V>
 C* TopTree<C,E,V>::deexpose_internal(Vertex<C,E,V>* vertex) { 
     C* root = nullptr;
-
     C* node = this->find_consuming_node(vertex); 
 
     static std::vector<C*> root_path;
@@ -321,7 +320,7 @@ bool TopTree<C,E,V>::connected(int u, int v) {
         depth++;
     }
     assert(depth <= 5);
-    bool result = root_u == Tv;
+    bool result = root_u && Tv && root_u == Tv;
     deexpose(u);
     deexpose(v);
     return result;

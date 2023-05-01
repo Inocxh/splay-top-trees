@@ -1,7 +1,7 @@
 #ifndef EDGE
 #define EDGE
 
-#include <utility> //Swap
+#include <algorithm> //Swap
 
 struct TwoEdgeCluster;
 

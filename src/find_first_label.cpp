@@ -1,5 +1,9 @@
 #include "two_edge_cluster.h"
 #include <cassert>
+#include <tuple>
+#include <vector>
+
+using std::vector;
 
 void set_bit(long int* bitvec, int pos) {
     *bitvec |= (1 << pos);
@@ -38,7 +42,7 @@ void compute_part_incident(vector<long int>& target_part_incident, vector<long i
             target_part_incident[i] = owner_part_incident[i];
         } else if (i == cover_level_idx) {
             target_part_incident[i] = owner_part_incident[i];
-            for (int j = i; i < lmax_idx + 1; i++) {
+            for (int j = i; j < lmax_idx + 1; j++) { // not i!
                 target_part_incident[i] |= other_part_incident[j];
             }       
         } else if (i < cover_level_idx) {
@@ -54,14 +58,23 @@ void or_row_range(long int *target_row, vector<long int>& source, int start, int
 }
 
 void TwoEdgeCluster::create_find_first_label(NewEdge* edge, VertexLabel*, VertexLabel*) {
+
     assert(edge->edge_type == TreeEdge);
-    this->boundary_vertices_id[0] = -1;
-    this->boundary_vertices_id[1] = -1;
+    int num_bound = 0;
     if (this->has_left_boundary()) {
+        num_bound++;
         this->boundary_vertices_id[0] = this->get_endpoint_id(0);
     }
     if (this->has_right_boundary()) {
+        num_bound++;
         this->boundary_vertices_id[1] = this->get_endpoint_id(1);
+    }
+    assert(edge->endpoints[0] == this->get_endpoint_id(0) || edge->endpoints[0] == this->get_endpoint_id(1));
+    assert(edge->endpoints[1] == this->get_endpoint_id(0) || edge->endpoints[1] == this->get_endpoint_id(1));
+    if (this->is_point()) {
+        assert(num_bound == 1 || num_bound == 0);
+    } else {
+        assert(num_bound == 2);
     }
 
     int cover_level_idx = edge->level + 1;
@@ -101,49 +114,72 @@ void TwoEdgeCluster::create_find_first_label(NewEdge* edge, VertexLabel*, Vertex
 }
 
 void TwoEdgeCluster::merge_find_first_label(TwoEdgeCluster* left, TwoEdgeCluster* right) {
-    this->boundary_vertices_id[0] = -1;
-    this->boundary_vertices_id[1] = -1;
-
     //First update the boundary vertex ids on the cluster
-    if (this->has_left_boundary()) {
-        this->boundary_vertices_id[0] = left->boundary_vertices_id[0];
+    int num_bound = 0;
+    if (!(left->boundary_vertices_id[1] == right->boundary_vertices_id[0])) {
+        this->print(0,false);
     }
-    if (this->has_middle_boundary()) {
-        //left of right and right of left equal by orientation invariant.
-        int middle_id = left->boundary_vertices_id[1];
-        if (this->has_left_boundary()) {
-            this->boundary_vertices_id[1] = middle_id;
-        } else {
-            this->boundary_vertices_id[0] = middle_id;
-        }
-    }
-    if (this->has_right_boundary()) {
-        this->boundary_vertices_id[1] = right->boundary_vertices_id[1];
+    assert(left->boundary_vertices_id[1] == right->boundary_vertices_id[0] &&
+           left->boundary_vertices_id[1] != -1 && right->boundary_vertices_id[0] != -1);
+    this->boundary_vertices_id[0]   = this->has_left_boundary() 
+                                    ? left->boundary_vertices_id[0]
+                                    : this->has_middle_boundary() 
+                                    ? left->boundary_vertices_id[1]
+                                    : -1;
+    this->boundary_vertices_id[1]   = this->has_right_boundary() 
+                                    ? right->boundary_vertices_id[1]
+                                    : this->has_middle_boundary() 
+                                    ? right->boundary_vertices_id[0]
+                                    : -1;
+
+    // if (this->has_left_boundary()) {
+    //     this->boundary_vertices_id[0] = left->boundary_vertices_id[0];
+    // }
+    // if (this->has_middle_boundary()) {
+    //     //left of right and right of left equal by orientation invariant.
+    //     if (!(left->boundary_vertices_id[1] == right->boundary_vertices_id[0])) {
+    //         this->print(0,false);
+    //     }
+    //     int middle_id = left->boundary_vertices_id[1];
+    //     if (this->has_left_boundary()) {
+    //         this->boundary_vertices_id[1] = middle_id;
+    //     } else {
+    //         this->boundary_vertices_id[0] = middle_id;
+    //     }
+    // }
+    // if (this->has_right_boundary()) {
+    //     this->boundary_vertices_id[1] = right->boundary_vertices_id[1];
+    // }
+    num_bound = (this->boundary_vertices_id[0] != -1) + (this->boundary_vertices_id[1] != -1);
+    if (this->is_point()) {
+        assert(num_bound == 1 || num_bound == 0 || this->boundary_vertices_id[0] == this->boundary_vertices_id[1]);
+    } else if (this->is_path()) {
+        assert(num_bound == 2);
     }
 
     //Then update the incident vector and part_incident vectors.
 
     int lmax_idx = this->l_max + 1;
-    this->incident = 0; //TODO needed?
+    assert(this->incident == 0);
     
     if (this->get_num_boundary_vertices() == 1 && !this->has_middle_boundary()) { // Off the path
         if (this->has_left_boundary()) { 
             long int right_cleared = right->incident;
             clear_from(&right_cleared, left->get_cover_level() + 1);
+            or_diagonal(&right_cleared, left->part_incident[0]); 
             this->incident = right_cleared;
-            or_diagonal(&this->incident, left->part_incident[0]); 
         } else if (this->has_right_boundary()) {
             long int left_cleared = left->incident;
             clear_from(&left_cleared, right->get_cover_level() + 1);
+            or_diagonal(&left_cleared, right->part_incident[1]);  
             this->incident = left_cleared;
-            or_diagonal(&this->incident, right->part_incident[1]);  
         }
 
         // Now handle part_incident. Delete data and write new.
-        for (int i = 0; i < lmax_idx + 1; i++) {
-            this->part_incident[0][i] = 0;
-            this->part_incident[1][i] = 0;
-        }
+        // for (int i = 0; i < lmax_idx + 1; i++) {
+        //     this->part_incident[0][i] = 0;
+        //     this->part_incident[1][i] = 0;
+        // }
         
         // Copy size into part_incident row: lmax. 
         this->part_incident[!this->has_left_boundary()][lmax_idx] = this->incident;
@@ -154,9 +190,10 @@ void TwoEdgeCluster::merge_find_first_label(TwoEdgeCluster* left, TwoEdgeCluster
             compute_part_incident(this->part_incident[0], left->part_incident[0], right->part_incident[0], left->get_cover_level());
         }
         if (this->has_middle_boundary()) {
-            if (this->has_left_boundary()) {
+            if (!this->has_right_boundary()) {
                 compute_part_incident(this->part_incident[1], right->part_incident[0], left->part_incident[1], right->get_cover_level());
-            } else {
+            }
+            if (!this->has_left_boundary()){
                 compute_part_incident(this->part_incident[0], left->part_incident[1], right->part_incident[0], left->get_cover_level());
             }
         }
@@ -203,29 +240,44 @@ void TwoEdgeCluster::split_find_first_label(TwoEdgeCluster* left, TwoEdgeCluster
             }
         }
     }
+    //Zero previous data:
+    this->boundary_vertices_id[0] = -1;
+    this->boundary_vertices_id[1] = -1;
+    this->incident = 0;
+    for (int i = 0; i < this->part_incident[0].size(); i++) {
+        this->part_incident[0][i] = 0;
+    }
+    for (int i = 0; i < this->part_incident[1].size(); i++) {
+        this->part_incident[1][i] = 0;
+    }
+
 }
 
 long int TwoEdgeCluster::get_incident() {
     return this->incident;
 }
 
-
-VertexLabel* TwoEdgeCluster::find_first_label(int u, int v, int level) {
+//Assumes that *this* is correctly flipped!
+std::tuple<TwoEdgeCluster*,VertexLabel*> TwoEdgeCluster::find_first_label(int u, int v, int level) {
+    assert(!this->is_flipped());
+    int left_bound = this->boundary_vertices_id[0];
+    int right_bound = this->boundary_vertices_id[1];
+    int cover_level = this->get_cover_level();
     this->clean(); //Fixes orientation and calls split from above.
 
     // u is now leftmost of this cluster.
-    int u_is_right = this->boundary_vertices_id[1] == u;
+    int u_is_right = right_bound == u;
     if (this->vertex[u_is_right] && this->vertex[u_is_right]->labels[level].size() > 0) {
         VertexLabel* result = this->vertex[u_is_right];
-        this->full_splay();
-        return result;
-    } else if (this->vertex[!u_is_right] && this->cover_level >= level) {
+        this->merge_internal();
+        return std::make_tuple(this,result);
+    } else if (this->vertex[!u_is_right] && cover_level >= level) {
         VertexLabel* result = this->vertex[!u_is_right];
-        this->full_splay();
-        return result;
+        this->merge_internal();
+        return std::make_tuple(this,result);
     } else if (!this->get_child(0) || !this->get_child(1)) {
-        this->full_splay();
-        return nullptr;
+        this->merge_internal();
+        return std::make_tuple(this,nullptr);
     }
 
 
@@ -247,7 +299,11 @@ VertexLabel* TwoEdgeCluster::find_first_label(int u, int v, int level) {
         index = 1;
     } else {
         // u middle. 
+        if (!(left_child->is_point() || right_child->is_point())) {
+            this->print(0,false);
+        }
         assert(left_child->is_point() || right_child->is_point());
+
         close_child = left_child->is_point() 
                       ? left_child
                       : right_child;
@@ -260,15 +316,18 @@ VertexLabel* TwoEdgeCluster::find_first_label(int u, int v, int level) {
     }
     
     if (get_bit(close_child->incident, level)) {
-
-        return close_child->find_first_label(close_child->boundary_vertices_id[index], close_child->boundary_vertices_id[!index], level);
-        
-    } else if (get_bit(far_child->incident, level) && (this->is_point() || close_child->get_cover_level() >= level)) { 
+        auto result = close_child->find_first_label(close_child->boundary_vertices_id[index], close_child->boundary_vertices_id[!index], level);
+        this->merge_internal();
+        return result;
+    } else if (get_bit(far_child->incident, level)){// && (this->is_point() || close_child->get_cover_level() >= level)) {
         if (close_child->is_point()) {
             index = !index;
         }    
-        return far_child->find_first_label(far_child->boundary_vertices_id[index], far_child->boundary_vertices_id[!index], level);
+        auto result = far_child->find_first_label(far_child->boundary_vertices_id[index], far_child->boundary_vertices_id[!index], level);
+        this->merge_internal();
+        return result;
     }
+    this->merge_internal();
     //Nothing exists
-    return nullptr;
+    return std::make_tuple(nullptr,nullptr);;
 }

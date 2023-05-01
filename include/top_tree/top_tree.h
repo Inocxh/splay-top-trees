@@ -80,9 +80,7 @@ class Node {
     int num_boundary_vertices;
     bool flipped = false;
  
-    //Implemented by LeafNode and InternalNode
-    virtual void merge_internal() = 0;
-    virtual void split_internal() = 0;
+
 
     //These must be implemented by the user!
     virtual void merge(C*, C*) = 0;
@@ -93,7 +91,7 @@ class Node {
     virtual void destroy(E*, V*, V*) {};
     virtual void swap_data() {};
 
-    virtual void push_flip() = 0;
+    
 
     void rotate_up();
     void flip();
@@ -117,9 +115,16 @@ class Node {
     
     public:
     virtual C* get_child(int) = 0;
+
+    virtual void push_flip() = 0;
     void clean();
     void full_splay();
     void semi_splay();
+    
+    //Implemented by LeafNode and InternalNode //TODO Make private
+    virtual void merge_internal() = 0; //TODO MOVE BACK;
+    virtual void split_internal() = 0;
+
     void recompute_root_path();
     int get_num_boundary_vertices();
     virtual void print(int, bool) {};

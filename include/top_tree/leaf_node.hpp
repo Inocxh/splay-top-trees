@@ -49,6 +49,7 @@ void LeafNode<C,E,V>::merge_internal() {
 
 template<class C, class E, class V>
 void LeafNode<C,E,V>::split_internal() {
+    this->push_flip();
     E* edge = this->edge->get_data();
     V* left = this->edge->get_endpoint(this->flipped)->get_data();
     V* right = this->edge->get_endpoint(!this->flipped)->get_data();
@@ -86,3 +87,5 @@ template<class C, class E, class V>
 C* LeafNode<C,E,V>::get_child(int e) {
     return nullptr;
 };
+
+

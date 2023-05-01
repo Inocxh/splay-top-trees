@@ -1,5 +1,7 @@
 #include "two_edge_cluster.h"
 
+using std::vector;
+
 TwoEdgeCluster::TwoEdgeCluster() {
     int lmax = TwoEdgeCluster::get_l_max();
 
@@ -22,10 +24,15 @@ void TwoEdgeCluster::swap_data() {
     std::swap(this->part_size[0], this->part_size[1]);
     std::swap(this->part_incident[0], this->part_incident[1]);
     std::swap(this->vertex[0],this->vertex[1]);
-    std::swap(this->boundary_vertices_id[0],this->boundary_vertices_id[1]);
+    
+    int tmp = this->boundary_vertices_id[0];
+    this->boundary_vertices_id[0] = this->boundary_vertices_id[1];
+    this->boundary_vertices_id[1] =  tmp;
 }
 
 void TwoEdgeCluster::assign_vertex(int vertex, VertexLabel* label) {
+    this->push_flip();
+    assert(!this->is_flipped());
     int is_right_endpoint = this->get_endpoint_id(1) == vertex; 
     this->vertex[is_right_endpoint] = label;     
 }
@@ -49,4 +56,11 @@ void TwoEdgeCluster::split(TwoEdgeCluster* left, TwoEdgeCluster* right) {
 
 void TwoEdgeCluster::destroy(NewEdge* edge_data, VertexLabel* left, VertexLabel* right) {
     destroy_cover(edge_data, left, right);
+    this->boundary_vertices_id[0] = -1;
+    this->boundary_vertices_id[1] = -1;
+    this->incident = 0;
+    for (int i = 0; i < this->part_incident[0].size(); i++ ){
+        this->part_incident[0][i] = 0;
+        this->part_incident[1][i] = 0;
+    }
 }

@@ -2,6 +2,7 @@
 #include <cstring>
 
 
+using std::vector;
 
 int TwoEdgeCluster::get_size(int i) {
     return this->size[i];
@@ -115,9 +116,10 @@ void TwoEdgeCluster::merge_find_size(TwoEdgeCluster* left, TwoEdgeCluster* right
             compute_part_size(this->part_size[0], left->part_size[0], right->part_size[0], left->get_cover_level());
         }
         if (this->has_middle_boundary()){
-            if (this->has_left_boundary()) {
+            if (!this->has_right_boundary()) {
                 compute_part_size(this->part_size[1], right->part_size[0], left->part_size[1], right->get_cover_level());
-            } else {
+            } 
+            if (!this->has_left_boundary()) {
                 compute_part_size(this->part_size[0], left->part_size[1], right->part_size[0], left->get_cover_level());
             }
         }
@@ -210,6 +212,16 @@ void TwoEdgeCluster::split_find_size(TwoEdgeCluster* left, TwoEdgeCluster* right
                 delete_row_range(right->part_size[1], 0, this->cover_plus + 1);
             }
         }
-
     }
+    for (int i = 0; i < this->size.size(); i++) {
+        this->size[i] = 0;
+    }
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < this->part_size[i].size(); j++) {
+            for (int k = 0; k < this->part_size[i][j].size(); k++) {
+                this->part_size[i][j][k] = 0;
+            }
+        }
+    }
+
 }

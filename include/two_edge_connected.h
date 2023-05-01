@@ -1,12 +1,14 @@
-#include "two_edge_cluster.h"
 #include "edge.h"
+#include "two_edge_cluster.h"
+
+#include <vector>
 #include <cmath>
 
 using CoverLevel = int;
 
 class TwoEdgeConnectivity {
-    TwoEdgeTree *top_tree;
-    vector<VertexLabel*> vertex_labels;
+    TopTree<TwoEdgeCluster,NewEdge,VertexLabel> *top_tree;
+    std::vector<VertexLabel*> vertex_labels;
 
     int size();
     NewEdge* swap(NewEdge*);
@@ -46,11 +48,11 @@ class TwoEdgeConnectivity {
 
     TwoEdgeConnectivity();
     TwoEdgeConnectivity(int size) {
-        TwoEdgeCluster::set_l_max((int) floor(log2(size)));
-        this->top_tree = new TwoEdgeTree(size);
-        this->vertex_labels = vector<VertexLabel*>(size);
+        TwoEdgeCluster::set_l_max((int) floor(log2 (size)) + 1); //TODO
+        this->top_tree = new TopTree<TwoEdgeCluster,NewEdge,VertexLabel>(size);
+        this->vertex_labels = std::vector<VertexLabel*>(size);
         for (int i = 0; i < size; i++) {
-            vertex_labels[i] = new VertexLabel();
+            vertex_labels[i] = new VertexLabel(TwoEdgeCluster::get_l_max());
         }
     };
     ~TwoEdgeConnectivity() {

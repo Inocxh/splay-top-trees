@@ -3,7 +3,7 @@ project(top-trees)
 
 set(CMAKE_CXX_STANDARD_REQUIRED 20)
 
-set(CMAKE_CXX_FLAGS)# "-D_GLIBCXX_DEBUG -ggdb")
+set(CMAKE_CXX_FLAGS "-D_GLIBCXX_DEBUG -ggdb")
 set(CMAKE_CXX_FLAGS_RELEASE_INIT "-O3 -DNDEBUG")
 
 include_directories(include)

@@ -1,42 +1,36 @@
+#include <vector>
 #include <iostream>
-#include "underlying_tree.h"
+#include <bitset>
 
-using std::cout;
-using std::endl; 
-
-template<int k>
-class VertexStuff {
-    char l[k] = {};
-};
-class EdgeStuff {
-
-};
-class NodeStuff {char l[0];};
-
+void clear_from(long int* bitvec, int pos) {
+    unsigned long int mask = ~0;
+    *bitvec &= ~(mask << pos);
+}
 
 int main() {
-    Tree t = Tree(10);
-    cout << sizeof(Tree<>) << endl;
-    cout << sizeof(Vertex<NodeStuff,NodeStuff,NodeStuff>) << endl;
-    cout << sizeof(Edge<>) << endl <<endl;
+    long int incident = 13;
+    clear_from(&incident, 2);
+    std::cout << incident << std::endl;
 
-    cout << sizeof(Tree<int,int,int>) << endl;
-    cout << sizeof(Vertex<int,int,int>) << endl;
-    cout << sizeof(Edge<int,int,int>) << endl << endl;
+    std::vector<long int> source = std::vector<long int>(7);
+    int lmax_idx = 5 + 1;
+    source[0] = 0;
+    source[1] = 0; 
+    source[2] = 15;
+    source[3] = 5;
+    source[4] = 0;
+    source[5] = 0;
+    source[6] = 0;
 
-    cout << sizeof(Vertex<NodeStuff,EdgeStuff,VertexStuff<0>>) << endl;
-    cout << sizeof(Vertex<NodeStuff,EdgeStuff,VertexStuff<1>>) << endl;
-    cout << sizeof(Vertex<NodeStuff,EdgeStuff,VertexStuff<2>>) << endl;
-    cout << sizeof(Vertex<NodeStuff,EdgeStuff,VertexStuff<3>>) << endl;
-    cout << sizeof(Vertex<NodeStuff,EdgeStuff,VertexStuff<4>>) << endl;
-    cout << sizeof(Vertex<NodeStuff,EdgeStuff,VertexStuff<5>>) << endl;
-    cout << sizeof(Vertex<NodeStuff,EdgeStuff,VertexStuff<6>>) << endl;
-    cout << sizeof(Vertex<NodeStuff,EdgeStuff,VertexStuff<7>>) << endl;
-    cout << sizeof(Vertex<NodeStuff,EdgeStuff,VertexStuff<8>>) << endl;
-    cout << sizeof(Vertex<NodeStuff,EdgeStuff,VertexStuff<9>>) << endl;
-    cout << sizeof(Vertex<NodeStuff,EdgeStuff,VertexStuff<10>>) << endl;
-
-    
+    // Start from 1, i.e. row 0, as row -1 is 0s. 
+    for (int i = 1; i < lmax_idx + 1; i++) {
+        long int tmp = source[i];
+        clear_from(&tmp, i);
+        incident |= tmp;
+        //std::cout << std::bitset<6>(tmp) << std::endl;
+    }
+    std::cout << std::bitset<10>(incident);
     return 0;
 }
+
 

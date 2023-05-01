@@ -56,17 +56,18 @@ TEST_CASE("FFL: large", "[find first label]") {
 
     
     root = tree.expose(2,7);
-    auto ffl = root->find_first_label(7,2,0);
+    auto res = root->find_first_label(7,2,0);
+    auto ffl = std::get<1>(res);
     REQUIRE(ffl->labels[0].size() > 0);
-    ffl = root->find_first_label(7,2,1);
+    ffl = std::get<1>(root->find_first_label(7,2,1));
     REQUIRE(ffl->labels[1].size() > 0);
     tree.deexpose(2,7);
 
     tree.insert(4,12);
     tree.insert(0,12,0);
     root = tree.expose(1,10);
-    ffl = root->find_first_label(10,1,0);
-    ffl = root->find_first_label(1,10,0);
+    ffl = std::get<1>(root->find_first_label(10,1,0));
+    ffl = std::get<1>(root->find_first_label(1,10,0));
     tree.deexpose(1,10);
 }
 
@@ -95,13 +96,14 @@ TEST_CASE("FFL: cut", "[find first label]") {
     tree.insert(14,15,0);
 
     auto root = tree.expose(1,6);
-    auto ffl = root->find_first_label(1,6,0);
+    auto res = root->find_first_label(1,6,0);
+    auto ffl = std::get<1>(res);
     REQUIRE((ffl->labels[0][0]->endpoints[0] == 8 && ffl->labels[0][0]->endpoints[1] == 11));
-    ffl = root->find_first_label(6,1,0);
+    ffl = std::get<1>(root->find_first_label(6,1,0));
     REQUIRE((ffl->labels[0][0]->endpoints[0] == 14 && ffl->labels[0][0]->endpoints[1] == 15));
-    ffl = root->find_first_label(1,6,1);    
+    ffl = std::get<1>(root->find_first_label(1,6,1));    
     REQUIRE((ffl == nullptr));
-    ffl = root->find_first_label(6,1,1);  
+    ffl = std::get<1>(root->find_first_label(6,1,1));  
     REQUIRE((ffl == nullptr));
     tree.deexpose(1,6);
     //TODO CUT
