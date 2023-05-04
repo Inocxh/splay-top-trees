@@ -20,11 +20,11 @@ void InternalNode<C,E,V>::push_flip() {
     if (!this->flipped) {
         return;
     }
-    this->flipped = false;
-    this->swap_data();
     std::swap(this->children[0], this->children[1]);
     this->children[0]->flip();
     this->children[1]->flip();
+    this->swap_data();
+    this->flipped = false;
 }
 
 template<class C, class E, class V>
@@ -75,10 +75,10 @@ C* InternalNode<C,E,V>::get_child(int index) {
 template<class C, class E, class V>
 void InternalNode<C,E,V>::print(int indent, bool was_flip) {
     for (int i = 0; i < indent; i++) {
-        std::cout << "    ";
+        std::cerr << "    ";
     }
     this->print_data();
-    std::cout << std::endl;
+    std::cerr << std::endl;
     this->children[this->flipped != was_flip]->print(indent + 1, this->flipped != was_flip);
     this->children[!this->flipped != was_flip]->print(indent + 1, this->flipped != was_flip);
 }

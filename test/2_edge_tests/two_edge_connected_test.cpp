@@ -212,6 +212,39 @@ TEST_CASE("2-edge: delete all", "[2-edge]") {
     }
 }
 
+TEST_CASE("2-edge: many parallel edges", "[2-edge]") {
+    TwoEdgeConnectivity tree = TwoEdgeConnectivity(3);
+    std::vector<NewEdge*> edges;
+    for (int i = 0; i < 1000; i++) {
+        auto e = tree.insert(0,1);
+        edges.push_back(tree.insert(0,1));
+        edges.push_back(tree.insert(1,2));
+        tree.remove(edges[0]);
+        edges[0] = edges.back();
+        edges.pop_back();
+    }
+    while (edges.size()>0) {
+        tree.remove(edges.back());
+        edges.pop_back();
+    }
+}
+
+TEST_CASE("2-edge: specific", "[2-edge]") {
+    TwoEdgeConnectivity tree = TwoEdgeConnectivity(6);
+    std::vector<NewEdge*> edges;
+    edges.push_back(tree.insert(3,2));
+    tree.insert(2,4);
+    tree.insert(0,3);
+    tree.insert(1,2);
+   
+    edges.push_back(tree.insert(0,1));
+    edges.push_back(tree.insert(0,1));
+
+    tree.remove(edges[0]);
+    tree.remove(edges[2]);
+}
+
+
 TEST_CASE("2-edge: delete mini", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(50);
     std::vector<NewEdge*> edges = std::vector<NewEdge*>(40);
@@ -320,4 +353,37 @@ tree.remove(edges[0]);
 edges[0] = edges.back();
 edges.pop_back();
 
+}
+
+TEST_CASE("2-edge: size is right", "[2-edge]") {
+    TwoEdgeConnectivity tree = TwoEdgeConnectivity(19);
+    std::vector<NewEdge*> edges;
+    auto edge = tree.insert(3, 5);
+    if(edge != nullptr) edges.push_back(edge);
+    // edge = tree.insert(18, 18);
+    // if(edge != nullptr) edges.push_back(edge);
+    edge = tree.insert(6, 10);
+    if(edge != nullptr) edges.push_back(edge);
+    edge = tree.insert(0, 9);
+    if(edge != nullptr) edges.push_back(edge);
+    edge = tree.insert(18, 12);
+    if(edge != nullptr) edges.push_back(edge);
+    edge = tree.insert(17, 18);
+    if(edge != nullptr) edges.push_back(edge);
+    edge = tree.insert(13, 17);
+    if(edge != nullptr) edges.push_back(edge);
+    edge = tree.insert(12, 14);
+    if(edge != nullptr) edges.push_back(edge);
+    edge = tree.insert(18, 15);
+    if(edge != nullptr) edges.push_back(edge);
+    edge = tree.insert(12, 5);
+    if(edge != nullptr) edges.push_back(edge);
+    edge = tree.insert(3, 6);
+    if(edge != nullptr) edges.push_back(edge);
+    edge = tree.insert(16, 3);
+    if(edge != nullptr) edges.push_back(edge);
+    edge = tree.insert(0, 12);
+    if(edge != nullptr) edges.push_back(edge);
+    edge = tree.insert(10, 5);
+    if(edge != nullptr) edges.push_back(edge);
 }

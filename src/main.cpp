@@ -1,36 +1,27 @@
 #include <vector>
 #include <iostream>
 #include <bitset>
+#include <vector>
+using std::vector;
 
-void clear_from(long int* bitvec, int pos) {
-    unsigned long int mask = ~0;
-    *bitvec &= ~(mask << pos);
+void sum_row_range(vector<int>& target_row, vector<vector<int>>& source, int start, int end) { 
+    for (int i = start; i < end; i++) {
+        for (int j = 0; j < 6; j++) {
+            target_row[j] += source[i][j];
+        }
+    }
 }
 
 int main() {
-    long int incident = 13;
-    clear_from(&incident, 2);
-    std::cout << incident << std::endl;
-
-    std::vector<long int> source = std::vector<long int>(7);
-    int lmax_idx = 5 + 1;
-    source[0] = 0;
-    source[1] = 0; 
-    source[2] = 15;
-    source[3] = 5;
-    source[4] = 0;
-    source[5] = 0;
-    source[6] = 0;
-
-    // Start from 1, i.e. row 0, as row -1 is 0s. 
-    for (int i = 1; i < lmax_idx + 1; i++) {
-        long int tmp = source[i];
-        clear_from(&tmp, i);
-        incident |= tmp;
-        //std::cout << std::bitset<6>(tmp) << std::endl;
+    vector<int> target = vector<int>(5);
+    vector<vector<int>> rows;
+    rows.push_back(vector<int>(5,1));
+    rows.push_back(vector<int>(5,2));
+    sum_row_range(target,rows,0,2);
+    for (auto i : target) {
+        std::cout << i << " ";
     }
-    std::cout << std::bitset<10>(incident);
+
+
     return 0;
 }
-
-

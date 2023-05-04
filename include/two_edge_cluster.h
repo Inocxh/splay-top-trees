@@ -21,9 +21,9 @@ struct VertexLabel {
 
     void print() {
         for (int i = 0; i < labels.size(); i++) {
-            if (i != 1) continue;
+            //if (i == 0) continue;
             for (int j = 0; j < labels[i].size(); j++) {
-                std::cout << "(" << labels[i][j]->endpoints[0] << "," << labels[i][j]->endpoints[1] << ") ";
+                std::cout << "(" << labels[i][j]->endpoints[0] << "," << labels[i][j]->endpoints[1] << "; " <<  labels[i][j]->level << ")";
             }
         }
     }
@@ -48,17 +48,26 @@ struct VertexLabel {
 };
 
 class TwoEdgeCluster : public Node<TwoEdgeCluster,NewEdge,VertexLabel> {
+    void recompute_tree(); //TODO: delete
+    bool everything_zero();
+
     friend class TwoEdgeConnectivity;
+
+    int last_uncover = -1;
 
     //Cover level
     inline static int l_max; //floor(log (tree_size))
-    int cover_level;
-    int cover_plus;
-    int cover_minus;
-    int global_cover;
+    int cover_level = -1;
+    int cover_plus = -1;
+    int cover_minus = -1;
+    int global_cover = -1;
 
-    NewEdge* min_path_edge;
-    NewEdge* min_global_edge;
+    NewEdge* min_path_edge = nullptr;
+    NewEdge* min_global_edge = nullptr;
+
+    void cover_level_cover(int);
+    void cover_level_uncover(int);
+    
 
     void merge_cover(TwoEdgeCluster*, TwoEdgeCluster*);
     void create_cover(NewEdge*, VertexLabel*, VertexLabel*);
@@ -69,6 +78,9 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster,NewEdge,VertexLabel> {
     std::vector<int> size;
     std::vector<std::vector<int>> part_size[2]; // could be binary tree
 
+    void find_size_cover(int);
+    void find_size_uncover(int);
+
     void compute_part_size(std::vector<std::vector<int>>&, std::vector<std::vector<int>>&, std::vector<std::vector<int>>&, int);
     void sum_row_range(std::vector<int>&, std::vector<std::vector<int>>&, int, int);
     void delete_row_range(std::vector<std::vector<int>>&, int, int);
@@ -77,6 +89,7 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster,NewEdge,VertexLabel> {
     void merge_find_size(TwoEdgeCluster*, TwoEdgeCluster*);
     void create_find_size(NewEdge*, VertexLabel*, VertexLabel*);
     void split_find_size(TwoEdgeCluster*, TwoEdgeCluster*);
+    void destroy_find_size(NewEdge*, VertexLabel*, VertexLabel*);
     
     
     
@@ -88,10 +101,13 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster,NewEdge,VertexLabel> {
 
     //VertexLabel* find_vertex_label(TwoEdgeCluster*, int v, int w, int i);
 
+    void find_first_label_cover(int);
+    void find_first_label_uncover(int);
 
     void merge_find_first_label(TwoEdgeCluster*, TwoEdgeCluster*);
     void create_find_first_label(NewEdge*, VertexLabel*, VertexLabel*);
     void split_find_first_label(TwoEdgeCluster*, TwoEdgeCluster*);
+    void destroy_find_first_label(NewEdge*, VertexLabel*, VertexLabel*);
 
 
 
@@ -121,22 +137,36 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster,NewEdge,VertexLabel> {
 
 
     void print_data() {
-    std::cout << "inci: " << std::bitset<4>(this->incident) << " "; 
-    std::cout << "bounds: (" << this->boundary_vertices_id[0] << "," << this->boundary_vertices_id[1] << ") ";
-    std::cout << " c: " << this->cover_level; //<< " c-: " << this->cover_minus << " c+: " << this->cover_plus << " "; 
-    //std::cout << "s: " << this->size[1] << " ";
-    if (this->vertex[0]) {
-        std::cout << "vl: ";
-        this->vertex[0]->print();
-    }
-    if (this->vertex[1]) {
-        std::cout << "vr: ";
-        this->vertex[1]->print();
-    }
-    if (!this->get_child(0)) {
-        auto this_leaf = (LeafNode<TwoEdgeCluster, NewEdge, VertexLabel>*) this;
-        std::cout << "cl: " << this_leaf->edge->get_data()->level;
-    }
+        std::cout << "inci: " << std::bitset<4>(this->incident) << " "; 
+        std::cout << "bounds: (" << this->boundary_vertices_id[0] << "," << this->boundary_vertices_id[1] << ") ";
+        std::cout << " c:" << this->cover_level << " c-:" << this->cover_minus << " c+:" << this->cover_plus << " "; 
+        //std::cout << " f: " << this->is_flipped() << " ";
+        std::cout << " [";
+        for (int i = 0; i <this->size.size(); i++) {
+            std::cout << this->size[i] << ",";
+        }
+        std::cout << "] ";
+        // for (int i = 0 ; i < 2; i++) {
+        //     std::cout << "p" << i << ": ["; 
+        //     for (int j = 0; j < this->part_size[i].size(); j++) {
+        //         std::cout << "[";
+        //         for(int k = 0; k < this->part_size[i][j].size(); k++) {
+        //             std::cout << this->part_size[i][j][k] << ",";
+        //         }
+        //         std::cout << "],";
+        //     }
+        //     std::cout << "];";
+        // }
+
+        std::cout << "s: " << this->size[1] << " ";
+        if (this->vertex[0]) {
+            std::cout << "vl: ";
+            this->vertex[0]->print();
+        }
+        if (this->vertex[1]) {
+            std::cout << "vr: ";
+            this->vertex[1]->print();
+        }
     };
 };
 

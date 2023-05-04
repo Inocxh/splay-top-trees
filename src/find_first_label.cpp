@@ -33,6 +33,8 @@ void or_diagonal(long int *target_row, vector<long int>& source) {
     }
 }
 
+
+
 void compute_part_incident(vector<long int>& target_part_incident, vector<long int>& owner_part_incident, vector<long int>& other_part_incident, int cover_level) {
     int lmax_idx = TwoEdgeCluster::get_l_max() + 1;
     int cover_level_idx = cover_level + 1; 
@@ -42,7 +44,7 @@ void compute_part_incident(vector<long int>& target_part_incident, vector<long i
             target_part_incident[i] = owner_part_incident[i];
         } else if (i == cover_level_idx) {
             target_part_incident[i] = owner_part_incident[i];
-            for (int j = i; j < lmax_idx + 1; j++) { // not i!
+            for (int j = i; j < lmax_idx + 1; j++) {
                 target_part_incident[i] |= other_part_incident[j];
             }       
         } else if (i < cover_level_idx) {
@@ -80,9 +82,9 @@ void TwoEdgeCluster::create_find_first_label(NewEdge* edge, VertexLabel*, Vertex
     int cover_level_idx = edge->level + 1;
     int lmax_idx = this->l_max + 1;
     
-    this->incident = 0;
-    fill(this->part_incident[0].begin(), this->part_incident[0].end(), 0);
-    fill(this->part_incident[1].begin(), this->part_incident[1].end(), 0);
+    // this->incident = 0;
+    // fill(this->part_incident[0].begin(), this->part_incident[0].end(), 0);
+    // fill(this->part_incident[1].begin(), this->part_incident[1].end(), 0);
     
     long int label[2] = {0,0};
 
@@ -106,10 +108,27 @@ void TwoEdgeCluster::create_find_first_label(NewEdge* edge, VertexLabel*, Vertex
         this->part_incident[!this->has_left_boundary()][lmax_idx] = this->incident;
     } else if (this->get_num_boundary_vertices() == 2) {
         this->incident = label[0] | label[1];
+        assert(cover_level_idx != lmax_idx);
         this->part_incident[0][lmax_idx] = label[0];
         this->part_incident[0][cover_level_idx] = label[1];
         this->part_incident[1][lmax_idx] = label[1];
         this->part_incident[1][cover_level_idx] = label[0];
+    } else if (this->get_num_boundary_vertices() == 0) {
+        // assert(this->incident == 0);
+        // for (int i = 0; i < this->part_incident[0].size(); i++) {
+        //     assert(this->part_incident[0][i] == 0);
+        //     assert(this->part_incident[1][i] == 0);
+        // }
+    }
+}
+
+void TwoEdgeCluster::destroy_find_first_label(NewEdge* edge, VertexLabel*, VertexLabel*) {
+    this->boundary_vertices_id[0] = -1;
+    this->boundary_vertices_id[1] = -1;
+    this->incident = 0;
+    for (int i = 0; i < this->part_incident[0].size(); i++ ){
+        this->part_incident[0][i] = 0;
+        this->part_incident[1][i] = 0;
     }
 }
 
@@ -131,25 +150,6 @@ void TwoEdgeCluster::merge_find_first_label(TwoEdgeCluster* left, TwoEdgeCluster
                                     : this->has_middle_boundary() 
                                     ? right->boundary_vertices_id[0]
                                     : -1;
-
-    // if (this->has_left_boundary()) {
-    //     this->boundary_vertices_id[0] = left->boundary_vertices_id[0];
-    // }
-    // if (this->has_middle_boundary()) {
-    //     //left of right and right of left equal by orientation invariant.
-    //     if (!(left->boundary_vertices_id[1] == right->boundary_vertices_id[0])) {
-    //         this->print(0,false);
-    //     }
-    //     int middle_id = left->boundary_vertices_id[1];
-    //     if (this->has_left_boundary()) {
-    //         this->boundary_vertices_id[1] = middle_id;
-    //     } else {
-    //         this->boundary_vertices_id[0] = middle_id;
-    //     }
-    // }
-    // if (this->has_right_boundary()) {
-    //     this->boundary_vertices_id[1] = right->boundary_vertices_id[1];
-    // }
     num_bound = (this->boundary_vertices_id[0] != -1) + (this->boundary_vertices_id[1] != -1);
     if (this->is_point()) {
         assert(num_bound == 1 || num_bound == 0 || this->boundary_vertices_id[0] == this->boundary_vertices_id[1]);
@@ -157,8 +157,8 @@ void TwoEdgeCluster::merge_find_first_label(TwoEdgeCluster* left, TwoEdgeCluster
         assert(num_bound == 2);
     }
 
-    //Then update the incident vector and part_incident vectors.
 
+    //Then update the incident vector and part_incident vectors.
     int lmax_idx = this->l_max + 1;
     assert(this->incident == 0);
     
@@ -174,12 +174,6 @@ void TwoEdgeCluster::merge_find_first_label(TwoEdgeCluster* left, TwoEdgeCluster
             or_diagonal(&left_cleared, right->part_incident[1]);  
             this->incident = left_cleared;
         }
-
-        // Now handle part_incident. Delete data and write new.
-        // for (int i = 0; i < lmax_idx + 1; i++) {
-        //     this->part_incident[0][i] = 0;
-        //     this->part_incident[1][i] = 0;
-        // }
         
         // Copy size into part_incident row: lmax. 
         this->part_incident[!this->has_left_boundary()][lmax_idx] = this->incident;
@@ -203,41 +197,65 @@ void TwoEdgeCluster::merge_find_first_label(TwoEdgeCluster* left, TwoEdgeCluster
     }
 }
 
+void TwoEdgeCluster::find_first_label_cover(int i) {
+    if (i < this->cover_plus || i == -1) {
+        return;
+    }
+    if (this->cover_level < i || this->last_uncover >= i) {
+        or_row_range(&this->part_incident[0][i + 1], this->part_incident[0], 0, i + 1);
+        or_row_range(&this->part_incident[1][i + 1], this->part_incident[1], 0, i + 1);
+        fill(this->part_incident[0].begin(), this->part_incident[0].begin() + (i + 1), 0);
+        fill(this->part_incident[1].begin(), this->part_incident[1].begin() + (i + 1), 0);
+    }
+}
 
+void TwoEdgeCluster::find_first_label_uncover(int i) {
+    if (i < this->cover_plus || i == -1) {
+        return;
+    }
+    if (this->cover_level <= i) {
+        this->last_uncover = i;
+        or_row_range(&this->part_incident[0][0], this->part_incident[0], 1, i + 2);
+        or_row_range(&this->part_incident[1][0], this->part_incident[1], 1, i + 2);
+        fill(this->part_incident[0].begin() + 1, this->part_incident[0].begin() + (i + 2), 0);
+        fill(this->part_incident[1].begin() + 1, this->part_incident[1].begin() + (i + 2), 0);
+    }
+}
 
 void TwoEdgeCluster::split_find_first_label(TwoEdgeCluster* left, TwoEdgeCluster* right) {
     if (this->is_path()) {
         if (left->is_path()) {
+            left->find_first_label_uncover(this->cover_minus);
+            left->find_first_label_cover(this->cover_plus);
             // Check for uncover.
-            
-            if (left->cover_level <= this->cover_minus) { // if some uncover should be propagated.
-                or_row_range(&left->part_incident[0][0], left->part_incident[0], 1, this->cover_minus + 2);
-                or_row_range(&left->part_incident[1][0], left->part_incident[1], 1, this->cover_minus + 2);
-                fill(left->part_incident[0].begin() + 1, left->part_incident[0].begin() + (this->cover_minus + 2), 0);
-                fill(left->part_incident[1].begin() + 1, left->part_incident[1].begin() + (this->cover_minus + 2), 0);
-            }
-            if (left->cover_level <= this->cover_plus) {
-                or_row_range(&left->part_incident[0][this->cover_plus + 1], left->part_incident[0], 0, this->cover_plus + 1);
-                or_row_range(&left->part_incident[1][this->cover_plus + 1], left->part_incident[1], 0, this->cover_plus + 1);
-                fill(left->part_incident[0].begin(), left->part_incident[0].begin() + (this->cover_minus + 1), 0);
-                fill(left->part_incident[1].begin(), left->part_incident[1].begin() + (this->cover_minus + 1), 0);
-                fill(left->part_incident[0].begin(), left->part_incident[0].begin() + (this->cover_minus + 1), 0);
-                fill(left->part_incident[1].begin(), left->part_incident[1].begin() + (this->cover_minus + 1), 0);
-            }
+            // if (left->cover_level <= this->cover_minus) { // if some uncover should be propagated.
+            //     or_row_range(&left->part_incident[0][0], left->part_incident[0], 1, this->cover_minus + 2);
+            //     or_row_range(&left->part_incident[1][0], left->part_incident[1], 1, this->cover_minus + 2);
+            //     fill(left->part_incident[0].begin() + 1, left->part_incident[0].begin() + (this->cover_minus + 2), 0);
+            //     fill(left->part_incident[1].begin() + 1, left->part_incident[1].begin() + (this->cover_minus + 2), 0);
+            // }
+            // if (left->cover_level <= this->cover_plus) {
+            //     or_row_range(&left->part_incident[0][this->cover_plus + 1], left->part_incident[0], 0, this->cover_plus + 1);
+            //     or_row_range(&left->part_incident[1][this->cover_plus + 1], left->part_incident[1], 0, this->cover_plus + 1);
+            //     fill(left->part_incident[0].begin(), left->part_incident[0].begin() + (this->cover_minus + 1), 0);
+            //     fill(left->part_incident[1].begin(), left->part_incident[1].begin() + (this->cover_minus + 1), 0);
+            // }
         }
         if (right->is_path()) {
-            if (right->cover_level <= this->cover_minus) {
-                or_row_range(&right->part_incident[0][0], right->part_incident[0], 1, this->cover_minus + 2);
-                or_row_range(&right->part_incident[1][0], right->part_incident[1], 1, this->cover_minus + 2);
-                fill(right->part_incident[0].begin() + 1, right->part_incident[0].begin() + (this->cover_minus + 2), 0);
-                fill(right->part_incident[1].begin() + 1, right->part_incident[1].begin() + (this->cover_minus + 2), 0);
-            }
-            if (right->cover_level <= this->cover_plus) {
-                or_row_range(&right->part_incident[0][this->cover_plus + 1], right->part_incident[0], 0, this->cover_plus + 1);
-                or_row_range(&right->part_incident[1][this->cover_plus + 1], right->part_incident[1], 0, this->cover_plus + 1);
-                fill(right->part_incident[0].begin(), right->part_incident[0].begin() + (this->cover_minus + 1), 0);
-                fill(right->part_incident[1].begin(), right->part_incident[1].begin() + (this->cover_minus + 1), 0);
-            }
+            right->find_first_label_uncover(this->cover_minus);
+            right->find_first_label_cover(this->cover_plus);
+            // if (right->cover_level <= this->cover_minus) {
+            //     or_row_range(&right->part_incident[0][0], right->part_incident[0], 1, this->cover_minus + 2);
+            //     or_row_range(&right->part_incident[1][0], right->part_incident[1], 1, this->cover_minus + 2);
+            //     fill(right->part_incident[0].begin() + 1, right->part_incident[0].begin() + (this->cover_minus + 2), 0);
+            //     fill(right->part_incident[1].begin() + 1, right->part_incident[1].begin() + (this->cover_minus + 2), 0);
+            // }
+            // if (right->cover_level <= this->cover_plus) {
+            //     or_row_range(&right->part_incident[0][this->cover_plus + 1], right->part_incident[0], 0, this->cover_plus + 1);
+            //     or_row_range(&right->part_incident[1][this->cover_plus + 1], right->part_incident[1], 0, this->cover_plus + 1);
+            //     fill(right->part_incident[0].begin(), right->part_incident[0].begin() + (this->cover_minus + 1), 0);
+            //     fill(right->part_incident[1].begin(), right->part_incident[1].begin() + (this->cover_minus + 1), 0);
+            // }
         }
     }
     //Zero previous data:
@@ -271,7 +289,7 @@ std::tuple<TwoEdgeCluster*,VertexLabel*> TwoEdgeCluster::find_first_label(int u,
         VertexLabel* result = this->vertex[u_is_right];
         this->merge_internal();
         return std::make_tuple(this,result);
-    } else if (this->vertex[!u_is_right] && cover_level >= level) {
+    } else if (this->vertex[!u_is_right] && this->vertex[!u_is_right]->labels[level].size() > 0) { // cover_level >= level
         VertexLabel* result = this->vertex[!u_is_right];
         this->merge_internal();
         return std::make_tuple(this,result);
@@ -283,27 +301,25 @@ std::tuple<TwoEdgeCluster*,VertexLabel*> TwoEdgeCluster::find_first_label(int u,
 
     TwoEdgeCluster* left_child = this->get_child(0);
     TwoEdgeCluster* right_child = this->get_child(1);
+    assert(!left_child->is_flipped());
+    assert(!right_child->is_flipped());
     
     TwoEdgeCluster* close_child, * far_child;
     int index = 0;
 
-    if (left_child->boundary_vertices_id[0] == u) {
+    if (left_child->boundary_vertices_id[0] == u && left_child->boundary_vertices_id[0] != left_child->boundary_vertices_id[1]) {
         //u left
         close_child = left_child;
         far_child = right_child;
         index = 0;
-    } else if (right_child->boundary_vertices_id[1] == u) {
+    } else if (right_child->boundary_vertices_id[1] == u && right_child->boundary_vertices_id[0] != right_child->boundary_vertices_id[1]) {
         //u right
         close_child = right_child;
         far_child = left_child;
         index = 1;
     } else {
         // u middle. 
-        if (!(left_child->is_point() || right_child->is_point())) {
-            this->print(0,false);
-        }
         assert(left_child->is_point() || right_child->is_point());
-
         close_child = left_child->is_point() 
                       ? left_child
                       : right_child;

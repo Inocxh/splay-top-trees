@@ -60,10 +60,10 @@ void LeafNode<C,E,V>::split_internal() {
 template<class C, class E, class V>
 void LeafNode<C,E,V>::print(int indent, bool flippe) {
     for (int i = 0; i < indent; i++) {
-        std::cout << "    ";
+        std::cerr << "    ";
     }
     this->print_data();
-    std::cout << "ep: (" <<
+    std::cerr << "ep: (" <<
     this->edge->get_endpoint(this->flipped != flippe)->get_id() << "," << 
     this->edge->get_endpoint(!this->flipped !=flippe)->get_id() << ")" << std::endl;
 
@@ -73,8 +73,8 @@ template<class C, class E, class V>
 void LeafNode<C,E,V>::push_flip() {
     if (this->flipped) {
         this->edge->flip();
-        this->flipped = false;
         this->swap_data();
+        this->flipped = false;
     }
 }
 

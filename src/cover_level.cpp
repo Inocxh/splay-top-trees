@@ -1,14 +1,30 @@
 #include "two_edge_cluster.h"
 
-void TwoEdgeCluster::cover(int i) {
+
+void TwoEdgeCluster::cover_level_cover(int i) {
     this->cover_level = std::max(this->cover_level,i);
     this->cover_plus = std::max(this->cover_plus,i);
+    
+    if (i >= this->cover_minus) {
+        this->cover_minus = -1;
+    }
 }
-void TwoEdgeCluster::uncover(int i) {
+void TwoEdgeCluster::cover_level_uncover(int i) {
+    // if (this->cover_level <= i) {
+    //     this->cover_level = -1;
+    //     this->cover_plus = -1;
+    //     this->cover_minus = std::max(this->cover_minus, i);
+    // }
+    if (this->cover_plus > i) {
+        return;
+    }
+    this->cover_plus = -1;
+    
     if (this->cover_level <= i) {
         this->cover_level = -1;
-        this->cover_plus = -1;
-        this->cover_minus = std::max(this->cover_minus, i);
+    }
+    if (this->cover_minus <= i) {
+        this->cover_minus = i;
     }
 }
 
@@ -29,19 +45,6 @@ void TwoEdgeCluster::create_cover(NewEdge* edge, VertexLabel* left, VertexLabel*
     }
     this->cover_plus = -1;
     this->cover_minus = -1;
-    
-    /*this->cover_level = edge->cover_level != -1 ? edge->cover_level : -1;       
-    this->global_cover = -1;
-
-    if (!this->is_path()) {
-        this->min_path_edge = nullptr;
-        this->min_global_edge = edge;
-    } else {
-        this->min_path_edge = edge;
-        this->min_global_edge = nullptr;
-    }
-    this->cover_minus = -1;
-    this->cover_plus = -1;*/
 };
 
 void TwoEdgeCluster::merge_cover(TwoEdgeCluster* left, TwoEdgeCluster* right) {
@@ -103,28 +106,37 @@ void TwoEdgeCluster::merge_cover(TwoEdgeCluster* left, TwoEdgeCluster* right) {
 };
 
 void TwoEdgeCluster::split_cover(TwoEdgeCluster* left, TwoEdgeCluster* right) {
-    if (this->is_path()) {
-        if (left->is_path()) {
-            if (std::max(left->cover_level, left->cover_minus) <= this->cover_minus) {
-                left->cover_minus = this->cover_minus;
-            }
-            if (left->cover_level <= std::max(this->cover_minus, this->cover_plus)) {
-                left->cover_level = this->cover_plus;
-                left->cover_plus = this->cover_plus;
-            }
-        }
-        if (right->is_path()) {
-            if (std::max(right->cover_level, right->cover_minus) <= this->cover_minus) {
-                right->cover_minus = this->cover_minus;
-            }
-            if (right->cover_level <= std::max(this->cover_minus, this->cover_plus)) {
-                right->cover_level = this->cover_plus;
-                right->cover_plus = this->cover_plus;
-            }
-        }
-    }
-    this->cover_minus = -1;
+    // if (this->is_path()) {
+    //     if (left->is_path()) {
+    //         left->cover_level_uncover(this->cover_minus);
+    //         left->cover_level_cover(this->cover_plus);
+    //         // if (std::max(left->cover_level, left->cover_minus) <= this->cover_minus) {
+    //         //     left->cover_minus = this->cover_minus;
+    //         // }
+    //         // if (left->cover_level <= std::max(this->cover_minus, this->cover_plus)) {
+    //         //     left->cover_level = this->cover_plus;
+    //         //     left->cover_plus = this->cover_plus;
+    //         // }
+    //     }
+    //     if (right->is_path()) {
+    //         right->cover_level_uncover(this->cover_minus);
+    //         right->cover_level_cover(this->cover_plus);
+    //         // if (std::max(right->cover_level, right->cover_minus) <= this->cover_minus) {
+    //         //     right->cover_minus = this->cover_minus;
+    //         // }
+    //         // if (right->cover_level <= std::max(this->cover_minus, this->cover_plus)) {
+    //         //     right->cover_level = this->cover_plus;
+    //         //     right->cover_plus = this->cover_plus;
+    //         // }
+    //     }
+    // }
+    this->cover_level = -1;
+    //Not yet! Only after find_size and find_first_label
     this->cover_plus = -1;
+    this->cover_minus = -1;
+    this->global_cover = -1;
+    this->min_global_edge = nullptr;
+    this->min_path_edge = nullptr;
 };
 
 void TwoEdgeCluster::destroy_cover(NewEdge* edge_data, VertexLabel* left, VertexLabel* right) {
@@ -132,8 +144,12 @@ void TwoEdgeCluster::destroy_cover(NewEdge* edge_data, VertexLabel* left, Vertex
     if (this->is_path()) {
         edge_data->level = this->cover_level;
     }
+    this->cover_level = -1;
     this->cover_minus = -1;
     this->cover_plus = -1;
+    this->global_cover = -1;
+    this->min_global_edge = nullptr;
+    this->min_path_edge = nullptr;
 }
 
 int TwoEdgeCluster::get_cover_level() {

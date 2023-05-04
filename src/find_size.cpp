@@ -4,6 +4,7 @@
 
 using std::vector;
 
+
 int TwoEdgeCluster::get_size(int i) {
     return this->size[i];
 }
@@ -15,12 +16,12 @@ void TwoEdgeCluster::create_find_size(NewEdge* edge_data, VertexLabel* left, Ver
     int lmax_idx = lmax + 1;
     
     //Set everything to zero!
-    std::fill(size.begin(), size.end(), 0);
+    // std::fill(size.begin(), size.end(), 0);
 
-    for (int i = 0; i < lmax_idx + 1; i++) {
-        std::fill(this->part_size[0][i].begin(), this->part_size[0][i].end(), 0);
-        std::fill(this->part_size[1][i].begin(), this->part_size[1][i].end(), 0);
-    }
+    // for (int i = 0; i < lmax_idx + 1; i++) {
+    //     std::fill(this->part_size[0][i].begin(), this->part_size[0][i].end(), 0);
+    //     std::fill(this->part_size[1][i].begin(), this->part_size[1][i].end(), 0);
+    // }
     
     /*
     For a leaf node we have 3 cases:
@@ -49,10 +50,6 @@ void TwoEdgeCluster::create_find_size(NewEdge* edge_data, VertexLabel* left, Ver
         }
         
     } else if (this->get_num_boundary_vertices() == 1) {
-        if (cover_level == 5) {
-            int ost = 0;
-        }
-
         
         fill(size.begin(), size.begin() + (cover_level + 1), 2);
         fill(size.begin() + (cover_level + 1), size.end(), 1);
@@ -66,6 +63,15 @@ void TwoEdgeCluster::create_find_size(NewEdge* edge_data, VertexLabel* left, Ver
     }
     // Do nothing if num bound is 0.
     
+}
+
+void TwoEdgeCluster::destroy_find_size(NewEdge* edge_data, VertexLabel* left, VertexLabel* right)  {
+    fill(size.begin(),size.end(),0);
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < this->part_size[i].size(); j++) {
+            fill(this->part_size[i][j].begin(),this->part_size[i][j].end(),0);
+        }
+    }
 }
 
 void TwoEdgeCluster::merge_find_size(TwoEdgeCluster* left, TwoEdgeCluster* right) {
@@ -97,10 +103,10 @@ void TwoEdgeCluster::merge_find_size(TwoEdgeCluster* left, TwoEdgeCluster* right
         }
 
         // Now handle partsize. Delete data and write new.
-        for (int i = 0; i < lmax_idx + 1; i++) {
-            fill(this->part_size[0][i].begin(), this->part_size[0][i].end(), 0);
-            fill(this->part_size[1][i].begin(), this->part_size[1][i].end(), 0);
-        }
+        // for (int i = 0; i < lmax_idx + 1; i++) {
+        //     fill(this->part_size[0][i].begin(), this->part_size[0][i].end(), 0);
+        //     fill(this->part_size[1][i].begin(), this->part_size[1][i].end(), 0);
+        // }
         
         // Copy size into partsize row: lmax. 
         std::copy(this->size.begin(), this->size.end(), this->part_size[!this->has_left_boundary()][lmax_idx].begin());
@@ -118,7 +124,7 @@ void TwoEdgeCluster::merge_find_size(TwoEdgeCluster* left, TwoEdgeCluster* right
         if (this->has_middle_boundary()){
             if (!this->has_right_boundary()) {
                 compute_part_size(this->part_size[1], right->part_size[0], left->part_size[1], right->get_cover_level());
-            } 
+            }
             if (!this->has_left_boundary()) {
                 compute_part_size(this->part_size[0], left->part_size[1], right->part_size[0], left->get_cover_level());
             }
@@ -179,40 +185,73 @@ void TwoEdgeCluster::sum_diagonal(vector<int>& target_row, vector<vector<int>>& 
     }
 }
 
-void TwoEdgeCluster::split_find_size(TwoEdgeCluster* left, TwoEdgeCluster* right) {
-    
-    if (this->is_path()) {
-        if (left->is_path()) {
-            // Check for uncover.
-            
-            if (left->cover_level <= this->cover_minus) { // if some uncover should be propagated.
-                sum_row_range(left->part_size[0][0], left->part_size[0], 1, this->cover_minus + 2);
-                sum_row_range(left->part_size[1][0], left->part_size[1], 1, this->cover_minus + 2);
-                delete_row_range(left->part_size[0], 1, this->cover_minus + 2);
-                delete_row_range(left->part_size[1], 1, this->cover_minus + 2);
-            }
-            if (left->cover_level <= this->cover_plus) {
-                sum_row_range(left->part_size[0][this->cover_plus + 1], left->part_size[0], 0, this->cover_plus + 1);
-                sum_row_range(left->part_size[1][this->cover_plus + 1], left->part_size[1], 0, this->cover_plus + 1);
-                delete_row_range(left->part_size[0], 0, this->cover_plus + 1);
-                delete_row_range(left->part_size[1], 0, this->cover_plus + 1);
-            }
-        }
-        if (right->is_path()) {
-            if (right->cover_level <= this->cover_minus) {
-                sum_row_range(right->part_size[0][0], right->part_size[0], 1, this->cover_minus + 2);
-                sum_row_range(right->part_size[1][0], right->part_size[1], 1, this->cover_minus + 2);
-                delete_row_range(right->part_size[0], 1, this->cover_minus + 2);
-                delete_row_range(right->part_size[1], 1, this->cover_minus + 2);
-            }
-            if (right->cover_level <= this->cover_plus) {
-                sum_row_range(right->part_size[0][this->cover_plus + 1], right->part_size[0], 0, this->cover_plus + 1);
-                sum_row_range(right->part_size[1][this->cover_plus + 1], right->part_size[1], 0, this->cover_plus + 1);
-                delete_row_range(right->part_size[0], 0, this->cover_plus + 1);
-                delete_row_range(right->part_size[1], 0, this->cover_plus + 1);
-            }
-        }
+void TwoEdgeCluster::find_size_cover(int i) {
+    if (i < this->cover_plus) {
+        return;
     }
+    if (this->cover_level < i) { //before <=
+        sum_row_range(this->part_size[0][i + 1], this->part_size[0], 0, i + 1);
+        sum_row_range(this->part_size[1][i + 1], this->part_size[1], 0, i + 1);
+        delete_row_range(this->part_size[0], 0, i + 1);
+        delete_row_range(this->part_size[1], 0, i + 1);
+    }
+}
+
+void TwoEdgeCluster::find_size_uncover(int i) {
+    if (i < this->cover_plus) {
+        return;
+    }
+    if (this->cover_level <= i) {
+        // this->last_uncover = i;
+        sum_row_range(this->part_size[0][0], this->part_size[0], 1, i + 2);
+        sum_row_range(this->part_size[1][0], this->part_size[1], 1, i + 2);
+        delete_row_range(this->part_size[0], 1, i + 2);
+        delete_row_range(this->part_size[1], 1, i + 2);
+    }
+
+
+    //if (std::max(this->cover_minus,this->cover_level) < i) {
+        
+    //}
+}
+
+
+void TwoEdgeCluster::split_find_size(TwoEdgeCluster* left, TwoEdgeCluster* right) {
+    // if (this->is_path()) {
+    //     if (left->is_path()) {
+    //         // Check for uncover.
+    //         left->find_size_uncover(this->cover_minus);
+    //         left->find_size_cover(this->cover_plus);
+    //         // if (left->cover_level <= this->cover_minus) { // if some uncover should be propagated. // TODO: this is wrong.
+    //         //     sum_row_range(left->part_size[0][0], left->part_size[0], 1, this->cover_minus + 2);
+    //         //     sum_row_range(left->part_size[1][0], left->part_size[1], 1, this->cover_minus + 2);
+    //         //     delete_row_range(left->part_size[0], 1, this->cover_minus + 2);
+    //         //     delete_row_range(left->part_size[1], 1, this->cover_minus + 2);
+    //         // }
+    //         // if (left->cover_level <= this->cover_plus) {
+    //         //     sum_row_range(left->part_size[0][this->cover_plus + 1], left->part_size[0], 0, this->cover_plus + 1);
+    //         //     sum_row_range(left->part_size[1][this->cover_plus + 1], left->part_size[1], 0, this->cover_plus + 1);
+    //         //     delete_row_range(left->part_size[0], 0, this->cover_plus + 1);
+    //         //     delete_row_range(left->part_size[1], 0, this->cover_plus + 1);
+    //         // }
+    //     }
+    //     if (right->is_path()) {
+    //         right->find_size_uncover(this->cover_minus);
+    //         right->find_size_cover(this->cover_plus);
+    //         // if (right->cover_level <= this->cover_minus) {
+    //         //     sum_row_range(right->part_size[0][0], right->part_size[0], 1, this->cover_minus + 2);
+    //         //     sum_row_range(right->part_size[1][0], right->part_size[1], 1, this->cover_minus + 2);
+    //         //     delete_row_range(right->part_size[0], 1, this->cover_minus + 2);
+    //         //     delete_row_range(right->part_size[1], 1, this->cover_minus + 2);
+    //         // }
+    //         // if (right->cover_level <= this->cover_plus) {
+    //         //     sum_row_range(right->part_size[0][this->cover_plus + 1], right->part_size[0], 0, this->cover_plus + 1);
+    //         //     sum_row_range(right->part_size[1][this->cover_plus + 1], right->part_size[1], 0, this->cover_plus + 1);
+    //         //     delete_row_range(right->part_size[0], 0, this->cover_plus + 1);
+    //         //     delete_row_range(right->part_size[1], 0, this->cover_plus + 1);
+    //         // }
+    //     }
+    // }
     for (int i = 0; i < this->size.size(); i++) {
         this->size[i] = 0;
     }

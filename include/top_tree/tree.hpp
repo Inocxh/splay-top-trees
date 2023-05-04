@@ -111,7 +111,7 @@ std::vector<Vertex<C, E, V>>* Tree<C,E,V>::get_vertices() {
 };
 
 template<class C, class E, class V>
-Vertex<C, E, V>* Tree<C,E,V>::get_vertex(int id) {
+Vertex<C,E,V>* Tree<C,E,V>::get_vertex(int id) {
     return &this->vertices[id];
 };
 

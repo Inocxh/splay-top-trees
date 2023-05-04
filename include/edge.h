@@ -2,6 +2,7 @@
 #define EDGE
 
 #include <algorithm> //Swap
+#include <cassert>
 
 struct TwoEdgeCluster;
 
