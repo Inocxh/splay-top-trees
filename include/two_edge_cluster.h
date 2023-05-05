@@ -38,14 +38,6 @@ struct VertexLabel {
         }
     };
 
-    ~VertexLabel() {
-        for (int i = 0; i < labels.size(); i++) {
-            for (int j = 0; j < labels[i].size(); j++) {
-                if (labels[i][j]->edge_type == NonTree)
-                delete labels[i][j];
-            }
-        }
-    };
 
 };
 
