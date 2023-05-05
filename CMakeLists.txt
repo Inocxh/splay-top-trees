@@ -13,7 +13,6 @@ set(IMPL_FILES ${IMPL_FILES}
 src/cover_level.cpp
 src/two_edge_connected.cpp
 src/two_edge_cluster.cpp
-src/connected.cpp
 src/find_size.cpp
 src/find_first_label.cpp
 )
@@ -26,7 +25,6 @@ test/toptree_tests/add_common_weight_test.cpp
 test/toptree_tests/orientation_invariant_test.cpp
 test/toptree_tests/diameter_test.cpp
 test/2_edge_tests/cover_level_test.cpp
-test/2_edge_tests/connected_test.cpp
 test/2_edge_tests/find_size_test.cpp
 test/2_edge_tests/find_first_label_test.cpp
 test/2_edge_tests/two_edge_connected_test.cpp

@@ -7,7 +7,7 @@
 using CoverLevel = int;
 
 class TwoEdgeConnectivity {
-    TopTree<TwoEdgeCluster,EdgeData,VertexLabel> *top_tree;
+    TopTree<TwoEdgeCluster,EdgeData,None> *top_tree;
     std::vector<VertexLabel*> vertex_labels;
 
     int size();
@@ -49,17 +49,18 @@ class TwoEdgeConnectivity {
     TwoEdgeConnectivity();
     TwoEdgeConnectivity(int size) {
         TwoEdgeCluster::set_l_max((int) floor(log2 (size)));
-        this->top_tree = new TopTree<TwoEdgeCluster,EdgeData,VertexLabel>(size);
+        this->top_tree = new TopTree<TwoEdgeCluster,EdgeData,None>(size);
         this->vertex_labels = std::vector<VertexLabel*>(size);
         for (int i = 0; i < size; i++) {
-            vertex_labels[i] = new VertexLabel(TwoEdgeCluster::get_l_max());
+            vertex_labels[i] = new VertexLabel(TwoEdgeCluster::get_l_max()); // TODO, make sure lmax is accessed similarly everywhere.
         }
     };
     ~TwoEdgeConnectivity() {
         // TODO: reinsert
-        // for (VertexLabel* vertex_label : vertex_labels) {
-        //     delete vertex_label;
-        // }
+        // delete top_tree;
+        for (VertexLabel* vertex_label : vertex_labels) {
+            delete vertex_label;
+        }
     };
 };
 

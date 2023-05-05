@@ -3,7 +3,7 @@
 
 
 //TODO: Change EdgeData() arguments
-using TwoEdgeTree = TopTree<TwoEdgeCluster,EdgeData,VertexLabel>;
+using TwoEdgeTree = TopTree<TwoEdgeCluster,EdgeData,None>;
 
 void cover(TwoEdgeTree T, int v, int w, int i) {
     TwoEdgeCluster *root = T.expose(v,w);

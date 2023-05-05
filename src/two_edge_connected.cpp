@@ -152,6 +152,7 @@ void TwoEdgeConnectivity::remove(EdgeData* edge) {
     for (int i = alpha; i >= 0; i--) {
         this->recover(v, u, i);
     }
+    delete edge;
 }
 
 int TwoEdgeConnectivity::cover_level(int u, int v) {
@@ -169,6 +170,7 @@ EdgeData* TwoEdgeConnectivity::swap(EdgeData* tree_edge) {
 
     reassign_vertices(tree_edge->extra_data.leaf_node);
     auto root = this->top_tree->cut_leaf(tree_edge->extra_data.leaf_node);
+    delete tree_edge;
 
     EdgeData* non_tree_edge = find_replacement(u, v, cover_level);
     int x = non_tree_edge->endpoints[0];
@@ -181,21 +183,19 @@ EdgeData* TwoEdgeConnectivity::swap(EdgeData* tree_edge) {
     //Try to reassign vertices
     new_leaf->full_splay();
     if (!vertex_labels[x]->leaf_node) {
-        //std::cout << "taking " << x << std::endl;
         new_leaf->assign_vertex(x, vertex_labels[x]);
         vertex_labels[x]->leaf_node = new_leaf;
     }
     if (!vertex_labels[y]->leaf_node) {
-        //std::cout << "taking " << y << std::endl;
         new_leaf->assign_vertex(y, vertex_labels[y]);
         vertex_labels[y]->leaf_node = new_leaf;
     }
 
     new_leaf->recompute_root_path();
-    // TODO delete
-    tree_edge->endpoints[0] = -1;
-    tree_edge->endpoints[1] = -1;
-    EdgeData::swap(non_tree_edge,EdgeData::new_tree_edge(x,y,-1,new_leaf));
+    
+    non_tree_edge->edge_type = TreeEdge;
+    non_tree_edge->level = -1;
+    non_tree_edge->extra_data.leaf_node = new_leaf;
 
     EdgeData* edge = EdgeData::new_non_tree_edge(u, v, cover_level);
     this->add_label(u, edge);

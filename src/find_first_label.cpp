@@ -59,7 +59,7 @@ void or_row_range(long int *target_row, vector<long int>& source, int start, int
     }
 }
 
-void TwoEdgeCluster::create_find_first_label(EdgeData* edge, VertexLabel*, VertexLabel*) {
+void TwoEdgeCluster::create_find_first_label(EdgeData* edge, None*, None*) {
     int cover_level_idx = edge->level + 1;
     int lmax_idx = this->l_max + 1;
     
@@ -100,7 +100,7 @@ void TwoEdgeCluster::create_find_first_label(EdgeData* edge, VertexLabel*, Verte
     } 
 }
 
-void TwoEdgeCluster::destroy_find_first_label(EdgeData* edge, VertexLabel*, VertexLabel*) {
+void TwoEdgeCluster::destroy_find_first_label(EdgeData* edge, None*, None*) {
     this->boundary_vertices_id[0] = -1;
     this->boundary_vertices_id[1] = -1;
     this->incident = 0;
