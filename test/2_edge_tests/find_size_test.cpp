@@ -2,8 +2,8 @@
 #include <catch2/catch_test_macros.hpp>
 
 
-//TODO: Change EdgeData() arguments
-using TwoEdgeTree = TopTree<TwoEdgeCluster,EdgeData,None>;
+//TODO: Change TreeEdgeData() arguments
+using TwoEdgeTree = TopTree<TwoEdgeCluster,TreeEdgeData,None>;
 
 void cover(TwoEdgeTree T, int v, int w, int i) {
     TwoEdgeCluster *root = T.expose(v,w);
@@ -22,14 +22,14 @@ TEST_CASE("Simple find size test", "[find size test]")  {
     TwoEdgeTree T = TwoEdgeTree(10);
     TwoEdgeCluster::set_l_max(3);
 
-    T.link(1,2,EdgeData(1,2));
-    T.link(2,3,EdgeData(2,3));
-    T.link(3,4,EdgeData(3,4));
-    T.link(4,5,EdgeData(4,5));
-    T.link(6,3,EdgeData(6,3));
-    T.link(6,7,EdgeData(6,7));
-    T.link(2,8,EdgeData(2,8));
-    T.link(9,8,EdgeData(9,8))->print(0, false);
+    T.link(1,2,TreeEdgeData(1,2));
+    T.link(2,3,TreeEdgeData(2,3));
+    T.link(3,4,TreeEdgeData(3,4));
+    T.link(4,5,TreeEdgeData(4,5));
+    T.link(6,3,TreeEdgeData(6,3));
+    T.link(6,7,TreeEdgeData(6,7));
+    T.link(2,8,TreeEdgeData(2,8));
+    T.link(9,8,TreeEdgeData(9,8))->print(0, false);
     std::cout << "\n";
     cover(T,1,5,0);
     TwoEdgeCluster *root = T.expose(1, 5);
@@ -40,13 +40,13 @@ TEST_CASE("Simple find size test", "[find size test]")  {
 TEST_CASE("Small find size", "[find size test]")  {
     TwoEdgeTree T = TwoEdgeTree(8);
     TwoEdgeCluster::set_l_max(4);
-    EdgeData* ed[10];
+    TreeEdgeData* ed[10];
     for (int i = 0; i < 10; i++) {
-        ed[i] = new EdgeData();
+        ed[i] = new TreeEdgeData();
     }
     
-    T.link(1,2, EdgeData(1,2));
-    T.link(2,3, EdgeData(2,3));
+    T.link(1,2, TreeEdgeData(1,2));
+    T.link(2,3, TreeEdgeData(2,3));
 
     cover(T,1,3,0);
     TwoEdgeCluster *root = T.expose(1, 3);
@@ -61,15 +61,15 @@ TEST_CASE("Find size test", "[find size test]")  {
     TwoEdgeCluster::set_l_max(3);
     TwoEdgeCluster *root;
 
-    T.link(0,1, EdgeData(0,1));
-    T.link(1,2, EdgeData(1,2));
-    T.link(2,3, EdgeData(2,3));
-    T.link(2,4, EdgeData(2,4));
-    T.link(4,5, EdgeData(4,5));
-    T.link(5,6, EdgeData(5,6));
-    T.link(5,7, EdgeData(5,7));
-    T.link(4,8, EdgeData(4,8));
-    T.link(8,9, EdgeData(8,9));
+    T.link(0,1, TreeEdgeData(0,1));
+    T.link(1,2, TreeEdgeData(1,2));
+    T.link(2,3, TreeEdgeData(2,3));
+    T.link(2,4, TreeEdgeData(2,4));
+    T.link(4,5, TreeEdgeData(4,5));
+    T.link(5,6, TreeEdgeData(5,6));
+    T.link(5,7, TreeEdgeData(5,7));
+    T.link(4,8, TreeEdgeData(4,8));
+    T.link(8,9, TreeEdgeData(8,9));
 
     cover(T,1,7,0);
     root = T.expose(1, 7);
@@ -77,7 +77,7 @@ TEST_CASE("Find size test", "[find size test]")  {
     T.deexpose(1, 7);
     
     T.cut(5,4);
-    T.link(4,6, EdgeData(4,6));
+    T.link(4,6, TreeEdgeData(4,6));
     
     root = T.expose(1, 7);
     REQUIRE(root->get_size(0) == 6);
@@ -98,19 +98,19 @@ TEST_CASE("FS: Massive", "[find size test]")  {
     TwoEdgeCluster::set_l_max(4);
     TwoEdgeCluster *root;
 
-    T.link(0,1, EdgeData(0,1));
-    T.link(1,2, EdgeData(1,2));
-    T.link(2,3, EdgeData(2,3));
-    T.link(1,4, EdgeData(1,4)); 
+    T.link(0,1, TreeEdgeData(0,1));
+    T.link(1,2, TreeEdgeData(1,2));
+    T.link(2,3, TreeEdgeData(2,3));
+    T.link(1,4, TreeEdgeData(1,4)); 
 
     cover(T,2,3,1);
 
-    T.link(5,6, EdgeData(5,6));
-    T.link(6,7, EdgeData(6,7));
-    T.link(7,8, EdgeData(7,8));
-    T.link(6,9, EdgeData(6,9)); 
-    T.link(9,10, EdgeData(9,10));
-    T.link(11,9, EdgeData(11,9)); 
+    T.link(5,6, TreeEdgeData(5,6));
+    T.link(6,7, TreeEdgeData(6,7));
+    T.link(7,8, TreeEdgeData(7,8));
+    T.link(6,9, TreeEdgeData(6,9)); 
+    T.link(9,10, TreeEdgeData(9,10));
+    T.link(11,9, TreeEdgeData(11,9)); 
     cover(T,5,11,0);
     cover(T,10,8,1);
 
@@ -120,8 +120,8 @@ TEST_CASE("FS: Massive", "[find size test]")  {
     REQUIRE(root->get_size(2) == 4);
     T.deexpose(5, 8);
 
-    T.link(4,10, EdgeData(4,10));
-    T.link(8,12, EdgeData(8,12)); 
+    T.link(4,10, TreeEdgeData(4,10));
+    T.link(8,12, TreeEdgeData(8,12)); 
     cover(T,10,6,2);
     cover(T,10,1,3);
 
@@ -139,15 +139,15 @@ TEST_CASE("FS: Uncover", "[find size test]")  {
     TwoEdgeCluster::set_l_max(4);
     TwoEdgeCluster *root;
 
-    T.link(0,1, EdgeData(0,1));
-    T.link(1,2, EdgeData(1,2));
-    T.link(2,3, EdgeData(2,3));
-    T.link(1,4, EdgeData(1,4)); 
+    T.link(0,1, TreeEdgeData(0,1));
+    T.link(1,2, TreeEdgeData(1,2));
+    T.link(2,3, TreeEdgeData(2,3));
+    T.link(1,4, TreeEdgeData(1,4)); 
 
     cover(T,0,3,0);
     cover(T,1,2,2);
     
-    T.link(4,5, EdgeData(4,5)); 
+    T.link(4,5, TreeEdgeData(4,5)); 
 
     cover(T,5,2,1);
 
@@ -191,33 +191,33 @@ TEST_CASE("FS: Uncover massive", "[find size test]")  {
     TwoEdgeCluster::set_l_max(4);
     TwoEdgeCluster *root;
 
-    T.link(0,1, EdgeData(0,1));
-    T.link(1,2, EdgeData(1,2));
-    T.link(2,3, EdgeData(2,3));
-    T.link(3,4, EdgeData(3,4));
-    T.link(4,5, EdgeData(4,5));
-    T.link(5,6, EdgeData(5,6));
-    T.link(6,7, EdgeData(6,7));
+    T.link(0,1, TreeEdgeData(0,1));
+    T.link(1,2, TreeEdgeData(1,2));
+    T.link(2,3, TreeEdgeData(2,3));
+    T.link(3,4, TreeEdgeData(3,4));
+    T.link(4,5, TreeEdgeData(4,5));
+    T.link(5,6, TreeEdgeData(5,6));
+    T.link(6,7, TreeEdgeData(6,7));
     
     cover(T, 2, 5, 1);
     
-    T.link(3,8, EdgeData(3,8));
-    T.link(8,9, EdgeData(8,9));
-    T.link(8,10, EdgeData(8,10));
+    T.link(3,8, TreeEdgeData(3,8));
+    T.link(8,9, TreeEdgeData(8,9));
+    T.link(8,10, TreeEdgeData(8,10));
     
     cover(T, 9, 1, 2);
     
-    T.link(5,11, EdgeData(5,11));
-    T.link(11,12, EdgeData(11,12));
-    T.link(12,13, EdgeData(12,13));
-    T.link(13,14, EdgeData(13,14));
-    T.link(11,15, EdgeData(11,15));
+    T.link(5,11, TreeEdgeData(5,11));
+    T.link(11,12, TreeEdgeData(11,12));
+    T.link(12,13, TreeEdgeData(12,13));
+    T.link(13,14, TreeEdgeData(13,14));
+    T.link(11,15, TreeEdgeData(11,15));
 
     cover(T,14,4,0);
     cover(T,15,7,1);
     cover(T,5,11,2);
     
-    T.link(4,16, EdgeData(4,16));    
+    T.link(4,16, TreeEdgeData(4,16));    
 
     cover(T,16,8,3);
         
@@ -264,12 +264,12 @@ TEST_CASE("Small", "[find size test]") {
     TwoEdgeCluster::set_l_max(4);
     TwoEdgeCluster *root;
 
-    T.link(0,6, EdgeData(0,6));
-    T.link(0,1, EdgeData(0,1));
-    T.link(1,2, EdgeData(1,2));
-    T.link(2,3, EdgeData(2,3));
-    T.link(3,4, EdgeData(3,4));
-    T.link(4,5, EdgeData(4,5));
+    T.link(0,6, TreeEdgeData(0,6));
+    T.link(0,1, TreeEdgeData(0,1));
+    T.link(1,2, TreeEdgeData(1,2));
+    T.link(2,3, TreeEdgeData(2,3));
+    T.link(3,4, TreeEdgeData(3,4));
+    T.link(4,5, TreeEdgeData(4,5));
     
     cover(T, 1, 5, 0);
     cover(T, 2, 5, 1);
@@ -296,17 +296,17 @@ TEST_CASE("FS: minified massive", "[find size test]")  {
     TwoEdgeCluster::set_l_max(2);
     TwoEdgeCluster *root;
 
-    T.link(0,1, EdgeData(0,1));
-    T.link(1,2, EdgeData(1,2));
-    T.link(2,3, EdgeData(2,3));
-    T.link(1,4, EdgeData(1,4)); 
+    T.link(0,1, TreeEdgeData(0,1));
+    T.link(1,2, TreeEdgeData(1,2));
+    T.link(2,3, TreeEdgeData(2,3));
+    T.link(1,4, TreeEdgeData(1,4)); 
 
     cover(T,2,3,1);
     cover(T,0,1,0);
 
-    T.link(2,5, EdgeData(2,5));
-    T.link(5,6, EdgeData(5,6)); 
-    T.link(5,7, EdgeData(5,7));
+    T.link(2,5, TreeEdgeData(2,5));
+    T.link(5,6, TreeEdgeData(5,6)); 
+    T.link(5,7, TreeEdgeData(5,7));
 
     cover(T,2,7,0);
     cover(T,2,5,1);
@@ -322,21 +322,21 @@ TEST_CASE("FS: cut", "[find size test]")  {
     TwoEdgeCluster::set_l_max(4);
     TwoEdgeCluster *root;
 
-    T.link(0,1, EdgeData(0,1));
-    T.link(1,2, EdgeData(1,2));
-    T.link(2,3, EdgeData(2,3));
-    T.link(3,4, EdgeData(3,4)); 
+    T.link(0,1, TreeEdgeData(0,1));
+    T.link(1,2, TreeEdgeData(1,2));
+    T.link(2,3, TreeEdgeData(2,3));
+    T.link(3,4, TreeEdgeData(3,4)); 
 
-    T.link(1,5, EdgeData(1,5));
-    T.link(5,6, EdgeData(5,6));
-    T.link(6,7, EdgeData(6,7));
+    T.link(1,5, TreeEdgeData(1,5));
+    T.link(5,6, TreeEdgeData(5,6));
+    T.link(6,7, TreeEdgeData(6,7));
     
-    T.link(5,8, EdgeData(5,8));
-    T.link(8,9, EdgeData(8,9));
-    T.link(9,10, EdgeData(9,10));
+    T.link(5,8, TreeEdgeData(5,8));
+    T.link(8,9, TreeEdgeData(8,9));
+    T.link(9,10, TreeEdgeData(9,10));
 
-    T.link(8,11, EdgeData(8,11));
-    T.link(11,12, EdgeData(11,12));
+    T.link(8,11, TreeEdgeData(8,11));
+    T.link(11,12, TreeEdgeData(11,12));
 
     cover(T,0,10,0);
     cover(T,12,7,1);
@@ -362,8 +362,8 @@ TEST_CASE("FS: cut", "[find size test]")  {
     cover(T,6,3,0);
 
     T.cut(5,1);
-    T.link(7,4, EdgeData(7,4));
-    T.link(10,7, EdgeData(10,7));
+    T.link(7,4, TreeEdgeData(7,4));
+    T.link(10,7, TreeEdgeData(10,7));
 
     cover(T,7,4,2);
     cover(T,7,3,1);
@@ -386,7 +386,7 @@ TEST_CASE("FS: cut", "[find size test]")  {
 
     cover(T,12,2,0);
 
-    T.link(6,9, EdgeData(6,9));
+    T.link(6,9, TreeEdgeData(6,9));
 
     cover(T,9,5, 2);
     uncover(T,2,4,1);
@@ -400,8 +400,8 @@ TEST_CASE("FS: cut", "[find size test]")  {
     
 
     T.cut(9,10);
-    T.link(6,7, EdgeData(6,7));
-    T.link(1,6, EdgeData(1,6));
+    T.link(6,7, TreeEdgeData(6,7));
+    T.link(1,6, TreeEdgeData(1,6));
     T.cut(8,9);
     T.cut(7,4);
 

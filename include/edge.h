@@ -12,6 +12,27 @@ union ExtraData {
     int index[2];
 };
 
+struct TreeEdgeData {
+    int endpoints[2];  
+    int level;
+
+    TreeEdgeData(int u, int v, int level) {
+        this->endpoints[0] = u;
+        this->endpoints[1] = v;
+        this->level = level;
+    };
+    TreeEdgeData(int u, int v) {
+        this->endpoints[0] = u;
+        this->endpoints[1] = v;
+        this->level = -1;
+    };
+    TreeEdgeData() {
+        this->endpoints[0] = -1;
+        this->endpoints[1] = -1;
+        this->level = -1;
+    };
+};
+
 struct EdgeData {
     EdgeType edge_type;
     int endpoints[2];  

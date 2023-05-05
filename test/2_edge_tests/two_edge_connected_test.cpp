@@ -4,7 +4,7 @@
 #include <random>
 #include "two_edge_connected.h"
 
-bool has_endpoints(EdgeData* bridge, int u, int v) {
+bool has_endpoints(TreeEdgeData* bridge, int u, int v) {
     return (bridge->endpoints[0] == u && bridge->endpoints[1] == v) || (bridge->endpoints[0] == v && bridge->endpoints[1] == u);
 }
 
@@ -36,7 +36,7 @@ TEST_CASE("2-edge: small", "[2-edge]") {
 TEST_CASE("2-edge: Medium", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(40);
     std::vector<EdgeData*> edges = std::vector<EdgeData*>(40);
-    EdgeData* bridge;
+    TreeEdgeData* bridge;
     
     edges[0] = tree.insert(0,1);
     edges[1] = tree.insert(1,2);
@@ -89,7 +89,7 @@ TEST_CASE("2-edge: Medium", "[2-edge]") {
 TEST_CASE("2-edge: large", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(40);
     std::vector<EdgeData*> edges = std::vector<EdgeData*>(40);
-    EdgeData* bridge;
+    TreeEdgeData* bridge;
     
     edges[0] = tree.insert(0,1);
     edges[1] = tree.insert(1,2);
@@ -166,7 +166,7 @@ TEST_CASE("2-edge: large", "[2-edge]") {
 TEST_CASE("2-edge: delete all", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(20);
     std::vector<EdgeData*> edges = std::vector<EdgeData*>(40);
-    EdgeData* bridge;
+    TreeEdgeData* bridge;
     
     edges[0] = tree.insert(0,1);
     edges[1] = tree.insert(1,2);
@@ -247,15 +247,6 @@ TEST_CASE("2-edge: delete mini", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(40);
     std::vector<EdgeData*> edges = std::vector<EdgeData*>(40);
     EdgeData* bridge;
-    
-    /*edges[0] = tree.insert(0,1);
-    edges[1] = tree.insert(1,2);
-    edges[2] = tree.insert(2,3);
-    edges[3] = tree.insert(3,4);  
-    edges[4] = tree.insert(4,5); 
-    edges[5] = tree.insert(3,12);
-    edges[6] = tree.insert(12,13);  
-    edges[7] = tree.insert(13,4);*/
 
     edges[0] = tree.insert(0,1);
     edges[1] = tree.insert(1,2);

@@ -7,7 +7,7 @@
 using CoverLevel = int;
 
 class TwoEdgeConnectivity {
-    TopTree<TwoEdgeCluster,EdgeData,None> *top_tree;
+    TopTree<TwoEdgeCluster,TreeEdgeData,None> *top_tree;
     std::vector<VertexLabel*> vertex_labels;
 
     int size();
@@ -28,8 +28,8 @@ class TwoEdgeConnectivity {
     EdgeData* insert(int, int, int); // TODO: SKAL Måske væk
     void remove(EdgeData*); //delete is keyword.
     bool two_edge_connected(int,int);
-    EdgeData* find_bridge(int);
-    EdgeData* find_bridge(int, int);
+    TreeEdgeData* find_bridge(int);
+    TreeEdgeData* find_bridge(int, int);
     void cover(int, int, int); // TODO: move to private and remove test
     void uncover(int, int, int); // TODO: move to private and remove test
     
@@ -49,7 +49,7 @@ class TwoEdgeConnectivity {
     TwoEdgeConnectivity();
     TwoEdgeConnectivity(int size) {
         TwoEdgeCluster::set_l_max((int) floor(log2(size)));
-        this->top_tree = new TopTree<TwoEdgeCluster,EdgeData,None>(size);
+        this->top_tree = new TopTree<TwoEdgeCluster,TreeEdgeData,None>(size);
         this->vertex_labels = std::vector<VertexLabel*>(size);
         for (int i = 0; i < size; i++) {
             vertex_labels[i] = new VertexLabel(TwoEdgeCluster::get_l_max()); // TODO, make sure lmax is accessed similarly everywhere.
@@ -61,20 +61,7 @@ class TwoEdgeConnectivity {
         for (int j = 0; j < this->vertex_labels.size(); j++) {
             VertexLabel* vertex_label = this->vertex_labels[j];
 
-            for (int i = 0; i < vertex_label->labels.size(); i++) {
-                while (!vertex_label->labels[i].empty()) {
-                    // EdgeData* edge = vertex_label->labels[i].back();
-                    // vertex_label->labels[i].pop_back();
 
-                    // bool is_right = edge->endpoints[1] == i;
-                    // // std::vector<EdgeData*>& other_list = this->vertex_labels[edge->endpoints[!is_right]]->labels[edge->level];
-                    // if (this->vertex_labels[edge->endpoints[!is_right]]->labels[edge->level].size() > 1) {
-                    //     this->vertex_labels[edge->endpoints[!is_right]]->labels[edge->level][edge->extra_data.index[!is_right]] = this->vertex_labels[edge->endpoints[!is_right]]->labels[edge->level].back();
-                    // }
-                    // this->vertex_labels[edge->endpoints[!is_right]]->labels[edge->level].pop_back();
-                    // delete edge;
-                }
-            }
             delete vertex_label;
         }
     };

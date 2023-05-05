@@ -19,8 +19,7 @@ EdgeData* TwoEdgeConnectivity::insert(int u, int v) {
         return nullptr;
     }
 
-    EdgeData edge_data = EdgeData::tree_edge(u, v, -1, nullptr);
-    TwoEdgeCluster* result = this->top_tree->link_leaf(u, v, edge_data); //TODO level = lmax?
+    TwoEdgeCluster* result = this->top_tree->link_leaf(u, v, TreeEdgeData(u, v, -1)); //TODO level = lmax?
     
     if (result) {
         //If successfull, try to assign vertex endpoints to new leaf
@@ -47,7 +46,7 @@ EdgeData* TwoEdgeConnectivity::insert(int u, int v) {
 }
 
 EdgeData* TwoEdgeConnectivity::insert(int u, int v, int level) {
-    TwoEdgeCluster* result = this->top_tree->link_leaf(u, v, EdgeData::tree_edge(u, v, -1, nullptr)); //TODO level = lmax?
+    TwoEdgeCluster* result = this->top_tree->link_leaf(u, v, TreeEdgeData(u, v, -1)); //TODO level = lmax?
     if (result) {
         return EdgeData::new_tree_edge(u, v, -1, result);
     }
@@ -177,8 +176,7 @@ EdgeData* TwoEdgeConnectivity::swap(EdgeData* tree_edge) {
     int y = non_tree_edge->endpoints[1];
     this->remove_labels(non_tree_edge);
     
-    EdgeData e = EdgeData::tree_edge(x,y,-1,nullptr);
-    TwoEdgeCluster* new_leaf = this->top_tree->link_leaf(x, y, e);
+    TwoEdgeCluster* new_leaf = this->top_tree->link_leaf(x, y, TreeEdgeData(x, y, -1));
 
     //Try to reassign vertices
     new_leaf->full_splay();
@@ -316,9 +314,9 @@ bool TwoEdgeConnectivity::two_edge_connected(int u, int v) {
     return (this->top_tree->connected(u,v) && (this->cover_level(u,v) >= 0));
 }
 
-EdgeData* TwoEdgeConnectivity::find_bridge(int u, int v) {
+TreeEdgeData* TwoEdgeConnectivity::find_bridge(int u, int v) {
     TwoEdgeCluster* root = this->top_tree->expose(u,v);
-    EdgeData* bridge;
+    TreeEdgeData* bridge;
     if (root->cover_level == -1) {
         bridge = root->min_path_edge;
     } else {
