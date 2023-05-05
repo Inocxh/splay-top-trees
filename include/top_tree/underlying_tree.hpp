@@ -68,25 +68,25 @@ void Edge<C,E,V>::set_leaf_node(LeafNode<C,E,V>* leaf) {
 }; 
 
 template<class C, class E, class V>
-Vertex<C,E,V>* Edge<C,E,V>::get_endpoint(int i){
+Vertex<C,E,V>* Edge<C,E,V>::get_endpoint(int i) {
     return this->endpoints[i];
 };
 template<class C, class E, class V>
-Edge<C,E,V>* Edge<C,E,V>::get_next(int i){
+Edge<C,E,V>* Edge<C,E,V>::get_next(int i) {
     return this->next[i];
 };
 template<class C, class E, class V>
-Edge<C,E,V>* Edge<C,E,V>::get_prev(int i){
+Edge<C,E,V>* Edge<C,E,V>::get_prev(int i) {
     return this->prev[i];
 };
 
 template<class C, class E, class V>
-E* Edge<C,E,V>::get_data(){
+E* Edge<C,E,V>::get_data() {
     return &(this->edge_data);
 };
 
 template<class C, class E, class V>
-void Edge<C,E,V>::flip(){
+void Edge<C,E,V>::flip() {
     std::swap(this->endpoints[0], this->endpoints[1]);
     std::swap(this->next[0], this->next[1]);
     std::swap(this->prev[0], this->prev[1]);

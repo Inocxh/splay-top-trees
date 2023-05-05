@@ -192,7 +192,6 @@ std::tuple<C*,Edge<C,E,V>*> TopTree<C,E,V>::link_internal(Vertex<C,E,V>* u, Vert
     C* Tv = expose_internal(v);
 
     //Tu now has constant depth 
-    // TODO:PROVE.
     C* root_u = Tu;
     int depth = 0;
     while (root_u && root_u->get_parent()) {

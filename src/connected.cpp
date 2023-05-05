@@ -7,7 +7,7 @@ void Connected::link(int u, int v) {
     root->id = (size_t) root; 
 };
 
-void Connected::cut(int u, int v){
+void Connected::cut(int u, int v) {
     std::tuple<ConnectedCluster*, ConnectedCluster*> roots = top_tree->cut(u, v);
     ConnectedCluster* left = std::get<0>(roots);
     ConnectedCluster* right = std::get<1>(roots);
@@ -17,7 +17,7 @@ void Connected::cut(int u, int v){
         right->id = (size_t) right;
 };
 
-bool Connected::connected(int u, int v){
+bool Connected::connected(int u, int v) {
     
     ConnectedCluster* u_root = this->top_tree->expose(u);
     if (!u_root) {

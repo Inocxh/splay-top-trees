@@ -117,4 +117,3 @@ TEST_CASE("Vertex is right", "[is_right_vertex]")
     }
 }
 
-// TODO : implement test for next and prev. Maybe also supports deleting middle of linked list edge.

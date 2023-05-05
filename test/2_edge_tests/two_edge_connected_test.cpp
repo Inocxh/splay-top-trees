@@ -1,16 +1,16 @@
 #include <catch2/catch_test_macros.hpp>
-#include <cassert>
+#include <iostream>
+#include <deque>
+#include <random>
 #include "two_edge_connected.h"
 
-
-
-bool has_endpoints(NewEdge* bridge, int u, int v) {
+bool has_endpoints(EdgeData* bridge, int u, int v) {
     return (bridge->endpoints[0] == u && bridge->endpoints[1] == v) || (bridge->endpoints[0] == v && bridge->endpoints[1] == u);
 }
 
 TEST_CASE("2-edge: small", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(50);
-    std::vector<NewEdge*> edges;
+    std::vector<EdgeData*> edges;
     
     edges.push_back(tree.insert(0,1));
     edges.push_back(tree.insert(1,2));
@@ -34,9 +34,9 @@ TEST_CASE("2-edge: small", "[2-edge]") {
     REQUIRE(has_endpoints(bridge, 0, 1));
 }
 TEST_CASE("2-edge: Medium", "[2-edge]") {
-    TwoEdgeConnectivity tree = TwoEdgeConnectivity(50);
-    std::vector<NewEdge*> edges = std::vector<NewEdge*>(40);
-    NewEdge* bridge;
+    TwoEdgeConnectivity tree = TwoEdgeConnectivity(40);
+    std::vector<EdgeData*> edges = std::vector<EdgeData*>(40);
+    EdgeData* bridge;
     
     edges[0] = tree.insert(0,1);
     edges[1] = tree.insert(1,2);
@@ -87,9 +87,9 @@ TEST_CASE("2-edge: Medium", "[2-edge]") {
 
 }
 TEST_CASE("2-edge: large", "[2-edge]") {
-    TwoEdgeConnectivity tree = TwoEdgeConnectivity(50);
-    std::vector<NewEdge*> edges = std::vector<NewEdge*>(40);
-    NewEdge* bridge;
+    TwoEdgeConnectivity tree = TwoEdgeConnectivity(40);
+    std::vector<EdgeData*> edges = std::vector<EdgeData*>(40);
+    EdgeData* bridge;
     
     edges[0] = tree.insert(0,1);
     edges[1] = tree.insert(1,2);
@@ -164,9 +164,9 @@ TEST_CASE("2-edge: large", "[2-edge]") {
 
 }
 TEST_CASE("2-edge: delete all", "[2-edge]") {
-    TwoEdgeConnectivity tree = TwoEdgeConnectivity(50);
-    std::vector<NewEdge*> edges = std::vector<NewEdge*>(40);
-    NewEdge* bridge;
+    TwoEdgeConnectivity tree = TwoEdgeConnectivity(20);
+    std::vector<EdgeData*> edges = std::vector<EdgeData*>(40);
+    EdgeData* bridge;
     
     edges[0] = tree.insert(0,1);
     edges[1] = tree.insert(1,2);
@@ -181,10 +181,8 @@ TEST_CASE("2-edge: delete all", "[2-edge]") {
     edges[10] = tree.insert(10,11);
     edges[11] = tree.insert(0,5);
 
-    
     tree.expose(13,3)->print(0,false);
     tree.deexpose(13,3);
-
 
     edges[12] = tree.insert(11,9);
     edges[13] = tree.insert(10,6);
@@ -214,7 +212,7 @@ TEST_CASE("2-edge: delete all", "[2-edge]") {
 
 TEST_CASE("2-edge: many parallel edges", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(3);
-    std::vector<NewEdge*> edges;
+    std::vector<EdgeData*> edges;
     for (int i = 0; i < 1000; i++) {
         auto e = tree.insert(0,1);
         edges.push_back(tree.insert(0,1));
@@ -231,7 +229,7 @@ TEST_CASE("2-edge: many parallel edges", "[2-edge]") {
 
 TEST_CASE("2-edge: specific", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(6);
-    std::vector<NewEdge*> edges;
+    std::vector<EdgeData*> edges;
     edges.push_back(tree.insert(3,2));
     tree.insert(2,4);
     tree.insert(0,3);
@@ -246,9 +244,9 @@ TEST_CASE("2-edge: specific", "[2-edge]") {
 
 
 TEST_CASE("2-edge: delete mini", "[2-edge]") {
-    TwoEdgeConnectivity tree = TwoEdgeConnectivity(50);
-    std::vector<NewEdge*> edges = std::vector<NewEdge*>(40);
-    NewEdge* bridge;
+    TwoEdgeConnectivity tree = TwoEdgeConnectivity(40);
+    std::vector<EdgeData*> edges = std::vector<EdgeData*>(40);
+    EdgeData* bridge;
     
     /*edges[0] = tree.insert(0,1);
     edges[1] = tree.insert(1,2);
@@ -270,120 +268,115 @@ TEST_CASE("2-edge: delete mini", "[2-edge]") {
     }
 }
 
-TEST_CASE("2-edge: delete micro", "[2-edge]") {
-    TwoEdgeConnectivity tree = TwoEdgeConnectivity(100);
-    std::vector<NewEdge*> edges;
-    auto edge = tree.insert(0, 7);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(3, 4);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(8, 6);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(3, 6);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(8, 8);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(5, 2);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(9, 4);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(5, 5);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(3, 0);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(0, 1);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(0, 1);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(1, 3);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(9, 6);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(5, 7);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(0, 1);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(8, 6);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(0, 0);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(6, 4);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(2, 0);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(8, 9);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(3, 2);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(6, 5);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(0, 4);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(5, 4);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(7, 5);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(7, 7);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(2, 8);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(6, 0);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(7, 3);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(6, 3);
-if(edge != nullptr) edges.push_back(edge);
-tree.two_edge_connected(1, 6);
-edge = tree.insert(1, 0);
-if(edge != nullptr) edges.push_back(edge);
-tree.two_edge_connected(3, 3);
-tree.two_edge_connected(3, 5);
-edge = tree.insert(9, 4);
-if(edge != nullptr) edges.push_back(edge);
-edge = tree.insert(1, 8);
-if(edge != nullptr) edges.push_back(edge);
-tree.two_edge_connected(7, 7);
-tree.two_edge_connected(4, 7);
-edge = tree.insert(6, 3);
-if(edge != nullptr) edges.push_back(edge);
-tree.remove(edges[23]);
-edges[23] = edges.back();
-edges.pop_back();
-tree.remove(edges[0]);
-edges[0] = edges.back();
-edges.pop_back();
-
+TEST_CASE("2-edge: completely connected subgraphs", "[2-edge]") {
+    int N = 100 / 2;
+    TwoEdgeConnectivity tree = TwoEdgeConnectivity(N*2);
+    std::vector<EdgeData*> edges;
+    //First create two instances of K_50 in vertices 0..=49 and 50..=99
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < i; j++) {
+            tree.insert(i,j);
+        }
+    }
+    for (int i = N; i < 2*N; i++) {
+        for (int j = N; j < i; j++ ) {
+            tree.insert(i,j);
+        }
+    }
+    //Assert that each section is completely two edge connected
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < i; j++) {
+            REQUIRE(tree.two_edge_connected(i,j));
+        }
+    }
+    for (int i = N; i < 2*N; i++) {
+        for (int j = N; j < i; j++) {
+            REQUIRE(tree.two_edge_connected(i,j));
+        }
+    }
+    // No i, i+N pair is two_edge_connected.
+    for (int i = 0; i < N; i++) {
+        REQUIRE(!tree.two_edge_connected(i,i+N));
+    }
+    // Insert a single edge between - still not two_edge_connected
+    auto e1 = tree.insert(0,N+N-1);
+    for (int i = 0; i < N; i++) {
+        REQUIRE(!tree.two_edge_connected(i,i+N));
+    }
+    // Insert another - now two_edge_connected
+    auto e2 = tree.insert(N-1,2*N-1);
+    for (int i = 0; i < N; i++) {
+        REQUIRE(tree.two_edge_connected(i,i+N));
+    }
+    tree.remove(e1);
+    // Remove the first - not connected again
+    for (int i = N-1; i >= 0; i--) {
+        REQUIRE(!tree.two_edge_connected(i,i+N));
+    }
 }
 
-TEST_CASE("2-edge: size is right", "[2-edge]") {
-    TwoEdgeConnectivity tree = TwoEdgeConnectivity(19);
-    std::vector<NewEdge*> edges;
-    auto edge = tree.insert(3, 5);
-    if(edge != nullptr) edges.push_back(edge);
-    // edge = tree.insert(18, 18);
-    // if(edge != nullptr) edges.push_back(edge);
-    edge = tree.insert(6, 10);
-    if(edge != nullptr) edges.push_back(edge);
-    edge = tree.insert(0, 9);
-    if(edge != nullptr) edges.push_back(edge);
-    edge = tree.insert(18, 12);
-    if(edge != nullptr) edges.push_back(edge);
-    edge = tree.insert(17, 18);
-    if(edge != nullptr) edges.push_back(edge);
-    edge = tree.insert(13, 17);
-    if(edge != nullptr) edges.push_back(edge);
-    edge = tree.insert(12, 14);
-    if(edge != nullptr) edges.push_back(edge);
-    edge = tree.insert(18, 15);
-    if(edge != nullptr) edges.push_back(edge);
-    edge = tree.insert(12, 5);
-    if(edge != nullptr) edges.push_back(edge);
-    edge = tree.insert(3, 6);
-    if(edge != nullptr) edges.push_back(edge);
-    edge = tree.insert(16, 3);
-    if(edge != nullptr) edges.push_back(edge);
-    edge = tree.insert(0, 12);
-    if(edge != nullptr) edges.push_back(edge);
-    edge = tree.insert(10, 5);
-    if(edge != nullptr) edges.push_back(edge);
+TEST_CASE("2-edge: completely connected subgraphs 2", "[2-edge]") {
+    int N = 100 / 2;
+    int K = 20;
+    int I = 3;
+    TwoEdgeConnectivity tree = TwoEdgeConnectivity(N*2);
+    std::vector<EdgeData*> edges;
+    //Create two K_(N) and connect them with K edges
+    // remove edges until the graph is now two_edge_connected and require that all but 1 edge have been removed when this happens
+    // do this I times
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < i; j++) {
+            tree.insert(i,j);
+        }
+    }
+    for (int i = N; i < 2*N; i++) {
+        for (int j = N; j < i; j++ ) {
+            tree.insert(i,j);
+        }
+    }
+    auto rng = std::default_random_engine {};
+    for (int times = 0; times < I; times++) {
+        for (int i = 0; i < K; i++) {
+            edges.push_back(tree.insert(i,N+i));
+        }
+        std::shuffle(edges.begin(), edges.end(), rng);
+        REQUIRE(tree.two_edge_connected(0,N+N-1));
+        int i = 0;
+        //Delete edges until the two components are not two_edge_connected anymore
+        while (tree.two_edge_connected(0,N+N-1)) {
+            auto e = edges[0];
+            edges[0] = edges.back();
+            edges.pop_back();
+
+            tree.remove(e);
+            i++;
+        }
+        //This will delete all but 1 edge! Remove it and repeat again
+        REQUIRE(K-1 == i);
+        tree.remove(edges[0]);
+        edges.pop_back();
+    }    
+}
+
+
+TEST_CASE("2-edge: cycle check", "[2-edge]") {
+    int iterations = 20;
+    int N = 200;
+    TwoEdgeConnectivity tree = TwoEdgeConnectivity(N);
+    
+    std::deque<EdgeData*> edges;
+
+    for (int i = 0; i < N; i++) {
+        edges.push_back(tree.insert(i, (i + 1) % N));
+    }
+
+    for (int i = 0; i < iterations; i++) {
+        for (int j = 0; j < N; j++) {
+            REQUIRE(tree.two_edge_connected(j, (j + 1) % N));
+            tree.remove(edges.front());
+            edges.pop_front();
+            REQUIRE(!tree.two_edge_connected(j, (j + 1) % N));
+            edges.push_back(tree.insert(j, (j + 1) % N));
+        }
+    }    
 }

@@ -106,5 +106,4 @@ TEST_CASE("FFL: cut", "[find first label]") {
     ffl = std::get<1>(root->find_first_label(6,1,1));  
     REQUIRE((ffl->labels[1][0]->endpoints[0] == 13 && ffl->labels[1][0]->endpoints[1] == 14));
     tree.deexpose(1,6);
-    //TODO CUT
 }
