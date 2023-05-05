@@ -8,7 +8,7 @@
 
 template<class C, class E, class V>
 TopTree<C,E,V>::TopTree(int size) {
-    this->underlying_tree = new Tree<C,E,V>(size);
+    this->underlying_tree = Tree<C,E,V>(size);
 }
 
 template<class C, class E, class V>
@@ -60,8 +60,8 @@ template<class C, class E, class V>
 C* TopTree<C,E,V>::expose(int vertex1_id, int vertex2_id) {
     assert(this->num_exposed == 0);
     this->num_exposed += 2;
-    Vertex<C,E,V>* vertex1 = this->underlying_tree->get_vertex(vertex1_id);
-    Vertex<C,E,V>* vertex2 = this->underlying_tree->get_vertex(vertex2_id);
+    Vertex<C,E,V>* vertex1 = this->underlying_tree.get_vertex(vertex1_id);
+    Vertex<C,E,V>* vertex2 = this->underlying_tree.get_vertex(vertex2_id);
     expose_internal(vertex1);
     return expose_internal(vertex2);
 }
@@ -69,7 +69,7 @@ template<class C, class E, class V>
 C* TopTree<C,E,V>::expose(int vertex_id) {
     assert(this->num_exposed < 2);
     this->num_exposed += 1;
-    Vertex<C,E,V>* vertex = this->underlying_tree->get_vertex(vertex_id);
+    Vertex<C,E,V>* vertex = this->underlying_tree.get_vertex(vertex_id);
     return expose_internal(vertex);
 }
 
@@ -142,8 +142,8 @@ template<class C, class E, class V>
 C* TopTree<C,E,V>::deexpose(int vertex1_id, int vertex2_id) { 
     assert(this->num_exposed == 2);
     this->num_exposed -= 2;
-    Vertex<C,E,V>* vertex1 = this->underlying_tree->get_vertex(vertex1_id);
-    Vertex<C,E,V>* vertex2 = this->underlying_tree->get_vertex(vertex2_id);
+    Vertex<C,E,V>* vertex1 = this->underlying_tree.get_vertex(vertex1_id);
+    Vertex<C,E,V>* vertex2 = this->underlying_tree.get_vertex(vertex2_id);
     deexpose_internal(vertex1);
     return deexpose_internal(vertex2);
 }
@@ -152,31 +152,31 @@ template<class C, class E, class V>
 C* TopTree<C,E,V>::deexpose(int vertex_id) { 
     assert(this->num_exposed >= 1);
     this->num_exposed -= 1;
-    Vertex<C,E,V>* vertex = this->underlying_tree->get_vertex(vertex_id);
+    Vertex<C,E,V>* vertex = this->underlying_tree.get_vertex(vertex_id);
     return deexpose_internal(vertex);
 }
 
 template<class C, class E, class V>
 C* TopTree<C,E,V>::link(int u_id, int v_id, E data) {
     assert(this->num_exposed == 0);
-    Vertex<C,E,V>* u = this->underlying_tree->get_vertex(u_id); 
-    Vertex<C,E,V>* v = this->underlying_tree->get_vertex(v_id); 
+    Vertex<C,E,V>* u = this->underlying_tree.get_vertex(u_id); 
+    Vertex<C,E,V>* v = this->underlying_tree.get_vertex(v_id); 
     return std::get<0>(link_internal(u, v, data));
 }
 
 template<class C, class E, class V>
 Edge<C,E,V>* TopTree<C,E,V>::link_ptr(int u_id, int v_id, E data) {
     assert(this->num_exposed == 0);
-    Vertex<C,E,V>* u = this->underlying_tree->get_vertex(u_id); 
-    Vertex<C,E,V>* v = this->underlying_tree->get_vertex(v_id); 
+    Vertex<C,E,V>* u = this->underlying_tree.get_vertex(u_id); 
+    Vertex<C,E,V>* v = this->underlying_tree.get_vertex(v_id); 
     return std::get<1>(link_internal(u, v, data));
 }
 
 template<class C, class E, class V>
 C* TopTree<C,E,V>::link_leaf(int u_id, int v_id, E data) {
     assert(this->num_exposed == 0);
-    Vertex<C,E,V>* u = this->underlying_tree->get_vertex(u_id); 
-    Vertex<C,E,V>* v = this->underlying_tree->get_vertex(v_id); 
+    Vertex<C,E,V>* u = this->underlying_tree.get_vertex(u_id); 
+    Vertex<C,E,V>* v = this->underlying_tree.get_vertex(v_id); 
     Edge<C,E,V>* new_edge = std::get<1>(link_internal(u, v, data));
     if (new_edge == nullptr) {
         return nullptr;
@@ -216,16 +216,16 @@ std::tuple<C*,Edge<C,E,V>*> TopTree<C,E,V>::link_internal(Vertex<C,E,V>* u, Vert
     u->exposed = false;
     v->exposed = false;
 
-    Edge<C,E,V>* edge = this->underlying_tree->add_edge(u, v, data);
-    C* root = new LeafNode<C,E,V>(edge, !!Tu + !!Tv);
+    Edge<C,E,V>* edge = this->underlying_tree.add_edge(u, v, data);
+    C* root = new LeafNode<C,E,V>(edge, !!Tu + !!Tv); // TODO: LEAKS
     edge->set_leaf_node((LeafNode<C,E,V>*) root);
 
     if (Tu) {
-        InternalNode<C,E,V>* root_new = new InternalNode<C,E,V>(Tu, root, !!Tv);        
+        InternalNode<C,E,V>* root_new = new InternalNode<C,E,V>(Tu, root, !!Tv); // TODO: LEAKS     
         root = root_new;
     }
     if (Tv) {
-        InternalNode<C,E,V>* root_new = new InternalNode<C,E,V>(root, Tv, 0);
+        InternalNode<C,E,V>* root_new = new InternalNode<C,E,V>(root, Tv, 0); // TODO: LEAKS
         root = root_new;
     }
     return std::make_tuple(root, edge);
@@ -248,7 +248,7 @@ void TopTree<C,E,V>::delete_all_ancestors(C* node) {
 template<class C, class E, class V>
 std::tuple<C*, C*> TopTree<C,E,V>::cut(int u_id, int v_id) {
     assert(this->num_exposed == 0);
-    Edge<C,E,V>* e = this->underlying_tree->find_edge(u_id, v_id);
+    Edge<C,E,V>* e = this->underlying_tree.find_edge(u_id, v_id);
     return this->cut_internal(e);
 }
 
@@ -271,7 +271,7 @@ std::tuple<C*, C*> TopTree<C,E,V>::cut_internal(Edge<C,E,V>* edge) {
     Vertex<C,E,V>* v = edge->endpoints[1];
     edge->node->full_splay();
     this->delete_all_ancestors(edge->node);
-    this->underlying_tree->del_edge(edge);    
+    this->underlying_tree.del_edge(edge);    
 
     u->exposed = true;
     v->exposed = true;
@@ -285,7 +285,7 @@ std::tuple<C*, C*> TopTree<C,E,V>::cut_internal(Edge<C,E,V>* edge) {
 //Takes O(index) time
 template<class C, class E, class V>
 C* TopTree<C,E,V>::get_adjacent_leaf_node(int vertex_id, int index) {
-    Vertex<C,E,V>* vertex = this->underlying_tree->get_vertex(vertex_id);
+    Vertex<C,E,V>* vertex = this->underlying_tree.get_vertex(vertex_id);
     Edge<C,E,V>* current = vertex->get_first_edge();
     if (!current) {
         return nullptr;

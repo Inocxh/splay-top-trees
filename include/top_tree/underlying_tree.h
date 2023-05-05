@@ -31,6 +31,7 @@ class Tree {
 
     public:
     Tree(int num_vertices);
+    Tree() {};
     ~Tree();
     
     Edge<C,E,V>* add_edge(Vertex<C,E,V>*, Vertex<C,E,V>*, E);

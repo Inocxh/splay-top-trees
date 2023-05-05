@@ -4,12 +4,11 @@
 
 template<class C, class E, class V>
 Tree<C,E,V>::Tree(int num_vertices) {
-    std::vector<Vertex<C,E,V>> vertices;
     for (int i = 0; i < num_vertices; i++) {
-        vertices.push_back(Vertex<C,E,V>(i));
+        this->vertices.push_back(Vertex<C,E,V>(i));
     }
-    this->vertices = vertices;
 };
+
 template<class C, class E, class V>
 Tree<C,E,V>::~Tree() {
     for (int i = 0; i < this->vertices.size(); i++) {
@@ -26,7 +25,7 @@ Edge<C, E, V>* Tree<C,E,V>::add_edge(Vertex<C, E, V>* left, Vertex<C, E, V>* rig
     Edge<C,E,V>* next[2] = { left->get_first_edge(), right->get_first_edge() };
 
     //Construct edge and set next
-    Edge<C,E,V>* edge = new Edge<C,E,V>(left, right, data);
+    Edge<C,E,V>* edge = new Edge<C,E,V>(left, right, data); // TODO: LEAKS
     edge->next[0] = next[0],
     edge->next[1] = next[1];
 

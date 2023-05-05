@@ -10,7 +10,7 @@ bool has_endpoints(TreeEdgeData* bridge, int u, int v) {
 
 TEST_CASE("2-edge: small", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(50);
-    std::vector<EdgeData*> edges;
+    std::vector<std::shared_ptr<EdgeData>> edges;
     
     edges.push_back(tree.insert(0,1));
     edges.push_back(tree.insert(1,2));
@@ -35,7 +35,7 @@ TEST_CASE("2-edge: small", "[2-edge]") {
 }
 TEST_CASE("2-edge: Medium", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(40);
-    std::vector<EdgeData*> edges = std::vector<EdgeData*>(40);
+    std::vector<std::shared_ptr<EdgeData>> edges = std::vector<std::shared_ptr<EdgeData>>(40);
     TreeEdgeData* bridge;
     
     edges[0] = tree.insert(0,1);
@@ -88,7 +88,7 @@ TEST_CASE("2-edge: Medium", "[2-edge]") {
 }
 TEST_CASE("2-edge: large", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(40);
-    std::vector<EdgeData*> edges = std::vector<EdgeData*>(40);
+    std::vector<std::shared_ptr<EdgeData>> edges = std::vector<std::shared_ptr<EdgeData>>(40);
     TreeEdgeData* bridge;
     
     edges[0] = tree.insert(0,1);
@@ -165,7 +165,7 @@ TEST_CASE("2-edge: large", "[2-edge]") {
 }
 TEST_CASE("2-edge: delete all", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(20);
-    std::vector<EdgeData*> edges = std::vector<EdgeData*>(40);
+    std::vector<std::shared_ptr<EdgeData>> edges = std::vector<std::shared_ptr<EdgeData>>(40);
     TreeEdgeData* bridge;
     
     edges[0] = tree.insert(0,1);
@@ -212,7 +212,7 @@ TEST_CASE("2-edge: delete all", "[2-edge]") {
 
 TEST_CASE("2-edge: many parallel edges", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(3);
-    std::vector<EdgeData*> edges;
+    std::vector<std::shared_ptr<EdgeData>> edges;
     for (int i = 0; i < 1000; i++) {
         auto e = tree.insert(0,1);
         edges.push_back(tree.insert(0,1));
@@ -229,7 +229,7 @@ TEST_CASE("2-edge: many parallel edges", "[2-edge]") {
 
 TEST_CASE("2-edge: specific", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(6);
-    std::vector<EdgeData*> edges;
+    std::vector<std::shared_ptr<EdgeData>> edges;
     edges.push_back(tree.insert(3,2));
     tree.insert(2,4);
     tree.insert(0,3);
@@ -245,7 +245,7 @@ TEST_CASE("2-edge: specific", "[2-edge]") {
 
 TEST_CASE("2-edge: delete mini", "[2-edge]") {
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(40);
-    std::vector<EdgeData*> edges = std::vector<EdgeData*>(40);
+    std::vector<std::shared_ptr<EdgeData>> edges = std::vector<std::shared_ptr<EdgeData>>(40);
     EdgeData* bridge;
 
     edges[0] = tree.insert(0,1);
@@ -311,7 +311,7 @@ TEST_CASE("2-edge: completely connected subgraphs 2", "[2-edge]") {
     int K = 20;
     int I = 3;
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(N*2);
-    std::vector<EdgeData*> edges;
+    std::vector<std::shared_ptr<EdgeData>> edges;
     //Create two K_(N) and connect them with K edges
     // remove edges until the graph is now two_edge_connected and require that all but 1 edge have been removed when this happens
     // do this I times
@@ -355,7 +355,7 @@ TEST_CASE("2-edge: cycle check", "[2-edge]") {
     int N = 200;
     TwoEdgeConnectivity tree = TwoEdgeConnectivity(N);
     
-    std::deque<EdgeData*> edges;
+    std::deque<std::shared_ptr<EdgeData>> edges;
 
     for (int i = 0; i < N; i++) {
         edges.push_back(tree.insert(i, (i + 1) % N));

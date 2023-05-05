@@ -17,7 +17,7 @@ struct TwoEdgeConnectivty;
 struct TwoEdgeCluster;
 
 struct VertexLabel {
-    std::vector<std::vector<EdgeData*>> labels;
+    std::vector<std::vector<std::shared_ptr<EdgeData>>> labels;
     TwoEdgeCluster* leaf_node = nullptr; 
 
     void print() {
@@ -32,9 +32,9 @@ struct VertexLabel {
     };
 
     VertexLabel(int lmax) {
-        this->labels = std::vector<std::vector<EdgeData*>>(lmax);
+        this->labels = std::vector<std::vector<std::shared_ptr<EdgeData>>>(lmax);
         for (int i = 0; i < this->labels.size(); i++) {
-            this->labels[i] = std::vector<EdgeData*>();
+            this->labels[i] = std::vector<std::shared_ptr<EdgeData>>();
         }
     };
 

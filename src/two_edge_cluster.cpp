@@ -18,7 +18,6 @@ void TwoEdgeCluster::uncover(int level) {
 TwoEdgeCluster::TwoEdgeCluster() {
     int lmax = TwoEdgeCluster::get_l_max();
 
-    
     this->size = std::vector<int>(lmax);
     this->part_size[0] = std::vector<vector<int>>(lmax + 2);
     this->part_size[1] = std::vector<vector<int>>(lmax + 2);

@@ -32,7 +32,7 @@ class DefaultC;
 template<class C = DefaultC, class E = None, class V = None>
 class TopTree {
     int num_exposed = 0;
-    Tree<C,E,V>* underlying_tree;
+    Tree<C,E,V> underlying_tree;
 
     C* find_consuming_node(Vertex<C,E,V>*);
     void delete_all_ancestors(C*);
@@ -63,9 +63,10 @@ class TopTree {
     bool connected(int v1, int v2);
     
     TopTree(int size);
+    TopTree() {};
 
     void print_tree() {
-        this->underlying_tree->print_tree();
+        this->underlying_tree.print_tree();
     }
 
 };
@@ -80,8 +81,6 @@ class Node {
     int num_boundary_vertices;
     bool flipped = false;
  
-
-
     //These must be implemented by the user!
     virtual void merge(C*, C*) = 0;
     virtual void create(E*, V*, V*) = 0;
@@ -90,8 +89,6 @@ class Node {
     virtual void split(C*, C*) {};
     virtual void destroy(E*, V*, V*) {};
     virtual void swap_data() {};
-
-    
 
     void rotate_up();
     void flip();
