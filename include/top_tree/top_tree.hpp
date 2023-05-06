@@ -4,12 +4,29 @@
 #include <vector>
 #include <cassert>
 
-
-
 template<class C, class E, class V>
 TopTree<C,E,V>::TopTree(int size) {
     this->underlying_tree = Tree<C,E,V>(size);
 }
+template<class C, class E, class V>
+TopTree<C,E,V>::~TopTree() {
+    for (int i = 0; i < this->underlying_tree.get_size(); i++) {
+        Vertex<C,E,V>* vertex = this->underlying_tree.get_vertex(i);
+        Edge<C,E,V>* edge = vertex->get_first_edge();
+        if (!edge) {
+            continue;
+        }
+        C* root = edge->node;
+        if (!root) {
+            continue;
+        }
+        while (root->get_parent()) {
+            root = root->get_parent();
+        }
+        root->delete_tree();
+    }
+}
+
 
 template<class C, class E, class V>
 C* TopTree<C,E,V>::find_consuming_node(Vertex<C,E,V>* vertex) {
@@ -18,7 +35,6 @@ C* TopTree<C,E,V>::find_consuming_node(Vertex<C,E,V>* vertex) {
     }
     //The node associated to an edge will *always* be a LeafNode<C,E,V>
     LeafNode<C,E,V>* first_node = (LeafNode<C,E,V>*) vertex->get_first_edge()->node;
-
 
     first_node->semi_splay();
     
@@ -35,9 +51,8 @@ C* TopTree<C,E,V>::find_consuming_node(Vertex<C,E,V>* vertex) {
     while (node->get_parent()) {
         InternalNode<C,E,V>* parent = (InternalNode<C,E,V>*) (node->get_parent());
 
-
         bool is_left_child = parent->children[0] == node;
-        bool is_middle = is_left_child ?
+        is_middle = is_left_child ?
                         is_right || (is_middle && !node->has_right_boundary()) :
                         is_left || (is_middle && !node->has_left_boundary()) ;
         is_left = (is_left_child != parent->is_flipped()) && !is_middle;
@@ -217,15 +232,15 @@ std::tuple<C*,Edge<C,E,V>*> TopTree<C,E,V>::link_internal(Vertex<C,E,V>* u, Vert
     v->exposed = false;
 
     Edge<C,E,V>* edge = this->underlying_tree.add_edge(u, v, data);
-    C* root = new LeafNode<C,E,V>(edge, !!Tu + !!Tv); // TODO: LEAKS
+    C* root = new LeafNode<C,E,V>(edge, !!Tu + !!Tv);
     edge->set_leaf_node((LeafNode<C,E,V>*) root);
 
     if (Tu) {
-        InternalNode<C,E,V>* root_new = new InternalNode<C,E,V>(Tu, root, !!Tv); // TODO: LEAKS     
+        InternalNode<C,E,V>* root_new = new InternalNode<C,E,V>(Tu, root, !!Tv);  
         root = root_new;
     }
     if (Tv) {
-        InternalNode<C,E,V>* root_new = new InternalNode<C,E,V>(root, Tv, 0); // TODO: LEAKS
+        InternalNode<C,E,V>* root_new = new InternalNode<C,E,V>(root, Tv, 0);
         root = root_new;
     }
     return std::make_tuple(root, edge);

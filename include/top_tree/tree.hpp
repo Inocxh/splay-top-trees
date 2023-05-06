@@ -25,7 +25,7 @@ Edge<C, E, V>* Tree<C,E,V>::add_edge(Vertex<C, E, V>* left, Vertex<C, E, V>* rig
     Edge<C,E,V>* next[2] = { left->get_first_edge(), right->get_first_edge() };
 
     //Construct edge and set next
-    Edge<C,E,V>* edge = new Edge<C,E,V>(left, right, data); // TODO: LEAKS
+    Edge<C,E,V>* edge = new Edge<C,E,V>(left, right, data);
     edge->next[0] = next[0],
     edge->next[1] = next[1];
 
@@ -104,10 +104,7 @@ void Tree<C,E,V>::print_edges(Vertex<C, E, V>* vertex) {
     }
 };
 
-template<class C, class E, class V>
-std::vector<Vertex<C, E, V>>* Tree<C,E,V>::get_vertices() {
-    return &this->vertices;
-};
+
 
 template<class C, class E, class V>
 Vertex<C,E,V>* Tree<C,E,V>::get_vertex(int id) {

@@ -87,3 +87,10 @@ template<class C, class E, class V>
 int InternalNode<C,E,V>::get_endpoint_id(int e) {
     return -1;
 };
+
+template<class C, class E, class V>
+void InternalNode<C,E,V>::delete_tree() {
+    this->children[0]->delete_tree();
+    this->children[1]->delete_tree();
+    delete this;
+};

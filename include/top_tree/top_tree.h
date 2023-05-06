@@ -64,6 +64,7 @@ class TopTree {
     
     TopTree(int size);
     TopTree() {};
+    ~TopTree();
 
     void print_tree() {
         this->underlying_tree.print_tree();
@@ -108,6 +109,7 @@ class Node {
     virtual bool has_middle_boundary() = 0;
     virtual bool has_right_boundary() = 0;
     virtual int get_endpoint_id(int) = 0;
+    virtual void delete_tree() = 0;
 
     
     public:
@@ -140,8 +142,6 @@ class LeafNode : public C {
     Edge<C, E, V>* edge;
 
     // Defined here as we cannot express that C inherits from Node elegantly.
-
-
     bool is_right_vertex(Vertex<C,E,V>*);
     
     void merge_internal();
@@ -157,6 +157,7 @@ class LeafNode : public C {
     bool has_middle_boundary();
     bool has_right_boundary();
     int get_endpoint_id(int);
+    void delete_tree();
 
     void print(int, bool);
 
@@ -185,6 +186,7 @@ class InternalNode : public C {
     bool has_right_boundary();
     int get_endpoint_id(int);
     C* get_child(int);
+    void delete_tree();
 
 
     void print(int, bool);

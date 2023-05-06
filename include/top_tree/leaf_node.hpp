@@ -89,3 +89,8 @@ C* LeafNode<C,E,V>::get_child(int e) {
 };
 
 
+template<class C, class E, class V>
+void LeafNode<C,E,V>::delete_tree() {
+    this->edge->set_leaf_node(nullptr);
+    delete this;
+};

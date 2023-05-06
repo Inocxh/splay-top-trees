@@ -45,7 +45,6 @@ class Tree {
     void print_edges(Vertex<C,E,V>*);
 
     int get_size();
-    std::vector<Vertex<C,E,V>>* get_vertices();
     Vertex<C,E,V>* get_vertex(int id);
 
 };

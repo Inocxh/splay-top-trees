@@ -40,10 +40,6 @@ TEST_CASE("Simple find size test", "[find size test]")  {
 TEST_CASE("Small find size", "[find size test]")  {
     TwoEdgeTree T = TwoEdgeTree(8);
     TwoEdgeCluster::set_l_max(4);
-    TreeEdgeData* ed[10];
-    for (int i = 0; i < 10; i++) {
-        ed[i] = new TreeEdgeData();
-    }
     
     T.link(1,2, TreeEdgeData());
     T.link(2,3, TreeEdgeData());
