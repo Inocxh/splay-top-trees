@@ -58,25 +58,24 @@ class TwoEdgeConnectivity {
     ~TwoEdgeConnectivity() {
         // TODO: reinsert
         // delete top_tree;
-        for (int j = 0; j < this->vertex_labels.size(); j++) {
-            VertexLabel* vertex_label = this->vertex_labels[j];
+        // for (int j = 0; j < this->vertex_labels.size(); j++) {
+        //     VertexLabel* vertex_label = this->vertex_labels[j];
 
-            for (int i = 0; i < vertex_label->labels.size(); i++) {
-                while (!vertex_label->labels[i].empty()) {
-                    // EdgeData* edge = vertex_label->labels[i].back();
-                    // vertex_label->labels[i].pop_back();
+        //     for (int i = 0; i < vertex_label->labels.size(); i++) {
+        //         while (!vertex_label->labels[i].empty()) {
+        //             EdgeData* edge = vertex_label->labels[i].back();
+        //             vertex_label->labels[i].pop_back();
 
-                    // bool is_right = edge->endpoints[1] == i;
-                    // // std::vector<EdgeData*>& other_list = this->vertex_labels[edge->endpoints[!is_right]]->labels[edge->level];
-                    // if (this->vertex_labels[edge->endpoints[!is_right]]->labels[edge->level].size() > 1) {
-                    //     this->vertex_labels[edge->endpoints[!is_right]]->labels[edge->level][edge->extra_data.index[!is_right]] = this->vertex_labels[edge->endpoints[!is_right]]->labels[edge->level].back();
-                    // }
-                    // this->vertex_labels[edge->endpoints[!is_right]]->labels[edge->level].pop_back();
-                    // delete edge;
-                }
-            }
-            delete vertex_label;
-        }
+        //             bool is_right = edge->endpoints[1] == i;
+        //             // std::vector<EdgeData*>& other_list = this->vertex_labels[edge->endpoints[!is_right]]->labels[edge->level];
+        //             if (this->vertex_labels[edge->endpoints[!is_right]]->labels[edge->level].size() > 1) {
+        //                 this->vertex_labels[edge->endpoints[!is_right]]->labels[edge->level][edge->extra_data.index[!is_right]] = this->vertex_labels[edge->endpoints[!is_right]]->labels[edge->level].back();
+        //             }
+        //             this->vertex_labels[edge->endpoints[!is_right]]->labels[edge->level].pop_back();
+        //             delete edge;
+        //         }
+        //     }
+        // }
     };
 };
 
