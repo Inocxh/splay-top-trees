@@ -17,7 +17,7 @@ struct TwoEdgeConnectivty;
 struct TwoEdgeCluster;
 
 struct VertexLabel {
-    std::vector<std::vector<EdgeData*>> labels;
+    std::vector<std::vector<std::shared_ptr<EdgeData>>> labels;
     TwoEdgeCluster* leaf_node = nullptr; 
 
     void print() {
@@ -32,16 +32,16 @@ struct VertexLabel {
     };
 
     VertexLabel(int lmax) {
-        this->labels = std::vector<std::vector<EdgeData*>>(lmax);
+        this->labels = std::vector<std::vector<std::shared_ptr<EdgeData>>>(lmax);
         for (int i = 0; i < this->labels.size(); i++) {
-            this->labels[i] = std::vector<EdgeData*>();
+            this->labels[i] = std::vector<std::shared_ptr<EdgeData>>();
         }
     };
 
 
 };
 
-class TwoEdgeCluster : public Node<TwoEdgeCluster,EdgeData,None> {
+class TwoEdgeCluster : public Node<TwoEdgeCluster,TreeEdgeData,None> {
     friend class TwoEdgeConnectivity;
 
     int last_uncover = -1;
@@ -53,17 +53,17 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster,EdgeData,None> {
     int cover_minus = -1;
     int global_cover = -1;
 
-    EdgeData* min_path_edge = nullptr;
-    EdgeData* min_global_edge = nullptr;
+    TreeEdgeData* min_path_edge = nullptr;
+    TreeEdgeData* min_global_edge = nullptr;
 
     void cover_level_cover(int);
     void cover_level_uncover(int);
     
 
     void merge_cover(TwoEdgeCluster*, TwoEdgeCluster*);
-    void create_cover(EdgeData*, None*, None*);
+    void create_cover(TreeEdgeData*, None*, None*);
     void split_cover(TwoEdgeCluster*, TwoEdgeCluster*);
-    void destroy_cover(EdgeData*, None*, None*);
+    void destroy_cover(TreeEdgeData*, None*, None*);
 
     //Find Size
     std::vector<int> size;
@@ -78,9 +78,9 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster,EdgeData,None> {
     void sum_diagonal(std::vector<int>&, std::vector<std::vector<int>>&);
 
     void merge_find_size(TwoEdgeCluster*, TwoEdgeCluster*);
-    void create_find_size(EdgeData*, None*, None*);
+    void create_find_size(TreeEdgeData*, None*, None*);
     void split_find_size(TwoEdgeCluster*, TwoEdgeCluster*);
-    void destroy_find_size(EdgeData*, None*, None*);
+    void destroy_find_size(TreeEdgeData*, None*, None*);
     
     
     
@@ -95,9 +95,9 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster,EdgeData,None> {
     void find_first_label_uncover(int);
 
     void merge_find_first_label(TwoEdgeCluster*, TwoEdgeCluster*);
-    void create_find_first_label(EdgeData*, None*, None*);
+    void create_find_first_label(TreeEdgeData*, None*, None*);
     void split_find_first_label(TwoEdgeCluster*, TwoEdgeCluster*);
-    void destroy_find_first_label(EdgeData*,  None*, None*);
+    void destroy_find_first_label(TreeEdgeData*,  None*, None*);
 
 
 
@@ -119,10 +119,10 @@ class TwoEdgeCluster : public Node<TwoEdgeCluster,EdgeData,None> {
     int get_size(int);
     long int get_incident();
 
-    void create(EdgeData*, None*, None*);
+    void create(TreeEdgeData*, None*, None*);
     void merge(TwoEdgeCluster*, TwoEdgeCluster*);
     void split(TwoEdgeCluster*, TwoEdgeCluster*);
-    void destroy(EdgeData*, None*, None*);
+    void destroy(TreeEdgeData*, None*, None*);
     void swap_data();
 
 

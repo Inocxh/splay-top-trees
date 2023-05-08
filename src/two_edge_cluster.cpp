@@ -18,7 +18,6 @@ void TwoEdgeCluster::uncover(int level) {
 TwoEdgeCluster::TwoEdgeCluster() {
     int lmax = TwoEdgeCluster::get_l_max();
 
-    
     this->size = std::vector<int>(lmax);
     this->part_size[0] = std::vector<vector<int>>(lmax + 2);
     this->part_size[1] = std::vector<vector<int>>(lmax + 2);
@@ -46,7 +45,7 @@ void TwoEdgeCluster::assign_vertex(int vertex, VertexLabel* label) {
     this->vertex[is_right_endpoint] = label;     
 }
 
-void TwoEdgeCluster::create(EdgeData* edge_data, None* left, None* right) {
+void TwoEdgeCluster::create(TreeEdgeData* edge_data, None* left, None* right) {
     create_cover(edge_data, left, right);
     create_find_size(edge_data, left, right);
     create_find_first_label(edge_data, left, right);
@@ -83,7 +82,7 @@ void TwoEdgeCluster::split(TwoEdgeCluster* left, TwoEdgeCluster* right) {
     split_cover(left, right);
 };
 
-void TwoEdgeCluster::destroy(EdgeData* edge_data, None* left, None* right) {
+void TwoEdgeCluster::destroy(TreeEdgeData* edge_data, None* left, None* right) {
     destroy_cover(edge_data, left, right);
     destroy_find_size(edge_data,left,right);
     destroy_find_first_label(edge_data,left,right);

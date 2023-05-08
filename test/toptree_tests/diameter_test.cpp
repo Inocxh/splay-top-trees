@@ -39,15 +39,35 @@ struct DiameterCluster : Node<DiameterCluster, int, None> {
             left->max_dist[1] + right->max_dist[0]
         );
         
+
+        // TODO: MAke sure refactor is correct.
+        // if (this->has_left_boundary()) {
+        //     this->max_dist[0] = std::max(left->max_dist[0], left->length + right->max_dist[0]);
+        // }
+        // if (this->has_right_boundary()) {
+        //     this->max_dist[1] = std::max(right->max_dist[1], right->length + left->max_dist[1]);
+        // }
+        // if (this->has_middle_boundary()) {
+        //     this->max_dist[this->has_left_boundary()] = std::max(left->max_dist[1], right->max_dist[0]);
+        // }
+
         if (this->has_left_boundary()) {
             this->max_dist[0] = std::max(left->max_dist[0], left->length + right->max_dist[0]);
+        }
+        if (this->has_middle_boundary()) {
+            if (!this->has_right_boundary()) {
+                this->max_dist[1] = std::max(left->max_dist[1], right->max_dist[0]);
+            }
+            if (!this->has_left_boundary()) {
+                this->max_dist[0] = std::max(left->max_dist[1], right->max_dist[0]);
+            }
         }
         if (this->has_right_boundary()) {
             this->max_dist[1] = std::max(right->max_dist[1], right->length + left->max_dist[1]);
         }
-        if (this->has_middle_boundary()) {
-            this->max_dist[this->has_left_boundary()] = std::max(left->max_dist[1], right->max_dist[0]);
-        }
+
+
+
     };
     void print_data() {
         std::cout << "[length: " << this->length <<" diameter: " << this->diameter <<" max_dist: " << this->max_dist[0] << "; " << this->max_dist[1] << "]:";

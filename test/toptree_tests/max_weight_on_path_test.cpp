@@ -21,6 +21,8 @@ struct MaxPathCluster : Node<MaxPathCluster, int, None> {
     }
 };
 
+
+
 TEST_CASE("Max-edge-weight shit", "[user data]") {
     int size = 26;
     TopTree<MaxPathCluster, int, None> top_tree = TopTree<MaxPathCluster,int,None>(size);
@@ -28,15 +30,9 @@ TEST_CASE("Max-edge-weight shit", "[user data]") {
     top_tree.link(2,1, 1);
     top_tree.link(3,0,1);
     top_tree.link(4,3, 1);
-    //top_tree.link(5,3, 1);
-    //top_tree.link(6,3, 1);
-    //top_tree.link(7,2, 1);
-    //top_tree.link(8,5, 1);
-    //top_tree.link(9,6, 1);
+
     top_tree.link(10,0, 1);
-    //top_tree.link(11,2, 1);
-    //top_tree.link(12,9, 1);
-    // top_tree.link(13,4, 1);
+
     top_tree.link(14,1, 1);
     top_tree.link(15,10, 1);
     top_tree.link(16,10, 1);
@@ -50,16 +46,6 @@ TEST_CASE("Max-edge-weight shit", "[user data]") {
     top_tree.expose(2);
     top_tree.deexpose(2)->print(0,false);
 
-    // top_tree.expose(22);
-    // top_tree.expose(5);
-    // top_tree.deexpose(22);
-    // top_tree.deexpose(5);
-
-    // top_tree.expose(22);
-    // top_tree.expose(13);
-    // top_tree.deexpose(22);
-    // top_tree.deexpose(13);
-
     std::cout << "Cutting 18 now" << std::endl;
     auto tup = top_tree.cut(21, 18);
     std::cout << "Cutting done" << std::endl;
@@ -69,6 +55,9 @@ TEST_CASE("Max-edge-weight shit", "[user data]") {
     top_tree.deexpose(18);
     top_tree.deexpose(3);
 }
+
+
+
 
 TEST_CASE("Max-edge-weight all edges removed", "[user data]") {
     int size = 10;

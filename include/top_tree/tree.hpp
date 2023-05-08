@@ -4,12 +4,11 @@
 
 template<class C, class E, class V>
 Tree<C,E,V>::Tree(int num_vertices) {
-    std::vector<Vertex<C,E,V>> vertices;
     for (int i = 0; i < num_vertices; i++) {
-        vertices.push_back(Vertex<C,E,V>(i));
+        this->vertices.push_back(Vertex<C,E,V>(i));
     }
-    this->vertices = vertices;
 };
+
 template<class C, class E, class V>
 Tree<C,E,V>::~Tree() {
     for (int i = 0; i < this->vertices.size(); i++) {
@@ -105,10 +104,7 @@ void Tree<C,E,V>::print_edges(Vertex<C, E, V>* vertex) {
     }
 };
 
-template<class C, class E, class V>
-std::vector<Vertex<C, E, V>>* Tree<C,E,V>::get_vertices() {
-    return &this->vertices;
-};
+
 
 template<class C, class E, class V>
 Vertex<C,E,V>* Tree<C,E,V>::get_vertex(int id) {

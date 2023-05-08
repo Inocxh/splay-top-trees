@@ -6,7 +6,8 @@ TEST_CASE("Create tree", "[tree constructor]")
 {
     int size = 10;
     Tree<> tree = Tree<>(size);
-    REQUIRE(tree.get_vertices()->size() == size);
+    REQUIRE(tree.get_size() == size);
+    
 }
 
 bool vertex_has_edge_incident(Vertex<>* vertex, Edge<>* edge)

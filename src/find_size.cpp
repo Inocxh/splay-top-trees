@@ -8,7 +8,7 @@ int TwoEdgeCluster::get_size(int i) {
     return this->size[i];
 }
 
-void TwoEdgeCluster::create_find_size(EdgeData* edge_data, None* left, None* right)  {
+void TwoEdgeCluster::create_find_size(TreeEdgeData* edge_data, None* left, None* right)  {
     int lmax = TwoEdgeCluster::get_l_max();
     int lmax_idx = lmax + 1;
     
@@ -35,7 +35,7 @@ void TwoEdgeCluster::create_find_size(EdgeData* edge_data, None* left, None* rig
     
 }
 
-void TwoEdgeCluster::destroy_find_size(EdgeData* edge_data, None* left, None* right)  {
+void TwoEdgeCluster::destroy_find_size(TreeEdgeData* edge_data, None* left, None* right)  {
     fill(size.begin(),size.end(),0);
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < this->part_size[i].size(); j++) {

@@ -31,6 +31,7 @@ class Tree {
 
     public:
     Tree(int num_vertices);
+    Tree() {};
     ~Tree();
     
     Edge<C,E,V>* add_edge(Vertex<C,E,V>*, Vertex<C,E,V>*, E);
@@ -44,7 +45,6 @@ class Tree {
     void print_edges(Vertex<C,E,V>*);
 
     int get_size();
-    std::vector<Vertex<C,E,V>>* get_vertices();
     Vertex<C,E,V>* get_vertex(int id);
 
 };

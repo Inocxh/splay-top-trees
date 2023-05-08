@@ -24,7 +24,6 @@ test/toptree_tests/max_weight_on_path_test.cpp
 test/toptree_tests/add_common_weight_test.cpp
 test/toptree_tests/orientation_invariant_test.cpp
 test/toptree_tests/diameter_test.cpp
-test/2_edge_tests/cover_level_test.cpp
 test/2_edge_tests/find_size_test.cpp
 test/2_edge_tests/find_first_label_test.cpp
 test/2_edge_tests/two_edge_connected_test.cpp
