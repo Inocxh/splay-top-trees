@@ -43,10 +43,8 @@ src/lib/Catch2
 cmake_install.cmake
 CMakeCache.txt
 cmake_install.cmake
-.gitignore
 CTestTestfile.cmake
 DartConfiguration.tcl
-.gitignore
 tests_include-b12d07c.cmake
 tests
 tests_tests-b12d07c.cmake

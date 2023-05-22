@@ -254,7 +254,6 @@ TEST_CASE("2-edge: delete mini", "[2-edge]") {
     edges[3] = tree.insert(3,0);
 
     for (int i = 0; i < 4; i++) {
-        bool ost = edges[3]->edge_type == TreeEdge;
         tree.remove(edges[i]);
     }
 }
