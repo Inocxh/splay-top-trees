@@ -88,6 +88,10 @@ C* LeafNode<C,E,V>::get_child(int e) {
     return nullptr;
 };
 
+template<class C, class E, class V>
+Edge<C,E,V>* LeafNode<C,E,V>::get_edge() {
+    return this->edge;
+};
 
 template<class C, class E, class V>
 void LeafNode<C,E,V>::delete_tree() {

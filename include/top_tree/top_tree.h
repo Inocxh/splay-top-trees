@@ -109,6 +109,7 @@ class Node {
     virtual bool has_middle_boundary() = 0;
     virtual bool has_right_boundary() = 0;
     virtual int get_endpoint_id(int) = 0;
+    virtual Edge<C,E,V>* get_edge() = 0;
     virtual void delete_tree() = 0;
 
     
@@ -156,6 +157,7 @@ class LeafNode : public C {
     bool has_left_boundary();
     bool has_middle_boundary();
     bool has_right_boundary();
+    Edge<C,E,V>* get_edge();
     int get_endpoint_id(int);
     void delete_tree();
 
@@ -184,6 +186,7 @@ class InternalNode : public C {
     bool has_left_boundary();
     bool has_middle_boundary();
     bool has_right_boundary();
+    Edge<C,E,V>* get_edge();
     int get_endpoint_id(int);
     C* get_child(int);
     void delete_tree();

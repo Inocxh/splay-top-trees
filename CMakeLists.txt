@@ -27,6 +27,7 @@ test/toptree_tests/diameter_test.cpp
 test/2_edge_tests/find_size_test.cpp
 test/2_edge_tests/find_first_label_test.cpp
 test/2_edge_tests/two_edge_connected_test.cpp
+test/min_span_forest_tests/min_span_forest_test.cpp
 )
 
 #Main target

@@ -89,6 +89,11 @@ int InternalNode<C,E,V>::get_endpoint_id(int e) {
 };
 
 template<class C, class E, class V>
+Edge<C,E,V>* InternalNode<C,E,V>::get_edge() {
+    return nullptr;
+};
+
+template<class C, class E, class V>
 void InternalNode<C,E,V>::delete_tree() {
     this->children[0]->delete_tree();
     this->children[1]->delete_tree();
