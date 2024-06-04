@@ -46,12 +46,7 @@ class MinSpanForest {
     TopTree<MinSpanForestCluster, int, None> top_tree;
 
     void insert(int u, int v, int weight) {
-        std::cout << "INSERT: " <<u << "," << v << ": " << weight << std::endl;
-
-
-
         if (!this->top_tree.connected(u, v)) {
-            std::cout << "not connected" << std::endl;
             this->top_tree.link(u, v, weight);
             this->weight += weight;
             return;
@@ -59,7 +54,6 @@ class MinSpanForest {
             
         MinSpanForestCluster* root = this->top_tree.expose(u, v);
         if (root->max_weight < weight) {
-            std::cout << "skip" << std::endl;
             this->top_tree.deexpose(u, v);
             return;
         }
@@ -72,8 +66,6 @@ class MinSpanForest {
         
         this->top_tree.link(u, v, weight);
         this->weight += weight;
-
-        std::cout << "replace" << std::endl;
     };
 
     

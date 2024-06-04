@@ -4,7 +4,7 @@ project(top-trees)
 set(CMAKE_CXX_STANDARD_REQUIRED 20)
 
 set(CMAKE_CXX_FLAGS "-ggdb")
-set(CMAKE_CXX_FLAGS_RELEASE_INIT "-O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE_INIT "-O4 -DNDEBUG")
 
 include_directories(include)
 include_directories(include/top_tree)
@@ -32,6 +32,7 @@ test/min_span_forest_tests/min_span_forest_test.cpp
 
 #Main target
 add_executable(main src/main.cpp)
+add_executable(mst_run bench/msf_runner.cpp)
 
 add_subdirectory(src/lib/Catch2)
 #Removes extra CTest targets
