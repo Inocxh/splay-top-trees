@@ -51,5 +51,7 @@ tests_tests-b12d07c.cmake
 main
 src/lib/Catch2
 Makefile
-data/
 callgrind.out.*
+
+benchmark/dataset/
+benchmark/results/
