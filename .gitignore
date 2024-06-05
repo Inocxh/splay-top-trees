@@ -52,3 +52,4 @@ main
 src/lib/Catch2
 Makefile
 data/
+callgrind.out.*
