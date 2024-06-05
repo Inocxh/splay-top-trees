@@ -16,14 +16,11 @@ struct Connectivity_Query {
 };
 
 int main(int argc, char *argv[]) {
-    int repeats = std::atol(argv[1]);
 
-    //Parse text-file as data
-    std::ifstream data_file(argv[2]);
+    int warmups = std::atol(argv[1]);
+    int iterations = std::atol(argv[2]);
+    std::ifstream data_file(argv[3]);
 
-    std::string name;
-
-    //std::getline(data_file, name);
 
 
     std::string problem;
@@ -43,14 +40,11 @@ int main(int argc, char *argv[]) {
         
     }
 
-    //Start clock
-    auto start = std::chrono::high_resolution_clock::now();
-    int total_cons = 0;
-    for (int i = 0; i < repeats; i++) {
 
-        //Run measurement
+    // Warmup
+    for (int i = 0; i < warmups; i++) {
+        int total_cons = 0;
         TopTree<AddWeightCluster, int, None> top_tree = TopTree<AddWeightCluster, int, None>(n);
-        
         for (Connectivity_Query q : queries) {
             if (q.op == 'i') {
                 top_tree.link(q.u, q.v, 0);
@@ -59,18 +53,35 @@ int main(int argc, char *argv[]) {
             } else if (q.op == 'p') { 
                 if (top_tree.connected(q.u, q.v))   {
                     total_cons += 1;
-                }
-                
+                }        
             }
         }
     }
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double, std::milli> time_taken = end - start;
 
-    //Return elapsed time
-    std::cout << total_cons / repeats << std::endl;
+    std::vector<double> times;
 
-    std::cout << time_taken.count() / repeats << "ms \n";
+    // Run measurement
+    for (int i = 0; i < iterations; i++) {
+        auto start = std::chrono::high_resolution_clock::now();
+        int total_cons = 0;
+        TopTree<AddWeightCluster, int, None> top_tree = TopTree<AddWeightCluster, int, None>(n);
+        for (Connectivity_Query q : queries) {
+            if (q.op == 'i') {
+                top_tree.link(q.u, q.v, 0);
+            } else if (q.op == 'd') {
+                top_tree.cut(q.u, q.v);
+            } else if (q.op == 'p') { 
+                if (top_tree.connected(q.u, q.v))   {
+                    total_cons += 1;
+                }        
+            }
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::nano> time_taken = end - start;
+        times.push_back(time_taken.count());
+    }
+    std::sort(times.begin(), times.end());
+    std::cout << "{ \"num_vertices\":" << n << ",\"num_edges\":" << m << ",\"name\":\"" << argv[3] << "\",\"time_ns\":" << times[times.size() / 2] << "}\n";
     return 0;
 }
 

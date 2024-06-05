@@ -14,15 +14,13 @@ struct MSF_Query {
 };
 
 int main(int argc, char *argv[]) {
-    //Parse text-file as data
-    std::ifstream data_file(argv[3]);
 
     int warmups = std::atol(argv[1]);
     int iterations = std::atol(argv[2]);
+    std::ifstream data_file(argv[3]);
 
     std::string name;
-
-    std::getline(data_file,name);
+    std::getline(data_file, name);
 
     std::string problem;
     int n;
@@ -59,7 +57,7 @@ int main(int argc, char *argv[]) {
             tree.insert(q.u,q.v,q.weight);
         }
         auto end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double, std::milli> time_taken = end - start;
+        std::chrono::duration<double, std::nano> time_taken = end - start;
         times.push_back(time_taken.count());
     }
     std::sort(times.begin(), times.end());
@@ -67,7 +65,7 @@ int main(int argc, char *argv[]) {
 
 
     //Return elapsed time
-    std::cout << times[times.size() / 2] << "\n";
+    std::cout << "{ \"num_vertices\":" << n << ",\"num_edges\":" << m << ",\"name\":\"" << argv[3] << "\",\"time_ns\":" << times[times.size() / 2] << "}\n";
     return 0;
 }
 
