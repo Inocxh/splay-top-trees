@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DATA_FILE=mst_random.jsonl
+DATA_FILE=mst.jsonl
 REPEAT=1
 SETS=3
 WARMUPS=1

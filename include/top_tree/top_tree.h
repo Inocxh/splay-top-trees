@@ -36,7 +36,11 @@ class TopTree {
 
     C* find_consuming_node(Vertex<C,E,V>*);
     void delete_all_ancestors(C*);
+
     C* expose_internal(Vertex<C,E,V>*);
+    C* prepare_expose(C*);
+    C* expose_prepared(C*);
+
     C* deexpose_internal(Vertex<C,E,V>*);
     std::tuple<C*,Edge<C,E,V>*> link_internal(Vertex<C,E,V>*, Vertex<C,E,V>*, E);
     std::tuple<C*, C*> cut_internal(Edge<C,E,V>*);
@@ -45,9 +49,13 @@ class TopTree {
     public:
     C* expose(int v1, int v2);
     C* expose(int vertex);
+
+    C* expose_fast(int vertex);
+    C* expose_fast(int v1, int v2);
+
     C* deexpose(int v1, int v2);
-    
     C* deexpose(int vertex);
+
     C* link(int u, int v, E);
     std::tuple<C*, C*> cut(int, int);
 

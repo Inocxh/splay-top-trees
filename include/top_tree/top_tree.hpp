@@ -74,19 +74,18 @@ C* TopTree<C,E,V>::find_consuming_node(Vertex<C,E,V>* vertex) {
 template<class C, class E, class V>
 C* TopTree<C,E,V>::expose(int vertex1_id, int vertex2_id) {
     assert(this->num_exposed == 0);
-    this->num_exposed += 2;
-    Vertex<C,E,V>* vertex1 = this->underlying_tree.get_vertex(vertex1_id);
-    Vertex<C,E,V>* vertex2 = this->underlying_tree.get_vertex(vertex2_id);
-    expose_internal(vertex1);
-    return expose_internal(vertex2);
+    this->expose(vertex1_id);
+    return this->expose(vertex2_id);;
 }
 template<class C, class E, class V>
 C* TopTree<C,E,V>::expose(int vertex_id) {
     assert(this->num_exposed < 2);
-    this->num_exposed += 1;
-    Vertex<C,E,V>* vertex = this->underlying_tree.get_vertex(vertex_id);
-    return expose_internal(vertex);
+    // this->num_exposed += 1;
+    // Vertex<C,E,V>* vertex = this->underlying_tree.get_vertex(vertex_id);
+    // return expose_internal(vertex);
+    return expose_fast(vertex_id);
 }
+
 
 template<class C, class E, class V>
 C* TopTree<C,E,V>::expose_internal(Vertex<C,E,V>* vertex) {
@@ -127,6 +126,100 @@ C* TopTree<C,E,V>::expose_internal(Vertex<C,E,V>* vertex) {
     }
     
     return parent ? parent : node;
+}
+
+template<class C, class E, class V>
+C* TopTree<C,E,V>::expose_fast(int vertex_id) {
+    assert(this->num_exposed < 2);
+    this->num_exposed += 1;
+    Vertex<C,E,V>* vertex = this->underlying_tree.get_vertex(vertex_id);
+
+    auto consuming_node = this->find_consuming_node(vertex);
+    if (consuming_node) {
+        consuming_node = this->prepare_expose(consuming_node);
+        auto root = expose_prepared(consuming_node);
+        vertex->exposed = true;
+        return root;
+    } else {
+        vertex->exposed = true;
+        return nullptr;
+    }
+}
+
+template<class C, class E, class V>
+C* TopTree<C,E,V>::expose_prepared(C* consuming_node) {
+    bool from_left = false;
+    bool from_right = false;
+    auto node = consuming_node;
+
+    std::vector<C*> root_path;
+    while (true) {
+        auto parent = node->get_parent();
+        //node->num_boundary_vertices += 1;
+        if (!parent) {
+            root_path.push_back(node);
+            //return node;
+            break;
+        }
+
+        bool is_right_child = node->is_right_child();
+
+        if ((is_right_child && from_left) || (!is_right_child && from_right)) {
+            node->flip();
+        }
+
+        from_left = !is_right_child != parent->is_flipped();
+        from_right = is_right_child != parent->is_flipped();
+
+        root_path.push_back(node);
+        node = parent;
+    } 
+
+    for (int i = root_path.size()-1;i >= 0; i--) {
+        root_path[i]->split_internal();
+    }
+    for (int i = 0; i < root_path.size(); i++) {
+        root_path[i]->num_boundary_vertices += 1;
+        root_path[i]->merge_internal();
+    }
+    return root_path[root_path.size()-1];
+}
+
+template<class C, class E, class V>
+C* TopTree<C,E,V>::prepare_expose(C* consuming_node) {
+    auto node = consuming_node;
+    while (node->get_parent()) {
+        auto parent = node->get_parent();
+        if (node->is_point()) {
+            node = parent;
+        } else {
+            parent->push_flip();
+            node->push_flip();
+
+            auto sibling = node->get_sibling();
+            int sibling_right = sibling->is_right_child();
+
+            auto same_side_child = node->get_child(sibling_right);
+
+            if (same_side_child->is_path() || sibling->is_point()) {
+                //Rotate up other side child.
+                (node->get_child(1-sibling_right))->rotate_up();
+                if (node == consuming_node) {
+                    consuming_node = parent;
+                }
+                node = parent;
+            } else {
+                int uncle_right = !(parent->is_right_child());
+
+                if (sibling_right == uncle_right) {
+                    node->rotate_up();
+                } else {
+                    sibling->rotate_up();
+                }
+            }
+        }
+    }
+    return consuming_node;
 }
 
 template<class C, class E, class V>
