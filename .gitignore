@@ -49,6 +49,7 @@ tests_include-b12d07c.cmake
 tests
 tests_tests-b12d07c.cmake
 main
+src/lib/Catch2/*
 src/lib/Catch2
 Makefile
 callgrind.out.*
@@ -59,4 +60,5 @@ benchmark/results/
 /data/ogbl-collab/.venv/*
 /data/connec/*
 /data/mst/*
-/data/incremental_mst
+/data/incremental_mst.txt
+src/lib/Catch2
