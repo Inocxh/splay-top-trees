@@ -55,3 +55,8 @@ callgrind.out.*
 
 benchmark/dataset/
 benchmark/results/
+
+/data/ogbl-collab/.venv/*
+/data/connec/*
+/data/mst/*
+/data/incremental_mst
