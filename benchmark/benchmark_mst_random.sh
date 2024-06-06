@@ -9,8 +9,8 @@ ITERATIONS=3
 
 if [ -f $INPUT_FILE ]
 then
-    mkdir -p results
-    rm -f results/$DATA_FILE
+    mkdir -p results/splay_top_tree/
+    rm -f results/splay_top_tree/$DATA_FILE
     
     for n in 1000 2000 5000 10000 20000 50000 100000 200000 500000 1000000
     do
@@ -20,7 +20,7 @@ then
             echo "Set $i" 
             for _ in $(eval echo {1..$REPEAT})
             do
-                ./../build/benchmark_mst $WARMUPS $ITERATIONS dataset/mst/random/mst_${n}_${i}.txt --json >> results/$DATA_FILE || exit
+                ./../build/benchmark_mst $WARMUPS $ITERATIONS dataset/mst/random/mst_${n}_${i}.txt >> results/splay_top_tree/$DATA_FILE || exit
             done
         done
     done
