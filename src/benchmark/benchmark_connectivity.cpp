@@ -4,6 +4,8 @@
 
 #include <stdio.h>
 #include <fstream>
+#include <bits/stdc++.h>
+#include <string>
 #include <cassert>
 #include <chrono>
 #include <unordered_map> 
@@ -57,20 +59,16 @@ struct ConnectivityTopTree {
 };
 
 int main(int argc, char *argv[]) {
-
     int warmups = std::atol(argv[1]);
     int iterations = std::atol(argv[2]);
     std::ifstream data_file(argv[3]);
-
-    std::string name;
-    std::getline(data_file, name);
-
+    std::string name = "";
+    //std::getline(data_file, name);
     std::string problem;
     int n;
     int m;
     data_file >> problem >> n >> m;
     std::vector<Connectivity_Query> queries;
-
     for (int i = 0; i < m; i++) {
         char query;
         int u;
@@ -80,13 +78,12 @@ int main(int argc, char *argv[]) {
         queries.push_back(Connectivity_Query{query, u, v});
     }
 
-
+    std::vector<double> warmup_times;
     // Warmup
     for (int i = 0; i < warmups; i++) {
+        auto start = std::chrono::high_resolution_clock::now();
         int total_cons = 0;
-
         ConnectivityTopTree top_tree = ConnectivityTopTree(n);
-
         for (Connectivity_Query q : queries) {
             if (q.op == 'i') {
                 top_tree.insert(q.u, q.v);
@@ -97,8 +94,10 @@ int main(int argc, char *argv[]) {
                     total_cons += 1;          
             }
         }
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::micro> time_taken = end - start;
+        warmup_times.push_back(time_taken.count());
     }
-
     std::vector<double> times;
 
     // Run measurement
@@ -119,11 +118,20 @@ int main(int argc, char *argv[]) {
             }
         }
         auto end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double, std::nano> time_taken = end - start;
+        std::chrono::duration<double, std::micro> time_taken = end - start;
         times.push_back(time_taken.count());
     }
-    std::sort(times.begin(), times.end());
-    std::cout << "{ \"num_vertices\":" << n << ",\"num_edges\":" << m << ",\"name\":\"" << argv[3] << "\",\"time_ns\":" << times[times.size() / 2] << "}\n";
+    std::vector<double> median = times;
+	std::sort(median.begin(), median.end());
+	std::cout << "{ \"num_vertices\":" << n << ",\"num_edges\":" << queries.size() << ",\"name\":\"splay top tree con\",\"median\":" << median[median.size() / 2] << ",\"warmup_times\":[";
+	std::cout << std::accumulate(std::next(warmup_times.begin()), warmup_times.end(), std::to_string(warmup_times[0]), [](std::string a, double b) {
+		return a + ',' + std::to_string(b);
+	});
+	std::cout << "], \"times\":[";
+	std::cout << std::accumulate(std::next(times.begin()), times.end(), std::to_string(times[0]), [](std::string a, double b) {
+		return a + ',' + std::to_string(b);
+	});
+	std::cout << "]}\n";
     return 0;
 }
 

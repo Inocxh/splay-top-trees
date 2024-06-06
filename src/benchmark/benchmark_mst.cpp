@@ -5,7 +5,7 @@
 #include <fstream>
 #include <cassert>
 #include <chrono>
-
+#include <string>
 
 struct MSF_Query {
     int u;
@@ -39,13 +39,18 @@ int main(int argc, char *argv[]) {
         queries.push_back(MSF_Query{u,v,weight});
     }
 
+    std::vector<double> warmup_times;
     // Warmup
     for (int i = 0; i < warmups; i++) {
         //Run measurement
+        auto start = std::chrono::high_resolution_clock::now();
         MinSpanForest tree(n);
         for (MSF_Query q : queries) {
             tree.insert(q.u,q.v,q.weight);
         }    
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::micro> time_taken = end - start;
+        warmup_times.push_back(time_taken.count());
     }
 
     std::vector<double> times;
@@ -60,12 +65,19 @@ int main(int argc, char *argv[]) {
         std::chrono::duration<double, std::nano> time_taken = end - start;
         times.push_back(time_taken.count());
     }
-    std::sort(times.begin(), times.end());
 
+    std::vector<double> median = times;
+	std::sort(median.begin(), median.end());
+	std::cout << "{ \"num_vertices\":" << n << ",\"num_edges\":" << queries.size() << ",\"name\":\"splay top tree con\",\"median\":" << median[median.size() / 2] << ",\"warmup_times\":[";
+	std::cout << std::accumulate(std::next(warmup_times.begin()), warmup_times.end(), std::to_string(warmup_times[0]), [](std::string a, double b) {
+		return a + ',' + std::to_string(b);
+	});
+	std::cout << "], \"times\":[";
+	std::cout << std::accumulate(std::next(times.begin()), times.end(), std::to_string(times[0]), [](std::string a, double b) {
+		return a + ',' + std::to_string(b);
+	});
+	std::cout << "]}\n";
 
-
-    //Return elapsed time
-    std::cout << "{ \"num_vertices\":" << n << ",\"num_edges\":" << m << ",\"name\":\"" << argv[3] << "\",\"time_ns\":" << times[times.size() / 2] << "}\n";
     return 0;
 }
 
