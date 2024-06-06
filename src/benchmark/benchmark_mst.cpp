@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
     std::ifstream data_file(argv[3]);
 
     std::string name;
-    std::getline(data_file, name);
+    //std::getline(data_file, name);
 
     std::string problem;
     int n;
