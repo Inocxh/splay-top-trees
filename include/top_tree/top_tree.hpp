@@ -80,10 +80,10 @@ C* TopTree<C,E,V>::expose(int vertex1_id, int vertex2_id) {
 template<class C, class E, class V>
 C* TopTree<C,E,V>::expose(int vertex_id) {
     assert(this->num_exposed < 2);
-    // this->num_exposed += 1;
-    // Vertex<C,E,V>* vertex = this->underlying_tree.get_vertex(vertex_id);
-    // return expose_internal(vertex);
-    return expose_fast(vertex_id);
+    this->num_exposed += 1;
+    Vertex<C,E,V>* vertex = this->underlying_tree.get_vertex(vertex_id);
+    return expose_internal(vertex);
+    //return expose_fast(vertex_id);
 }
 
 
