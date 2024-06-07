@@ -62,6 +62,12 @@ int main(int argc, char *argv[]) {
     int warmups = std::atol(argv[1]);
     int iterations = std::atol(argv[2]);
     std::ifstream data_file(argv[3]);
+
+    if (!data_file) {
+        std::cerr << "Datafile not found!";
+        exit(1);
+    }
+
     std::string name = "";
     //std::getline(data_file, name);
     std::string problem;
