@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
             }
         }
         auto end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double, std::micro> time_taken = end - start;
+        std::chrono::duration<double, std::nano> time_taken = end - start;
         warmup_times.push_back(time_taken.count());
     }
     std::vector<double> times;
@@ -124,12 +124,12 @@ int main(int argc, char *argv[]) {
             }
         }
         auto end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double, std::micro> time_taken = end - start;
+        std::chrono::duration<double, std::nano> time_taken = end - start;
         times.push_back(time_taken.count());
     }
     std::vector<double> median = times;
 	std::sort(median.begin(), median.end());
-	std::cout << "{ \"num_vertices\":" << n << ",\"num_edges\":" << queries.size() << ",\"name\":\"splay top tree con\",\"median\":" << median[median.size() / 2] << ",\"warmup_times\":[";
+	std::cout << "{ \"num_vertices\":" << n << ",\"num_edges\":" << queries.size() << ",\"name\":\"Splay top tree\",\"median\":" << median[median.size() / 2] << ",\"warmup_times\":[";
 	std::cout << std::accumulate(std::next(warmup_times.begin()), warmup_times.end(), std::to_string(warmup_times[0]), [](std::string a, double b) {
 		return a + ',' + std::to_string(b);
 	});
