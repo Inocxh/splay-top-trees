@@ -46,13 +46,13 @@ class TwoEdgeConnectivity {
         return this->top_tree.deexpose(u, v);
     };
 
-    TwoEdgeConnectivity();
+    TwoEdgeConnectivity() {};
     TwoEdgeConnectivity(int size) {
         TwoEdgeCluster::set_l_max((int) floor(log2(size)));
         this->top_tree = TopTree<TwoEdgeCluster,TreeEdgeData,None>(size);
         this->vertex_labels = std::vector<VertexLabel*>(size);
         for (int i = 0; i < size; i++) {
-            vertex_labels[i] = new VertexLabel(TwoEdgeCluster::get_l_max()); // TODO, make sure lmax is accessed similarly everywhere.
+            this->vertex_labels[i] = new VertexLabel(TwoEdgeCluster::get_l_max()); // TODO, make sure lmax is accessed similarly everywhere.
         }
     };
     ~TwoEdgeConnectivity() {

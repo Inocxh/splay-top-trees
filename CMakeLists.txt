@@ -33,6 +33,9 @@ test/min_span_forest_tests/min_span_forest_test.cpp
 #Main target
 add_executable(benchmark_mst src/benchmark/benchmark_mst.cpp)
 add_executable(benchmark_connectivity src/benchmark/benchmark_connectivity.cpp)
+add_executable(benchmark_2_edge src/benchmark/benchmark_2_edge.cpp)
+
+target_sources(benchmark_2_edge PRIVATE ${IMPL_FILES})
 
 add_subdirectory(src/lib/Catch2)
 #Removes extra CTest targets
