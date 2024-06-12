@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
     name = "Splay top tree full splay";
     #endif
 
-	std::cout << "{ \"num_vertices\":" << n << ",\"num_edges\":" << queries.size() << ",\"name\":" << name << ",\"median\":" << median[median.size() / 2] << ",\"warmup_times\":[";
+	std::cout << "{ \"num_vertices\":" << n << ",\"num_edges\":" << queries.size() << ",\"name\": \"" << name << "\" ,\"median\":" << median[median.size() / 2] << ",\"warmup_times\":[";
 	std::cout << std::accumulate(std::next(warmup_times.begin()), warmup_times.end(), std::to_string(warmup_times[0]), [](std::string a, double b) {
 		return a + ',' + std::to_string(b);
 	});

@@ -38,6 +38,7 @@ add_executable(benchmark_connectivity_semi_splay src/benchmark/benchmark_connect
 add_executable(benchmark_2_edge_semi_splay src/benchmark/benchmark_2_edge.cpp)
 
 target_sources(benchmark_2_edge PRIVATE ${IMPL_FILES})
+target_sources(benchmark_2_edge_semi_splay PRIVATE ${IMPL_FILES})
 
 target_compile_definitions(benchmark_connectivity_semi_splay PUBLIC SEMI_SPLAY=1)
 target_compile_definitions(benchmark_2_edge_semi_splay PUBLIC SEMI_SPLAY=1)

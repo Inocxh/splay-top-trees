@@ -198,21 +198,22 @@ C* TopTree<C,E,V>::prepare_expose(C* consuming_node) {
             node->push_flip();
 
             auto sibling = node->get_sibling();
-            int sibling_right = sibling->is_right_child();
+            int sibling_idx = sibling->is_right_child();
 
-            auto same_side_child = node->get_child(sibling_right);
+            auto same_side_child = node->get_child(sibling_idx);
 
             if (same_side_child->is_path() || sibling->is_point()) {
                 //Rotate up other side child.
-                (node->get_child(1-sibling_right))->rotate_up();
+                (node->get_child(1-sibling_idx))->rotate_up();
                 if (node == consuming_node) {
                     consuming_node = parent;
                 }
                 node = parent;
             } else {
-                int uncle_right = !(parent->is_right_child());
+                auto uncle = parent->get_sibling();
+                int uncle_idx = parent->get_parent()->get_child(1) == uncle;
 
-                if (sibling_right == uncle_right) {
+                if (sibling_idx == uncle_idx) {
                     node->rotate_up();
                 } else {
                     sibling->rotate_up();
