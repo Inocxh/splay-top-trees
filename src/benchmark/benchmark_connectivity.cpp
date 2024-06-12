@@ -30,13 +30,26 @@ struct pair_hash {
     }
 };
 
+struct EmptyCluster : Node<EmptyCluster, int, None> {
+    void create(int* weight, None* left, None* right) {
+
+    };    
+    
+    void merge(EmptyCluster* left, EmptyCluster* right) {
+
+    };
+
+    void print_data() {
+        std::cout << "num_b: "  << this->get_num_boundary_vertices() << " ";
+    }
+};
 
 struct ConnectivityTopTree {
-    TopTree<AddWeightCluster, int, None> top_tree;
-    std::unordered_map<std::pair<int,int>, Edge<AddWeightCluster, int, None> *, pair_hash> edge_map;
+    TopTree<EmptyCluster, int, None> top_tree;
+    std::unordered_map<std::pair<int,int>, Edge<EmptyCluster, int, None> *, pair_hash> edge_map;
 
     ConnectivityTopTree(int n) {
-        this->top_tree = TopTree<AddWeightCluster, int, None>(n);
+        this->top_tree = TopTree<EmptyCluster, int, None>(n);
     }
 
     void insert(int u, int v) {
@@ -68,8 +81,6 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    std::string name = "";
-    //std::getline(data_file, name);
     std::string problem;
     int n;
     int m;
@@ -129,7 +140,14 @@ int main(int argc, char *argv[]) {
     }
     std::vector<double> median = times;
 	std::sort(median.begin(), median.end());
-	std::cout << "{ \"num_vertices\":" << n << ",\"num_edges\":" << queries.size() << ",\"name\":\"Splay top tree\",\"median\":" << median[median.size() / 2] << ",\"warmup_times\":[";
+    std::string name = "";
+    #ifdef SEMI_SPLAY
+    name = "Splay top tree semi splay";
+    #else
+    name = "Splay top tree full splay";
+    #endif
+
+	std::cout << "{ \"num_vertices\":" << n << ",\"num_edges\":" << queries.size() << ",\"name\":" << name << ",\"median\":" << median[median.size() / 2] << ",\"warmup_times\":[";
 	std::cout << std::accumulate(std::next(warmup_times.begin()), warmup_times.end(), std::to_string(warmup_times[0]), [](std::string a, double b) {
 		return a + ',' + std::to_string(b);
 	});

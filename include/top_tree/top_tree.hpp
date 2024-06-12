@@ -82,8 +82,11 @@ C* TopTree<C,E,V>::expose(int vertex_id) {
     assert(this->num_exposed < 2);
     this->num_exposed += 1;
     Vertex<C,E,V>* vertex = this->underlying_tree.get_vertex(vertex_id);
+    #ifdef SEMI_SPLAY
+    return expose_internal_semi_splay(vertex);
+    #else
     return expose_internal(vertex);
-    //return expose_fast(vertex_id);
+    #endif
 }
 
 
@@ -129,16 +132,14 @@ C* TopTree<C,E,V>::expose_internal(Vertex<C,E,V>* vertex) {
 }
 
 template<class C, class E, class V>
-C* TopTree<C,E,V>::expose_fast(int vertex_id) {
+C* TopTree<C,E,V>::expose_internal_semi_splay(Vertex<C,E,V>* vertex) {
     assert(this->num_exposed < 2);
     this->num_exposed += 1;
-    Vertex<C,E,V>* vertex = this->underlying_tree.get_vertex(vertex_id);
 
     auto consuming_node = this->find_consuming_node(vertex);
     if (consuming_node) {
         consuming_node = this->prepare_expose(consuming_node);
-        auto root = expose_prepared(consuming_node);
-        vertex->exposed = true;
+        auto root = expose_prepared(consuming_node,vertex);
         return root;
     } else {
         vertex->exposed = true;
@@ -147,7 +148,7 @@ C* TopTree<C,E,V>::expose_fast(int vertex_id) {
 }
 
 template<class C, class E, class V>
-C* TopTree<C,E,V>::expose_prepared(C* consuming_node) {
+C* TopTree<C,E,V>::expose_prepared(C* consuming_node, Vertex<C,E,V>* vertex) {
     bool from_left = false;
     bool from_right = false;
     auto node = consuming_node;
@@ -155,14 +156,13 @@ C* TopTree<C,E,V>::expose_prepared(C* consuming_node) {
     std::vector<C*> root_path;
     while (true) {
         auto parent = node->get_parent();
+        root_path.push_back(node);
         //node->num_boundary_vertices += 1;
         if (!parent) {
-            root_path.push_back(node);
-            //return node;
             break;
         }
 
-        bool is_right_child = node->is_right_child();
+        bool is_right_child = parent->children[0] == node;
 
         if ((is_right_child && from_left) || (!is_right_child && from_right)) {
             node->flip();
@@ -171,18 +171,19 @@ C* TopTree<C,E,V>::expose_prepared(C* consuming_node) {
         from_left = !is_right_child != parent->is_flipped();
         from_right = is_right_child != parent->is_flipped();
 
-        root_path.push_back(node);
         node = parent;
     } 
 
     for (int i = root_path.size()-1;i >= 0; i--) {
         root_path[i]->split_internal();
     }
+
+    vertex->exposed = true;
     for (int i = 0; i < root_path.size(); i++) {
         root_path[i]->num_boundary_vertices += 1;
         root_path[i]->merge_internal();
-    }
-    return root_path[root_path.size()-1];
+    }   
+    return root_path.back();
 }
 
 template<class C, class E, class V>
@@ -296,8 +297,13 @@ C* TopTree<C,E,V>::link_leaf(int u_id, int v_id, E data) {
 //Assumes u and v in trees with no exposed vertices!
 template<class C, class E, class V>
 std::tuple<C*,Edge<C,E,V>*> TopTree<C,E,V>::link_internal(Vertex<C,E,V>* u, Vertex<C,E,V>* v, E data) {
+    #ifdef SEMI_SPLAY
+    C* Tu = expose_internal_semi_splay(u);
+    C* Tv = expose_internal_semi_splay(v);
+    #else
     C* Tu = expose_internal(u);
     C* Tv = expose_internal(v);
+    #endif
 
     //Tu now has constant depth 
     C* root_u = Tu;

@@ -38,8 +38,9 @@ class TopTree {
     void delete_all_ancestors(C*);
 
     C* expose_internal(Vertex<C,E,V>*);
+    C* expose_internal_semi_splay(Vertex<C,E,V>*);
     C* prepare_expose(C*);
-    C* expose_prepared(C*);
+    C* expose_prepared(C*, Vertex<C,E,V>*);
 
     C* deexpose_internal(Vertex<C,E,V>*);
     std::tuple<C*,Edge<C,E,V>*> link_internal(Vertex<C,E,V>*, Vertex<C,E,V>*, E);
