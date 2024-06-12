@@ -19,7 +19,6 @@ int main(int argc, char *argv[]) {
     int iterations = std::atol(argv[2]);
     std::ifstream data_file(argv[3]);
 
-
     if (!data_file) {
         std::cerr << "Datafile not found!";
         exit(1);
@@ -104,7 +103,14 @@ int main(int argc, char *argv[]) {
     std::vector<double> median = times;
 	std::sort(median.begin(), median.end());
 
-	std::cout << "{ \"num_vertices\":" << n << ",\"num_edges\":" << queries.size() << ",\"name\":\"splay top tree 2edge con\",\"median\":" << median[median.size() / 2] << ",\"warmup_times\":[";
+    std::string name = "";
+    #ifdef SEMI_SPLAY 
+    name = "splay top tree 2edge semi splay";
+    #else
+    name = "splay top tree 2edge full splay";
+    #endif
+
+	std::cout << "{ \"num_vertices\":" << n << ",\"num_edges\":" << queries.size() << ",\"name\":\" " << name << " \",\"median\":" << median[median.size() / 2] << ",\"warmup_times\":[";
 	std::cout << std::accumulate(std::next(warmup_times.begin()), warmup_times.end(), std::to_string(warmup_times[0]), [](std::string a, double b) {
 		return a + ',' + std::to_string(b);
 	});
